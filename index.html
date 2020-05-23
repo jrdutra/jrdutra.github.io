@@ -5,14 +5,79 @@
 <title>JavaScript Replace Character in a String</title>
 <script>
     function strReplace(text){
+
         let convList = [
-            ["á", "\\'a"]
+            ["á", "\\'a"],
+            ["é", "\\'e"],
+            ["í", "\\'i"],
+            ["ó", "\\'o"],
+            ["ú", "\\'u"],
+            ["Á", "\\'A"],
+            ["É", "\\'E"],
+            ["Í", "\\'I"],
+            ["Ó", "\\'O"],
+            ["Ú", "\\'U"],
+            ["à", "\\`a"],
+            ["À", "\\`A"],
+            ["ç", "\\c {c}"],
+            ["ã", "\\~a"],
+            ["õ", "\\~o"],
+            ["â", "\\^a"],
+            ["ê", "\\^e"],
+            ["î", "\\^i"],
+            ["ô", "\\^o"],
+            ["û", "\\^u"],
+            ["Â", "\\^A"],
+            ["Ê", "\\^E"],
+            ["Î", "\\^I"],
+            ["Ô", "\\^O"],
+            ["Û", "\\^U"],
+            ["...", "\\ldots"],
+            [" \"", " ``"],
+            ["\" ", "'' "],
+            ["\".", " ''."],
+            ["“", "``"],
+            ["”", "''"]
         ];
+
         convList.forEach(conversao => {
-            newText = text.replace(conversao[0], conversao[1]);
-            text = newText;
+            for (var i = 0; i < text.length; i++) {
+                newText = text.replace(conversao[0], conversao[1]);
+                text = newText;
+            }
         });
+
         document.getElementById("idText").value = newText;
+    }
+
+    function strPaste(){
+
+        let pasteArea = document.getElementById("idText");
+
+        pasteArea.value = '';
+
+        navigator.clipboard.readText()
+        .then((text)=>{
+            pasteArea.value = text;
+        });
+
+    }
+
+    function strCopy(){
+        var text = document.getElementById("idText").value;
+
+        var textField = document.createElement('textarea');
+
+        textField.innerText = text;
+
+        document.body.appendChild(textField);
+
+        textField.select();
+
+        document.execCommand('copy');
+
+        textField.remove();
+
     }
 </script>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
@@ -30,7 +95,9 @@
             </div>
         </form>
         <p>Click convert to get your laTex text.</p>
+        <a class="btn btn-primary btn-lg" href="#" onclick="strPaste();" role="button">Paste</a>
         <a class="btn btn-primary btn-lg" href="#" onclick="strReplace($('#idText').val());" role="button">Convert</a>
+        <a class="btn btn-primary btn-lg" href="#" onclick="strCopy();" role="button">Copy</a>
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
