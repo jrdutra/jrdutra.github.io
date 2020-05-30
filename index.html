@@ -5,8 +5,18 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>JavaScript Replace Character in a String</title>
 <script>
-    function strReplace(text){
 
+    function run(text){
+
+        text = toItalic(text);
+
+        text = toBold(text);
+
+        strReplace(text);
+        
+    }
+
+    function strReplace(text){
         let convList = [
             ["á", "\\'a"],
             ["é", "\\'e"],
@@ -52,6 +62,38 @@
         document.getElementById("idText").value = newText;
     }
 
+    function toItalic(text){
+        let itWords;
+        itWords = document.getElementById("idTxtItalics").value;
+        if(itWords != ""){
+            let listItWord = [];
+            listItWords = itWords.split(",");
+            listItWords.forEach(word => {
+                let itCodeWord = '\\textit{' + word + '}';
+                text = replaceAll(text,word,itCodeWord);
+            });
+        }
+        return text;
+    }
+
+    function toBold(text){
+        let bWords;
+        bWords = document.getElementById("idTxtBolds").value;
+        if(bWords != ""){
+            let listBWord = [];
+            listBWords = bWords.split(",");
+            listBWords.forEach(word => {
+                let bCodeWord = '\\textbf{' + word + '}';
+                text = replaceAll(text,word,bCodeWord);
+            });
+        }
+        return text;
+    }
+
+    function replaceAll(str, find, replace) {
+        return str.replace(new RegExp(find, 'g'), replace);
+    }
+
     function strPaste(){
 
         let pasteArea = document.getElementById("idText");
@@ -85,22 +127,37 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 </head>
 <body>
-
     <div class="jumbotron">
-        <h1 class="display-4">LaTex Symbols Converter</h1>
-        <p class="lead">Special character converter for LaTex.</p>
+        <h2 class="display-5">LaTex Symbols Converter</h2>
         <hr class="my-4">
         <form>     
             <div class="form-group">
-              <label for="exampleFormControlTextarea1">Text to convert to LaTex:</label>
-              <textarea class="form-control" id="idText" rows="10"></textarea>
+                <label for="exampleFormControlTextarea1">Text to convert to LaTex:</label>
+                <textarea class="form-control" id="idText" rows="6"></textarea>    
+                <label for="exampleFormControlSelect1">Inserir itálico e negrito separados por ',':</label>
+                <div class="row">
+                    <div class="col">
+                        <label for="exampleFormControlSelect1">Itálico:</label>
+                    </div>
+                    <div class="col">
+                        <label for="exampleFormControlSelect1">Negrito:</label>
+                    </div>
+                    <div class="w-100"></div>
+                    <div class="col">
+                        <input class="form-control" id="idTxtItalics" type="text" placeholder="Palavras em itálico">
+                    </div>
+                    <div class="col">
+                        <input class="form-control" id="idTxtBolds" type="text" placeholder="Palavras em negrito">
+                    </div> 
+                </div>
             </div>
         </form>
         <p>Click convert to get your laTex text.</p>
         <a class="btn btn-primary btn-lg" href="#" onclick="strPaste();" role="button">Paste</a>
-        <a class="btn btn-primary btn-lg" href="#" onclick="strReplace($('#idText').val());" role="button">Convert</a>
+        <a class="btn btn-primary btn-lg" href="#" onclick="run($('#idText').val());" role="button">Convert</a>
         <a class="btn btn-primary btn-lg" href="#" onclick="strCopy();" role="button">Copy</a>
     </div>
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
