@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leitor de Área CWS</title>
+    <!-- Link para o Bootstrap -->
+    <link rel="stylesheet" href="./bootstrap.min.css">
+    <link rel="stylesheet" href="./index.css">
+    <link rel="icon" type="image/x-icon" href="./icon.ico">
+</head>
+<body>
+    <br>
+    <div class="container" >
+        <div class="card sombra">
+            <div class="card-header">
+                NTT DATA
+            </div>
+                <div class="card-body">
+                    <h5 class="card-title">Leitor de Área CWS</h5>
+                    <p class="card-text">Esse é um leitor de área de comunicação do CWS. Basta informar a BOOK e a área de comunicação.</p>
+                    <div class="form-group"></div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="textarea-book">BOOK DO CWS</label>
+                            <textarea class="form-control" id="textarea-book" rows="5"></textarea>        
+                        </div>
+                        <div class="col">
+                            <label for="textarea-areacomunicacao">ÁREA DE COMUNICACAO</label>
+                            <textarea class="form-control" id="textarea-areacomunicacao" rows="5"></textarea>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-2">
+                            <button type="button" class="btn btn-primary" onclick="executar()">Executar Leitura</button>
+                        </div>
+                        <div class="col">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="id-omitir" checked>
+                                <label class="form-check-label" for="id-omitir">
+                                    Esconder Brancos e Zeros
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container" >
+                        <div id="id-resultado" class="well">
+                        </div>
+                    </div>
+                    <br>
+                </div>  
+            </div>
+            <br>
+			<p class="text-muted">Desenvolvido por João Dutra - NTT DATA - 2023</p>
+        </div>
+    </div>
+  <!-- Aplicação -->
+  <script src="./app.js"></script>
+  
+  
+
+</body>
+</html>
