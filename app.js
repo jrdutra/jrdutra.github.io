@@ -234,8 +234,8 @@
                     tamanhoDecimalNum = parseInt(tamanhoDecimal,10)
                 }
 
-                //let tamanhoDecimalTotal = parseInt(tamanhoInteiro, 10) + tamanhoDecimalNum
-                let tamanhoDecimalTotal = parseInt(tamanhoInteiro, 10)
+                let tamanhoDecimalTotal = parseInt(tamanhoInteiro, 10) + tamanhoDecimalNum
+                //let tamanhoDecimalTotal = parseInt(tamanhoInteiro, 10)
 
                 return tamanhoDecimalTotal
             }
