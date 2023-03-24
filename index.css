@@ -1,6 +1,16 @@
 body {
-	background-color: gainsboro;
+	background-color: rgb(164, 164, 164);
 }
 .sombra {
 	box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.textareaclasse {
+	 background-color: rgb(71, 71, 71); 
+	 color: rgb(213, 213, 213); 
+}
+
+.textareaclasse:focus {
+	background-color: rgb(85, 85, 85); 
+	color: white; 
 }
