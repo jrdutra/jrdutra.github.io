@@ -6,11 +6,11 @@ body {
 }
 
 .textareaclasse {
-	 background-color: rgb(71, 71, 71); 
-	 color: rgb(213, 213, 213); 
+	background-color: rgb(75, 75, 75); 
+	color: rgb(223, 223, 223); 
 }
 
 .textareaclasse:focus {
-	background-color: rgb(85, 85, 85); 
-	color: white; 
+	background-color: rgb(98, 98, 98); 
+	color: rgb(243, 243, 243); 
 }
