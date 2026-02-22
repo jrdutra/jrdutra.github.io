@@ -207,6 +207,7 @@
  display: flex; 
  flex-direction: column; 
  gap: 10px; 
+ transition: gap .52s cubic-bezier(.2,.9,.2,1);
  } 
  .card:hover{ background: var(--card-hover); } 
  .card.completed{ 
@@ -305,7 +306,15 @@
  margin-top: -2px; 
  } 
  .card-meta .meta-item time{ font-variant-numeric: tabular-nums;} 
- .card-body{ display: flex; flex-direction: column; gap: 8px; } 
+ .card-body{ 
+ display: flex; 
+ flex-direction: column; 
+ gap: 8px; 
+ overflow: hidden;
+ max-height: 2000px;
+ opacity: 1;
+ transition: max-height .52s cubic-bezier(.2,.9,.2,1), opacity .36s ease;
+ } 
  .field-label{ font-size: 12px; color: var(--muted); } 
  /* Descrição */ 
  textarea.card-desc{ 
@@ -399,7 +408,7 @@
  /* Card colapsado: mostra só header */ 
  .card.collapsed{ cursor: pointer; gap: 0; } 
  .card.collapsed .card-header-actions { display: none; } 
- .card.collapsed .card-body { display: none; } 
+ .card.collapsed .card-body { max-height: 0; opacity: 0; pointer-events: none; } 
  /* Título quando concluído */ 
  .card.completed .card-title{ 
  color: var(--text-completed); 
@@ -541,13 +550,13 @@
 #cardOverlay.modal-overlay{
   opacity: 0;
   pointer-events: none;
-  transition: opacity .18s ease;
+  transition: opacity .72s ease;
 }
 #cardOverlay .modal-card{
   transform-origin: top center;
   transform: scaleY(0);
   opacity: 0;
-  transition: transform .26s cubic-bezier(.2,.9,.2,1), opacity .18s ease;
+  transition: transform 1.04s cubic-bezier(.2,.9,.2,1), opacity .72s ease;
 }
 #cardOverlay.opening,
 #cardOverlay.open{
@@ -558,6 +567,25 @@
 #cardOverlay.open .modal-card{
   transform: scaleY(1);
   opacity: 1;
+}
+#cardOverlay.opening{
+  animation: cardOverlayFadeIn .72s ease both;
+}
+#cardOverlay.opening .modal-card{
+  animation: cardModalAppear 1.04s cubic-bezier(.2,.9,.2,1) both;
+}
+@keyframes cardOverlayFadeIn{
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes cardModalAppear{
+  from { transform: translateY(12px) scaleY(0.92); opacity: 0; }
+  to { transform: translateY(0) scaleY(1); opacity: 1; }
+}
+.card-modal-ghost{
+  pointer-events: none;
+  opacity: 0.48;
+  filter: saturate(0.75) brightness(0.9);
 }
 
 /* Spacer below topbar matching board background */
@@ -1179,7 +1207,7 @@ let currentDraggedChecklistItem = null;
  if (settingsUI.overlay) renderSettingsRows(boardMeta.ageColorRules); 
  // garantia 
  applyDueColorsAll(); 
- } 
+ }
  
  function getDefaultBoardData(){
  const now = nowISO();
@@ -1190,30 +1218,32 @@ let currentDraggedChecklistItem = null;
  id: uid('col'),
  title: 'A Fazer',
  cards: [
- { id: uid('card'), title: 'Definir escopo da semana', description: 'Listar prioridades e alinhar expectativas do time.', completed: false, checklist: [], createdAt: now, updatedAt: now, dueDate: '' },
- { id: uid('card'), title: 'Organizar backlog', description: 'Revisar tarefas pendentes e ordenar por prioridade.', completed: false, checklist: [], createdAt: now, updatedAt: now, dueDate: '' },
- { id: uid('card'), title: 'Planejar entrega', description: 'Separar itens da próxima entrega e responsáveis.', completed: false, checklist: [], createdAt: now, updatedAt: now, dueDate: '' }
+ { id: uid('card'), title: 'Definir escopo da semana', description: 'Listar prioridades e alinhar expectativas do time. Referencia: https://www.atlassian.com/agile/project-management', completed: false, checklist: [{ checked: true, label: 'Levantar demandas com o time' }, { checked: false, label: 'Definir prioridades da sprint' }, { checked: false, label: 'Validar capacidade semanal' }], createdAt: now, updatedAt: now, dueDate: '' },
+ { id: uid('card'), title: 'Organizar backlog', description: 'Revisar tarefas pendentes e ordenar por prioridade. Exemplo de tecnica: https://www.scrum.org/resources/what-is-a-product-backlog', completed: false, checklist: [{ checked: true, label: 'Remover itens duplicados' }, { checked: true, label: 'Padronizar titulos' }, { checked: false, label: 'Repriorizar historias' }], createdAt: now, updatedAt: now, dueDate: '' },
+ { id: uid('card'), title: 'Planejar entrega', description: 'Separar itens da proxima entrega e responsaveis. Checklist base: https://www.productplan.com/glossary/release-plan/', completed: false, checklist: [{ checked: false, label: 'Definir janela de release' }, { checked: false, label: 'Mapear riscos da entrega' }, { checked: true, label: 'Listar responsaveis' }], createdAt: now, updatedAt: now, dueDate: '' }
  ]
  },
  {
  id: uid('col'),
  title: 'Fazendo',
  cards: [
- { id: uid('card'), title: 'Implementar tela inicial', description: 'Ajustar layout e textos principais da página.', completed: false, checklist: [], createdAt: now, updatedAt: now, dueDate: '' },
- { id: uid('card'), title: 'Validar fluxo de uso', description: 'Testar abertura do app e exportação/importação JSON.', completed: false, checklist: [], createdAt: now, updatedAt: now, dueDate: '' }
+ { id: uid('card'), title: 'Implementar tela inicial', description: 'Ajustar layout e textos principais da pagina. Guia de usabilidade: https://www.nngroup.com/articles/ten-usability-heuristics/', completed: false, checklist: [{ checked: true, label: 'Criar estrutura HTML base' }, { checked: false, label: 'Ajustar espacamentos mobile' }, { checked: false, label: 'Revisar contraste das cores' }], createdAt: now, updatedAt: now, dueDate: '' },
+ { id: uid('card'), title: 'Validar fluxo de uso', description: 'Testar abertura do app e exportacao/importacao JSON. Referencia de JSON: https://developer.mozilla.org/docs/Learn_web_development/Core/Scripting/JSON', completed: false, checklist: [{ checked: true, label: 'Testar criacao de coluna' }, { checked: false, label: 'Testar importacao JSON' }, { checked: false, label: 'Testar exportacao JSON' }], createdAt: now, updatedAt: now, dueDate: '' },
+ { id: uid('card'), title: 'Revisar criterios de pronto', description: 'Conferir padrao para mover tarefa para Feito. Exemplo: https://www.agilealliance.org/glossary/definition-of-done/', completed: false, checklist: [{ checked: true, label: 'Definir checklist minimo' }, { checked: true, label: 'Alinhar com o time' }, { checked: false, label: 'Publicar criterio final' }], createdAt: now, updatedAt: now, dueDate: '' }
  ]
  },
  {
  id: uid('col'),
  title: 'Feito',
  cards: [
- { id: uid('card'), title: 'Criar estrutura do quadro', description: 'Quadro inicial configurado com colunas padrão.', completed: true, checklist: [], createdAt: now, updatedAt: now, dueDate: '' }
+ { id: uid('card'), title: 'Criar estrutura do quadro', description: 'Quadro inicial configurado com colunas padrao. Modelo kanban: https://kanban.university/kanban-guide/', completed: true, checklist: [{ checked: true, label: 'Criar colunas iniciais' }, { checked: true, label: 'Adicionar acoes de card' }, { checked: true, label: 'Validar drag and drop' }], createdAt: now, updatedAt: now, dueDate: '' },
+ { id: uid('card'), title: 'Publicar primeira versao', description: 'Primeira versao disponibilizada para o time. Registro de release: https://keepachangelog.com/pt-BR/1.1.0/', completed: true, checklist: [{ checked: true, label: 'Gerar pacote da versao' }, { checked: true, label: 'Atualizar changelog' }, { checked: true, label: 'Comunicar stakeholders' }], createdAt: now, updatedAt: now, dueDate: '' },
+ { id: uid('card'), title: 'Validar links nas descricoes', description: 'Links de suporte convertidos para clique automatico. Documentacao: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String/replace', completed: true, checklist: [{ checked: true, label: 'Testar link http' }, { checked: true, label: 'Testar link https' }, { checked: true, label: 'Confirmar abertura em nova aba' }], createdAt: now, updatedAt: now, dueDate: '' }
  ]
  }
  ]
  };
  }
-
  // ===== Criação de elementos ===== 
  const board = document.getElementById('board'); 
  const tplColumn = document.getElementById('tpl-column'); 
@@ -1896,12 +1926,16 @@ function updateChecklistProgress(cardNode){
 
 
 // ====== NOVO: suporte a Modal de Card (com título dinâmico) ======
+const CARD_MODAL_ANIM_MS = 224;
 function ensureCardModalRefs(){
   if (window.__cardModal) return window.__cardModal;
   const overlay = document.getElementById('cardOverlay');
   const content = document.getElementById('cardModalContent');
   const closeBtn = overlay ? overlay.querySelector('.modal-close') : null;
-  window.__cardModal = { overlay, content, closeBtn, currentCard: null, placeholder: null, _titleInput: null, _titleHandler: null };
+  window.__cardModal = {
+    overlay, content, closeBtn, currentCard: null, columnGhost: null,
+    _titleInput: null, _titleHandler: null, isClosing: false, closeTimer: null
+  };
   if (overlay){
     if (closeBtn) closeBtn.addEventListener('click', closeCardModal);
     overlay.addEventListener('click', function(e){ if (e.target === overlay) closeCardModal(); });
@@ -1912,11 +1946,14 @@ function ensureCardModalRefs(){
 function openCardModal(card){
   const modal = ensureCardModalRefs();
   if (!modal || !modal.overlay || !modal.content) return;
-  if (modal.currentCard) closeCardModal();
-  // placeholder para manter a posição original
-  modal.placeholder = document.createElement('div');
-  modal.placeholder.className = 'card-placeholder';
-  card.parentNode.insertBefore(modal.placeholder, card.nextSibling);
+  if (modal.closeTimer){ clearTimeout(modal.closeTimer); modal.closeTimer = null; }
+  modal.isClosing = false;
+  if (modal.currentCard) closeCardModal(true);
+  // card fantasma para manter contexto visual da posição original
+  modal.columnGhost = card.cloneNode(true);
+  modal.columnGhost.classList.add('card-modal-ghost');
+  modal.columnGhost.setAttribute('aria-hidden', 'true');
+  card.parentNode.insertBefore(modal.columnGhost, card);
   // expande o card
   setCollapsed(card, false);
   // move para o modal
@@ -1934,27 +1971,52 @@ function openCardModal(card){
     titleInput.addEventListener('change', __syncModalTitle);
   }
   modal.overlay.classList.remove('hidden');
+  modal.overlay.classList.remove('closing', 'open');
+  modal.overlay.classList.add('opening');
+  modal.overlay.getBoundingClientRect();
+  requestAnimationFrame(function(){
+    modal.overlay.classList.remove('opening');
+    modal.overlay.classList.add('open');
+  });
   try { (titleInput||{}).focus?.(); } catch(_){}
 }
-function closeCardModal(){
+function closeCardModal(immediate){
   const modal = ensureCardModalRefs();
-  if (!modal || !modal.currentCard) { if (modal && modal.overlay) modal.overlay.classList.add('hidden'); return; }
-  // remover listeners de título
-  if (modal._titleInput && modal._titleHandler){
-    modal._titleInput.removeEventListener('input', modal._titleHandler);
-    modal._titleInput.removeEventListener('change', modal._titleHandler);
-    modal._titleInput = null;
-    modal._titleHandler = null;
+  if (!modal || !modal.overlay) return;
+  const shouldCloseInstant = immediate === true;
+  const finishClose = function(){
+    if (modal._titleInput && modal._titleHandler){
+      modal._titleInput.removeEventListener('input', modal._titleHandler);
+      modal._titleInput.removeEventListener('change', modal._titleHandler);
+      modal._titleInput = null;
+      modal._titleHandler = null;
+    }
+    if (modal.currentCard && modal.columnGhost && modal.columnGhost.parentNode){
+      modal.columnGhost.parentNode.insertBefore(modal.currentCard, modal.columnGhost);
+      modal.columnGhost.remove();
+    }
+    if (modal.currentCard) setCollapsed(modal.currentCard, true);
+    modal.currentCard = null;
+    modal.columnGhost = null;
+    modal.overlay.classList.remove('opening', 'open', 'closing');
+    modal.overlay.classList.add('hidden');
+    modal.isClosing = false;
+    if (modal.closeTimer){ clearTimeout(modal.closeTimer); modal.closeTimer = null; }
+  };
+  if (!modal.currentCard) {
+    modal.overlay.classList.remove('opening', 'open', 'closing');
+    modal.overlay.classList.add('hidden');
+    return;
   }
-  // devolver o card
-  if (modal.placeholder && modal.placeholder.parentNode){
-    modal.placeholder.parentNode.insertBefore(modal.currentCard, modal.placeholder);
-    modal.placeholder.remove();
+  if (modal.isClosing) return;
+  modal.isClosing = true;
+  modal.overlay.classList.remove('opening', 'open');
+  modal.overlay.classList.add('closing');
+  if (shouldCloseInstant) {
+    finishClose();
+    return;
   }
-  setCollapsed(modal.currentCard, true);
-  modal.currentCard = null;
-  modal.placeholder = null;
-  modal.overlay.classList.add('hidden');
+  modal.closeTimer = setTimeout(finishClose, CARD_MODAL_ANIM_MS);
 }
 // Delegação para botões que abrem em modal
 // (funciona com .open-card-modal ou .expand-card)
@@ -2002,12 +2064,12 @@ document.addEventListener('click', function(e){
  } 
  }); 
  // Clique fora de qualquer card → minimiza todos; clique em um card → expande somente aquele 
- document.addEventListener('click', function(e){ 
- const clickedCard = e.target.closest && e.target.closest('.card'); 
+document.addEventListener('click', function(e){ 
+const clickedCard = e.target.closest && e.target.closest('.card'); 
  $$('.card').forEach(function(card){ 
  setCollapsed(card, card !== clickedCard); 
  }); 
- }); 
+}); 
  // ===== AUTOSAVE (LocalStorage) ===== 
  (function enableAutosave(){ 
  const AUTOSAVE_KEY = 'kanbanBoardAutosave.v1'; 
@@ -2141,3 +2203,4 @@ requestAnimationFrame(syncTopbarSpacer);
  </script> 
 </body> 
 </html>
+
