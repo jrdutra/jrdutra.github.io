@@ -12,9 +12,10 @@
  --border: #3a3a3a; 
  --text: #ffffff; 
  --muted: #bdbdbd; 
- --purple: #7c4dff; /* faixa roxa padrão */ 
- --purple-dark: #2a254b; /* faixa roxa mais escura (concluído) */ 
- --purple-2: #9e7fff; 
+ --purple: #9b00ff; /* faixa roxa padrão — mais viva e saturada */
+ --purple-dark: #2a254b; /* faixa roxa mais escura (concluído) */
+ --purple-2: #d4a8ff;
+ --purple-strong: #7a00ff; /* roxo mais escuro para checkboxes*/
  --card: #2f2f2f; 
  --card-hover: #363636; 
  --card-completed: #262626; /* levemente mais escuro */ 
@@ -41,13 +42,14 @@
   justify-content: space-between;
   padding: 12px 16px;
   /* Visual similar to index secondary-board: subtle purple gradient, border and rounded corners */
-  background: linear-gradient(180deg, rgba(124,77,255,0.10), rgba(124,77,255,0.04));
-  border: 1px solid rgba(124,77,255,0.35);
-  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(155,0,255,0.18), rgba(155,0,255,0.08));
+  border: 1px solid rgba(155,0,255,0.56);
+  border-radius: 0;
   color: var(--text);
   box-shadow: 0 10px 26px rgba(0,0,0,0.25);
 }
  .brand{ font-weight: 700; letter-spacing: 0.3px; } 
+.brand{ font-size: 120%; }
  .menu{ display: flex; gap: 8px; align-items: center; flex-wrap: wrap; } 
  button, .btn{ 
  background: var(--panel-2); 
@@ -63,6 +65,24 @@
  .btn-small{ padding: 6px 10px; font-size: 12px; } 
  .btn-danger{ background: #B00020; border-color: rgba(255,255,255,0.25); color: #fff; } 
  .btn-danger:hover{ filter: brightness(1.1); } 
+/* Menu buttons styled to match topbar: purple border and subtle outer glow */
+.topbar .menu button,
+.topbar .menu .btn {
+  border-color: rgba(155,0,255,0.46);
+  /* subtle outer purple glow + softer cast shadow (updated color/intensity) */
+  box-shadow: 0 0 7px rgba(155,0,255,0.18), 0 4px 10px rgba(155,0,255,0.10);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  padding: 6px 12px;
+  transition: box-shadow .18s ease, transform .12s ease;
+}
+.topbar .menu button:hover,
+.topbar .menu .btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 10px rgba(155,0,255,0.22), 0 6px 14px rgba(155,0,255,0.12);
+}
  /* Board */ 
  main{ padding: 16px; padding-top: 18px; } 
  .board{ 
@@ -71,17 +91,31 @@
  gap: 16px; 
  overflow-x: auto; 
  padding-bottom: 12px; 
+  
+
+/* Extra spacer at board footer to ensure space larger than column shadow */
+.board-bottom-spacer{ width:100%; height:72px; /* larger than 40px shadow */ }
+
+/* Fixed transparent overlay right above the viewport scrollbar (30px height) */
+.board-scroll-overlay{ position: fixed; left: 0; right: 0; bottom: 0; height: 30px; background: transparent; pointer-events: none; z-index: 6; }
  } 
  .column{ 
- background: var(--panel); 
- min-width: 320px; 
- max-width: 380px; 
- border: 1px solid var(--border); 
- border-radius: var(--radius); 
- box-shadow: var(--shadow); 
- display: flex; 
- flex-direction: column; 
+  min-width: 320px;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  /* Aplicar visual do primeiro quadro em index.html: fundo sutil, borda neutra, radius maior e sombra mais pronunciada */
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.35);
+  /* reduzir padding interno em 50% (valor anterior usado como referência) */
+  padding: clamp(6px, 1vw, 9px);
+    /* Espaço inferior fixo relativo à altura da viewport (5% da altura da página) */
+    margin-bottom: 5vh;
+    margin-top: 0.1vh;
  } 
+ 
  .column-header{ 
  padding: 12px; 
  border-bottom: 1px solid var(--border); 
@@ -96,7 +130,9 @@
  color: var(--text); 
  border: 1px solid var(--border); 
  border-radius: 8px; 
- padding: 8px 10px; 
+ /* increase font-size by 20% and increase vertical padding to raise textbox height */
+ font-size: 120%;
+ padding: calc(8px * 1.2) 10px; 
  font-weight: 600; 
  } 
  .column-actions{ 
@@ -203,6 +239,60 @@
  font-size: 12px; 
  color: var(--muted); 
  } 
+ 
+ /* Checkbox escuro e arredondado para cards e checklist */
+ .card-header input[type="checkbox"],
+.checklist-item input[type="checkbox"],
+ input.card-done,
+ input.item-check {
+   -webkit-appearance: none;
+   appearance: none;
+   width: 18px;
+   height: 18px;
+   margin-right: 8px;
+   vertical-align: middle;
+   border-radius: 6px;
+   background-color: var(--card);
+   border: 1px solid var(--border);
+   display: inline-block;
+   position: relative;
+ }
+
+/* Reduce space between checklist checkbox and its text by 50% */
+.checklist-item input[type="checkbox"] { margin-right: 4px; }
+
+ .card-header input[type="checkbox"]::after,
+ .checklist-item input[type="checkbox"]::after,
+ input.card-done::after,
+ input.item-check::after {
+   content: '';
+   position: absolute;
+  left: 50%;
+  top: 50%;
+   width: 6px;
+   height: 10px;
+   border: 2px solid #fff;
+   border-top: none;
+   border-left: none;
+  transform: translate(-50%, -50%) rotate(45deg) scale(0);
+   transform-origin: center;
+   transition: transform .12s ease;
+ }
+
+ .card-header input[type="checkbox"]:checked,
+ .checklist-item input[type="checkbox"]:checked,
+ input.card-done:checked,
+ input.item-check:checked {
+   background-color: var(--purple-2);
+   border-color: rgba(255,255,255,0.12);
+ }
+
+ .card-header input[type="checkbox"]:checked::after,
+ .checklist-item input[type="checkbox"]:checked::after,
+ input.card-done:checked::after,
+ input.item-check:checked::after {
+  transform: translate(-50%, -50%) rotate(45deg) scale(1);
+ }
  /* Timestamps abaixo do título */ 
  .card-meta{ 
  grid-column: 1 / -1; 
@@ -250,6 +340,18 @@
  flex-direction: column; 
  gap: 8px; 
  } 
+
+/* Placeholder visual shown while dragging checklist items */
+.checklist-placeholder{
+  border: 2px dashed rgba(155,0,255,0.55);
+  background: rgba(155,0,255,0.08);
+  border-radius: 8px;
+  margin: 4px 0;
+}
+
+/* Checklist: hide inner checkmark and use darker purple background when checked */
+.checklist-item input[type="checkbox"]::after { display: none; }
+.checklist-item input[type="checkbox"]:checked { background-color: var(--progress-color, var(--purple)); border-color: rgba(255,255,255,0.12); }
  .checklist-header{ 
  display: flex; 
  align-items: center; 
@@ -260,24 +362,25 @@
  .items{ display: flex; flex-direction: column; gap: 8px; } 
  .checklist-item{ 
  display: grid; 
- grid-template-columns: auto 1fr auto; 
+ grid-template-columns: auto auto 1fr auto; 
  gap: 8px; 
- align-items: start; 
+ align-items: center; 
  background: var(--panel-2); 
  border: 1px solid var(--border); 
  border-radius: 8px; 
  padding: 8px; 
  cursor: text; 
  } 
+/* drag-handle removed: using item-level drag instead */
  .item-view{ 
- grid-column: 2 / 3; 
+ grid-column: 3 / 4; 
  color: var(--muted); 
  font-size: 13px; 
- white-space: nowrap; 
  overflow: hidden; 
  text-overflow: ellipsis; 
  max-width: 100%; 
- } 
+ align-self: center;
+ }
  .item-view a{ color: #90caf9; text-decoration: underline; } 
  .item-editor{ 
  grid-column: 1 / -1; 
@@ -435,6 +538,132 @@
 /* Modal para card (visual de card em foco) */
 .modal-card { width: min(900px, 96vw); }
 .modal-card .modal-body { background: var(--panel); }
+#cardOverlay.modal-overlay{
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease;
+}
+#cardOverlay .modal-card{
+  transform-origin: top center;
+  transform: scaleY(0);
+  opacity: 0;
+  transition: transform .26s cubic-bezier(.2,.9,.2,1), opacity .18s ease;
+}
+#cardOverlay.opening,
+#cardOverlay.open{
+  opacity: 1;
+  pointer-events: auto;
+}
+#cardOverlay.opening .modal-card,
+#cardOverlay.open .modal-card{
+  transform: scaleY(1);
+  opacity: 1;
+}
+
+/* Spacer below topbar matching board background */
+.topbar-spacer{ position: fixed; top: 0; left: 0; right: 0; width: 100%; background: var(--bg); opacity: 1; z-index: 5; pointer-events: none; }
+
+/* ===== Mobile: hamburger + vertical menu ===== */
+.hamburger{
+  display: none;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.06);
+  color: var(--text);
+  border-radius: 8px;
+  width: 40px; height: 36px;
+  align-items: center; justify-content: center;
+  font-size: 20px;
+  cursor: pointer;
+}
+.mobile-menu{
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: auto;
+  transform-origin: top center;
+  transform: scaleY(0);
+  transition: transform .26s cubic-bezier(.2,.9,.2,1), opacity .18s ease;
+  /* Background equal to board background */
+  background: var(--bg);
+  /* remove purple border for the opened mobile menu */
+  border: none;
+  border-radius: 0;
+  color: var(--text);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.25);
+  z-index: 12;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  pointer-events: none;
+}
+.mobile-menu.open{ transform: scaleY(1); opacity: 1; pointer-events: auto; }
+.mobile-menu-inner{ width: 100%; display: flex; flex-direction: column; align-items: center; gap: 12px; padding-top: 12px; }
+@media (max-width: 640px){
+  .menu{ display: none; }
+  .hamburger{ display: inline-flex; }
+  .topbar{ padding: 10px 12px; }
+  .mobile-menu{ left: 8px; right: 8px; }
+}
+
+/* When the desktop .menu is moved into the mobile panel, ensure it becomes visible
+   and displayed as a vertical centered column of buttons */
+.mobile-menu .menu {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 0 0 12px 0;
+}
+.mobile-menu .menu .btn {
+  width: 85vw; /* 85% da largura da viewport */
+  max-width: none;
+  font-size: 18px;
+  /* horizontal padding = 5% da largura da viewport */
+  padding: 12px 5vw;
+  height: 56px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px; /* same visual as topbar buttons */
+  background: linear-gradient(180deg, rgba(95,0,155,0.34), rgba(70,0,120,0.24));
+  border: 1px solid rgba(255,255,255,0.15);
+  /* topbar purple border/shadow to match large-screen buttons */
+  box-shadow: 0 0 12px rgba(155,0,255,0.30), 0 6px 14px rgba(155,0,255,0.14);
+  border-color: rgba(155,0,255,0.78);
+  color: var(--text);
+}
+@media (orientation: portrait) and (max-width: 640px){
+  .mobile-menu{
+    left: 0;
+    right: 0;
+  }
+  .mobile-menu.open{
+    box-shadow: 0 32px 60px rgba(0,0,0,0.88);
+  }
+  .mobile-menu.open::after{
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    height: 75vh;
+    pointer-events: none;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.78), rgba(0,0,0,0));
+  }
+  .mobile-menu-inner{
+    padding-top: 31px;
+    padding-bottom: 36px;
+  }
+  .mobile-menu .menu{
+    padding-bottom: 0;
+  }
+  .mobile-menu .menu .btn{
+    border-color: rgba(155,0,255,0.40);
+    box-shadow: 0 0 6px rgba(155,0,255,0.16), 0 3px 8px rgba(155,0,255,0.10);
+  }
+}
 
 </style> 
 </head> 
@@ -448,9 +677,17 @@
  <input type="file" id="fileJson" accept="application/json" hidden> 
  <button id="btnLoad" class="btn">Carregar JSON</button> 
  </div> 
+ <button id="hamburgerBtn" class="hamburger" aria-controls="mobileMenu" aria-expanded="false" aria-label="Abrir menu">☰</button>
  </header> 
+<!-- Opaque spacer, same height as topbar, same color as board background -->
+<div id="topbarSpacer" class="topbar-spacer" aria-hidden="true"></div>
+<!-- Mobile menu container (hidden by default) -->
+<div id="mobileMenu" class="mobile-menu" aria-hidden="true"></div>
  <main> 
  <div id="board" class="board" aria-live="polite"></div> 
+<div class="board-bottom-spacer" aria-hidden="true"></div>
+<!-- Transparent overlay immediately above the viewport scrollbar (visual only) -->
+<div class="board-scroll-overlay" aria-hidden="true"></div>
  </main> 
  <!-- Templates --> 
  <template id="tpl-column"> 
@@ -531,6 +768,7 @@
  </template> 
  <template id="tpl-checklist-item"> 
  <div class="checklist-item"> 
+ 
  <input type="checkbox" class="item-check" aria-label="Marcar item"> 
  <div class="item-view" aria-label="Rótulo (clique para editar)"></div> 
  <div class="item-actions"> 
@@ -651,6 +889,8 @@
  const $$ = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel)); 
  const uid = (p='id') => `${p}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`; 
  const nextFrame = () => new Promise(r => requestAnimationFrame(() => r())); 
+// Currently dragged checklist item (handle-driven)
+let currentDraggedChecklistItem = null;
  function escapeHtml(str){ 
  const s = String(str == null ? '' : str); 
  const map = { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }; 
@@ -1192,12 +1432,38 @@
  const itemsWrap = $('.items', node); 
  $('.add-item', node).addEventListener('click', function(e){ 
  e.stopPropagation(); 
- itemsWrap.appendChild(createChecklistItem()); 
+ const newItem = createChecklistItem();
+ // inserir no topo da lista (aparecer por cima)
+ if (itemsWrap.firstChild) itemsWrap.insertBefore(newItem, itemsWrap.firstChild);
+ else itemsWrap.appendChild(newItem);
  updateItemsCount(node); 
  touchCardUpdated(node); 
  const col = node.closest('.column'); 
  if (col) applyColumnFilter(col); 
  }); 
+  // Habilita arrastar/soltar para reordenar itens de checklist dentro deste card
+  itemsWrap.addEventListener('dragover', function(e){
+    e.preventDefault();
+    const dragged = currentDraggedChecklistItem;
+    if (!dragged) return;
+    const after = (function(container, y){
+      const items = Array.from(container.querySelectorAll('.checklist-item:not(.dragging)'));
+      for (let i=0;i<items.length;i++){
+        const box = items[i].getBoundingClientRect();
+        if (y < box.top + box.height/2) return items[i];
+      }
+      return null;
+    })(itemsWrap, e.clientY);
+    if (after == null) itemsWrap.appendChild(dragged);
+    else itemsWrap.insertBefore(dragged, after);
+  });
+  itemsWrap.addEventListener('drop', function(e){
+    e.preventDefault();
+    const card = node; // card node is outer scope here
+    updateItemsCount(card);
+    touchCardUpdated(card);
+    currentDraggedChecklistItem = null;
+  });
  // Concluir card: move para o fim se marcado 
  const done = $('.card-done', node); 
  done.addEventListener('change', function(e){ 
@@ -1263,6 +1529,18 @@
  } 
  function createChecklistItem(labelText='', checked=false){ 
  const node = tplItem.content.firstElementChild.cloneNode(true); 
+  // make whole item draggable (no visible handle)
+  node.draggable = true;
+  node.addEventListener('dragstart', function(e){
+    currentDraggedChecklistItem = node;
+    node.classList.add('dragging');
+    try{ e.dataTransfer.setData('text/plain', ''); e.dataTransfer.effectAllowed = 'move'; }catch(_){ }
+  });
+  node.addEventListener('dragend', function(e){
+    node.classList.remove('dragging');
+    currentDraggedChecklistItem = null;
+    const card = node.closest('.card'); if (card) { updateItemsCount(card); touchCardUpdated(card); }
+  });
  const chk = $('.item-check', node); 
  const view = $('.item-view', node); 
  const editor = $('.item-editor', node); 
@@ -1282,17 +1560,17 @@
  editor.classList.add('hidden'); 
  view.classList.remove('hidden'); 
  }; 
- view.addEventListener('click', function(e){ 
- if(e.target && e.target.tagName && e.target.tagName.toLowerCase() === 'a') return; 
- enterEdit(); 
- }); 
- node.addEventListener('click', function(e){ 
- const t = e.target; 
- if (t && t.classList && t.classList.contains('item-check')) return; 
- if (t && t.closest && t.closest('.delete-item')) return; 
- if (t && t.tagName && t.tagName.toLowerCase() === 'a') return; 
- if (editor.classList.contains('hidden')) enterEdit(); 
- }); 
+  view.addEventListener('click', function(e){ 
+    if(e.target && e.target.tagName && e.target.tagName.toLowerCase() === 'a') return; 
+    enterEdit(); 
+  });
+  node.addEventListener('click', function(e){ 
+    const t = e.target; 
+    if (t && t.classList && t.classList.contains('item-check')) return; 
+    if (t && t.closest && t.closest('.delete-item')) return; 
+    if (t && t.tagName && t.tagName.toLowerCase() === 'a') return; 
+    if (editor.classList.contains('hidden')) enterEdit(); 
+  });
  editor.addEventListener('blur', function(){ 
  exitEdit(true); 
  const card = node.closest('.card'); 
@@ -1305,11 +1583,27 @@
  if(key === 'Escape' || key === 'Esc'){ exitEdit(false); editor.blur(); } 
  if((e.ctrlKey || e.metaKey) && (key === 'Enter')){ editor.blur(); } 
  }); 
- chk.addEventListener('change', function(e){ 
- e.stopPropagation(); 
- const card = node.closest('.card'); if (card) touchCardUpdated(card); 
- const col = node.closest('.column'); if (col) applyColumnFilter(col); 
- }); 
+  chk.addEventListener('change', function(e){ 
+    e.stopPropagation(); 
+    const card = node.closest('.card'); 
+    const itemsWrap = node.closest('.items');
+    if (card) {
+      // quando checado, mover o item para o fim do checklist
+      if (chk.checked) {
+        if (itemsWrap) itemsWrap.appendChild(node);
+      } else {
+        // quando deschecado, mover para o topo da lista
+        if (itemsWrap) {
+          const first = itemsWrap.querySelector('.checklist-item');
+          if (first && first !== node) itemsWrap.insertBefore(node, first);
+        }
+      }
+      touchCardUpdated(card);
+      // atualizar contadores/progresso
+      updateItemsCount(card);
+    }
+    const col = node.closest('.column'); if (col) applyColumnFilter(col); 
+  }); 
  $('.delete-item', node).addEventListener('click', function(e){ 
  e.stopPropagation(); 
  node.remove(); 
@@ -1318,8 +1612,8 @@
  const col = node.closest('.column'); 
  if (col) applyColumnFilter(col); 
  }); 
- syncView(); 
- return node; 
+  syncView(); 
+  return node; 
  } 
  function updateItemsCount(cardNode){ 
  const count = $$('.checklist-item', cardNode).length; 
@@ -1754,7 +2048,96 @@ document.addEventListener('click', function(e){
  } 
  // Try to restore on first load 
  (async function(){ const restored = await restoreFromAutosave(); if(!restored){ await loadBoardSequential(getDefaultBoardData()); } })(); 
+// Sync spacer height to match the topbar height so it sits immediately below the menu
+function syncTopbarSpacer(){
+  try{
+    const tb = document.querySelector('.topbar');
+    const sp = document.getElementById('topbarSpacer');
+    if (!tb || !sp) return;
+    const h = Math.ceil(tb.getBoundingClientRect().height);
+    sp.style.height = h + 'px';
+    // place spacer just beneath topbar so it does not appear above it
+    sp.style.top = '0px';
+    // ensure spacer uses the current board bg color variable
+    const rootStyles = getComputedStyle(document.documentElement);
+    const bg = rootStyles.getPropertyValue('--bg') || '';
+    if (bg) sp.style.background = bg.trim();
+  }catch(e){ /* ignore */ }
+}
+window.addEventListener('resize', syncTopbarSpacer);
+// observe topbar size changes (responsive) and adjust
+const tbObs = new ResizeObserver(syncTopbarSpacer);
+const tbEl = document.querySelector('.topbar'); if (tbEl) tbObs.observe(tbEl);
+// initial sync (defer a frame to ensure layout computed)
+requestAnimationFrame(syncTopbarSpacer);
  })(); 
+// ===== Mobile menu behaviour: move menu into a vertical mobile panel on narrow viewports =====
+(function(){
+  const topbar = document.querySelector('.topbar');
+  const desktopMenu = topbar ? topbar.querySelector('.menu') : null;
+  const mobileMenu = document.getElementById('mobileMenu');
+  const hamburger = document.getElementById('hamburgerBtn');
+  if(!desktopMenu || !mobileMenu || !hamburger) return;
+
+  // Keep a reference to original parent/position so we can restore
+  const originalParent = desktopMenu.parentElement;
+  const originalNext = desktopMenu.nextSibling;
+
+  function placeMenuMobile(){
+    if(window.innerWidth <= 640){
+      // move menu into mobile container if not already
+      if(!mobileMenu.contains(desktopMenu)){
+        const inner = document.createElement('div');
+        inner.className = 'mobile-menu-inner';
+        mobileMenu.appendChild(inner);
+        inner.appendChild(desktopMenu);
+      }
+      hamburger.setAttribute('aria-expanded','false');
+      mobileMenu.setAttribute('aria-hidden','true');
+      mobileMenu.classList.remove('open');
+      // position mobile menu directly below the topbar and let its height fit-content
+      const rect = topbar.getBoundingClientRect();
+      mobileMenu.style.top = Math.ceil(rect.bottom) + 'px';
+      mobileMenu.style.height = '';
+    } else {
+      // restore menu to original place
+      if(!originalParent.contains(desktopMenu)){
+        originalParent.insertBefore(desktopMenu, originalNext);
+      }
+      mobileMenu.classList.remove('open');
+      mobileMenu.setAttribute('aria-hidden','true');
+      hamburger.setAttribute('aria-expanded','false');
+      // clear mobile sizing overrides
+      mobileMenu.style.top = '';
+      mobileMenu.style.height = '';
+    }
+    // when not in fullscreen, JS may position the mobile menu under the topbar; we clear here
+  }
+
+  // Toggle open/close
+  hamburger.addEventListener('click', function(){
+    const open = mobileMenu.classList.toggle('open');
+    mobileMenu.setAttribute('aria-hidden', String(!open));
+    hamburger.setAttribute('aria-expanded', String(open));
+    // recompute top in case layout changed
+    const rect = topbar.getBoundingClientRect();
+    mobileMenu.style.top = Math.ceil(rect.bottom) + 'px';
+  });
+
+  // Close mobile menu if clicking outside
+  document.addEventListener('click', function(e){
+    if(!mobileMenu.classList.contains('open')) return;
+    if(e.target === hamburger) return;
+    if(mobileMenu.contains(e.target)) return;
+    mobileMenu.classList.remove('open');
+    mobileMenu.setAttribute('aria-hidden','true');
+    hamburger.setAttribute('aria-expanded','false');
+  }, true);
+
+  window.addEventListener('resize', placeMenuMobile);
+  // initial placement
+  placeMenuMobile();
+})();
  </script> 
 </body> 
 </html>
