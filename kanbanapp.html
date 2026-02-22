@@ -3,7 +3,7 @@
 <head> 
  <meta charset="utf-8" /> 
  <meta name="viewport" content="width=device-width, initial-scale=1" /> 
- <title>Organizador de Tarefas – Dark/Purple</title> 
+ <title>KanbanApp – Dark/Purple</title> 
  <style> 
  :root{ 
  --bg: #1e1e1e; 
@@ -32,19 +32,21 @@
  color: var(--text); 
  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; 
  } 
- /* Topbar */ 
- .topbar{ 
- position: sticky; 
- top: 0; 
- z-index: 10; 
- display: flex; 
- align-items: center; 
- justify-content: space-between; 
- padding: 12px 16px; 
- background: var(--purple); 
- color: var(--text); 
- box-shadow: var(--shadow); 
- } 
+.topbar{
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  /* Visual similar to index secondary-board: subtle purple gradient, border and rounded corners */
+  background: linear-gradient(180deg, rgba(124,77,255,0.10), rgba(124,77,255,0.04));
+  border: 1px solid rgba(124,77,255,0.35);
+  border-radius: 16px;
+  color: var(--text);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.25);
+}
  .brand{ font-weight: 700; letter-spacing: 0.3px; } 
  .menu{ display: flex; gap: 8px; align-items: center; flex-wrap: wrap; } 
  button, .btn{ 
@@ -438,7 +440,7 @@
 </head> 
 <body> 
  <header class="topbar"> 
- <div class="brand">Organizador de Tarefas</div> 
+ <div class="brand">KanbanApp</div> 
  <div class="menu"> 
  <button id="btnAddColumn" class="btn">+ Coluna</button> 
  <button id="btnSettings" class="btn">Configurações</button> 
@@ -938,6 +940,40 @@
  // garantia 
  applyDueColorsAll(); 
  } 
+ 
+ function getDefaultBoardData(){
+ const now = nowISO();
+ return {
+ meta: { version: 10, exportedAt: now, ageColorRules: Array.isArray(boardMeta.ageColorRules) ? boardMeta.ageColorRules : [] },
+ columns: [
+ {
+ id: uid('col'),
+ title: 'A Fazer',
+ cards: [
+ { id: uid('card'), title: 'Definir escopo da semana', description: 'Listar prioridades e alinhar expectativas do time.', completed: false, checklist: [], createdAt: now, updatedAt: now, dueDate: '' },
+ { id: uid('card'), title: 'Organizar backlog', description: 'Revisar tarefas pendentes e ordenar por prioridade.', completed: false, checklist: [], createdAt: now, updatedAt: now, dueDate: '' },
+ { id: uid('card'), title: 'Planejar entrega', description: 'Separar itens da próxima entrega e responsáveis.', completed: false, checklist: [], createdAt: now, updatedAt: now, dueDate: '' }
+ ]
+ },
+ {
+ id: uid('col'),
+ title: 'Fazendo',
+ cards: [
+ { id: uid('card'), title: 'Implementar tela inicial', description: 'Ajustar layout e textos principais da página.', completed: false, checklist: [], createdAt: now, updatedAt: now, dueDate: '' },
+ { id: uid('card'), title: 'Validar fluxo de uso', description: 'Testar abertura do app e exportação/importação JSON.', completed: false, checklist: [], createdAt: now, updatedAt: now, dueDate: '' }
+ ]
+ },
+ {
+ id: uid('col'),
+ title: 'Feito',
+ cards: [
+ { id: uid('card'), title: 'Criar estrutura do quadro', description: 'Quadro inicial configurado com colunas padrão.', completed: true, checklist: [], createdAt: now, updatedAt: now, dueDate: '' }
+ ]
+ }
+ ]
+ };
+ }
+
  // ===== Criação de elementos ===== 
  const board = document.getElementById('board'); 
  const tplColumn = document.getElementById('tpl-column'); 
@@ -1697,6 +1733,8 @@ document.addEventListener('click', function(e){
  const json = localStorage.getItem(AUTOSAVE_KEY); 
  if(!json) return false; 
  const data = JSON.parse(json); 
+ const hasColumns = data && Array.isArray(data.columns) && data.columns.length > 0; 
+ if(!hasColumns) return false; 
  await loadBoardSequential(data); 
  lastSnapshot = json; // align snapshot to avoid immediate re-save 
  return true; 
@@ -1715,7 +1753,7 @@ document.addEventListener('click', function(e){
  mo.observe(board, { childList: true, subtree: true }); 
  } 
  // Try to restore on first load 
- (async function(){ await restoreFromAutosave(); })(); 
+ (async function(){ const restored = await restoreFromAutosave(); if(!restored){ await loadBoardSequential(getDefaultBoardData()); } })(); 
  })(); 
  </script> 
 </body> 
