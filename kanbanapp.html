@@ -1186,8 +1186,16 @@ let currentDraggedChecklistItem = null;
  // checklist 
  const itemsWrap = $('.items', cnode); 
  const checklist = Array.isArray(cd.checklist) ? cd.checklist : []; 
- for(let ck = 0; ck < checklist.length; ck++){ 
- const it = checklist[ck] || {}; 
+ const orderedChecklist = checklist
+ .map((it, idx) => ({ it, idx }))
+ .sort((a, b) => {
+ const av = a.it && a.it.checked ? 1 : 0;
+ const bv = b.it && b.it.checked ? 1 : 0;
+ return av - bv || a.idx - b.idx;
+ })
+ .map(x => x.it);
+ for(let ck = 0; ck < orderedChecklist.length; ck++){ 
+ const it = orderedChecklist[ck] || {}; 
  const inode = createChecklistItem(it.label || '', !!it.checked); 
  itemsWrap.appendChild(inode); 
  await nextFrame(); 
