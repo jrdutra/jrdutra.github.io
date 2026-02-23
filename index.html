@@ -21,10 +21,10 @@
   <meta property="og:url" content="https://kanbanapp.io/" />
   <meta property="og:title" content="KANBAN Online e Offline Grátis | KanbanApp" />
   <meta property="og:description" content="KANBAN online e offline grátis para equipes, com privacidade, sem cadastro e sem servidor. Ideal para uso corporativo com controle local dos dados." />
-  <meta property="og:image" content="https://kanbanapp.io/og-image.jpeg" />
-  <meta property="og:image:secure_url" content="https://kanbanapp.io/og-image.jpeg" />
-  <meta property="og:image:type" content="image/jpeg" />
-  <meta property="og:image:url" content="https://kanbanapp.io/og-image.jpeg" />
+  <meta property="og:image" content="https://kanbanapp.io/og-image.svg" />
+  <meta property="og:image:secure_url" content="https://kanbanapp.io/og-image.svg" />
+  <meta property="og:image:type" content="image/svg+xml" />
+  <meta property="og:image:url" content="https://kanbanapp.io/og-image.svg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:image:alt" content="KanbanApp" />
@@ -32,9 +32,9 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="KANBAN Online e Offline Grátis | KanbanApp" />
   <meta name="twitter:description" content="KANBAN online e offline grátis, privado e sem cadastro. Abra no navegador ou baixe o HTML para uso local em equipes e empresas." />
-  <meta name="twitter:image" content="https://kanbanapp.io/og-image.jpeg" />
+  <meta name="twitter:image" content="https://kanbanapp.io/og-image.svg" />
   <meta name="twitter:image:alt" content="KanbanApp" />
-  <meta itemprop="image" content="https://kanbanapp.io/og-image.jpeg" />
+  <meta itemprop="image" content="https://kanbanapp.io/og-image.svg" />
 
   <script type="application/ld+json">
   {
@@ -194,6 +194,20 @@
     }
 
     .center-text { text-align: center; }
+
+    .seo-og-image-wrap {
+      max-width: 860px;
+      margin: 18px auto 0;
+    }
+
+    .seo-og-image {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+    }
 
     .post-nav-note {
       margin-top: 18px;
@@ -380,6 +394,9 @@
         Use como <strong>kanban online</strong> no navegador ou como <strong>kanban offline</strong> baixando o arquivo HTML. É uma opção de <strong>kanban corporativo</strong>
         para equipes que valorizam privacidade e baixo atrito de adoção.
       </p>
+      <figure class="seo-og-image-wrap">
+        <img class="seo-og-image" src="./og-image.svg" alt="Imagem de capa do KanbanApp para compartilhamento social" width="1200" height="630" loading="eager" decoding="async" />
+      </figure>
     </header>
     <section class="cta" aria-label="Ações principais">
       <a class="btn btn-download" href="./kanbanapp.html" download="kanbanapp.html" aria-label="Baixar arquivo kanbanapp.html para uso offline">
