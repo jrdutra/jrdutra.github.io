@@ -23,10 +23,10 @@
   <meta property="og:url" content="https://kanbanapp.io/" />
   <meta property="og:title" content="KANBAN Online e Offline Grátis | KanbanApp" />
   <meta property="og:description" content="KANBAN online e offline grátis para equipes, com privacidade, sem cadastro e sem servidor. Ideal para uso corporativo com controle local dos dados." />
-  <meta property="og:image" content="https://kanbanapp.io/og-image.svg" />
-  <meta property="og:image:secure_url" content="https://kanbanapp.io/og-image.svg" />
-  <meta property="og:image:type" content="image/svg+xml" />
-  <meta property="og:image:url" content="https://kanbanapp.io/og-image.svg" />
+  <meta property="og:image" content="https://kanbanapp.io/og-image.jpg" />
+  <meta property="og:image:secure_url" content="https://kanbanapp.io/og-image.jpg" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:url" content="https://kanbanapp.io/og-image.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:image:alt" content="Ilustração do KanbanApp com três colunas de quadro Kanban para organização de tarefas." />
@@ -34,9 +34,9 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="KANBAN Online e Offline Grátis | KanbanApp" />
   <meta name="twitter:description" content="KANBAN online e offline grátis, privado e sem cadastro. Abra no navegador ou baixe o HTML para uso local em equipes e empresas." />
-  <meta name="twitter:image" content="https://kanbanapp.io/og-image.svg" />
+  <meta name="twitter:image" content="https://kanbanapp.io/og-image.jpg" />
   <meta name="twitter:image:alt" content="KanbanApp" />
-  <meta itemprop="image" content="https://kanbanapp.io/og-image.svg" />
+  <meta itemprop="image" content="https://kanbanapp.io/og-image.jpg" />
 
   <script type="application/ld+json">
   {
@@ -196,6 +196,40 @@
     }
 
     .center-text { text-align: center; }
+
+    .site-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .site-brand-icon {
+      width: 44px;
+      height: 44px;
+      display: inline-block;
+      border-radius: 6px;
+      filter: drop-shadow(0 3px 8px rgba(0,0,0,0.55));
+      flex: 0 0 auto;
+    }
+
+    .site-brand-text {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    .site-brand-name {
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    .tagline {
+      margin: 6px 0 0;
+      color: var(--muted);
+      line-height: 1.2;
+    }
 
     .seo-og-image-wrap {
       max-width: 860px;
@@ -385,8 +419,13 @@
 <body>
   <header role="banner" class="site-header" aria-label="Cabeçalho do site">
     <div class="center-text">
-      <span class="highlight" style="font-weight:800;">KanbanApp</span>
-      <p class="tagline" style="margin:6px 0 0;color:var(--muted);">Quadro Kanban online e offline</p>
+      <div class="site-brand">
+        <img class="site-brand-icon" src="./favicon.svg" alt="" aria-hidden="true" />
+        <div class="site-brand-text">
+          <span class="site-brand-name">KanbanApp</span>
+          <p class="tagline">Quadro Kanban online e offline</p>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -603,4 +642,5 @@
 
 </body>
 </html>
+
 

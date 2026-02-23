@@ -52,14 +52,15 @@
   background:
     radial-gradient(circle at 88% -40%, color-mix(in srgb, var(--menu-purple-light) 56%, transparent), transparent 45%),
     radial-gradient(circle at 8% 130%, color-mix(in srgb, var(--menu-blue-soft) 50%, transparent), transparent 42%),
-    linear-gradient(120deg, color-mix(in srgb, var(--menu-purple-deep) 58%, #20244a) 0%, color-mix(in srgb, var(--menu-purple-base) 52%, #2a3060) 100%);
+    linear-gradient(120deg, #090b14 0%, color-mix(in srgb, var(--menu-purple-deep) 76%, #141a2b) 24%, color-mix(in srgb, var(--menu-purple-base) 52%, #2a3060) 100%);
   border: 1px solid color-mix(in srgb, var(--menu-border-soft) 55%, transparent);
   border-radius: 0;
   color: var(--text);
   box-shadow: 0 10px 26px rgba(0,0,0,0.28);
 }
- .brand{ font-weight: 700; letter-spacing: 0.3px; } 
+ .brand{ font-weight: 700; letter-spacing: 0.3px; display: inline-flex; align-items: center; gap: 8px; } 
 .brand{ font-size: 120%; }
+.brand-icon{ width: 24px; height: 24px; display: inline-block; border-radius: 6px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.55)); }
  .menu{ display: flex; gap: 8px; align-items: center; flex-wrap: wrap; } 
  button, .btn{ 
  background: var(--panel-2); 
@@ -716,7 +717,7 @@
 </head> 
 <body> 
  <header class="topbar"> 
- <div class="brand">KanbanApp</div> 
+ <div class="brand"><img class="brand-icon" src="./favicon.svg" alt="" aria-hidden="true">KanbanApp</div> 
  <div class="menu"> 
  <button id="btnAddColumn" class="btn">+ Coluna</button> 
  <button id="btnSettings" class="btn">Configurações</button> 
