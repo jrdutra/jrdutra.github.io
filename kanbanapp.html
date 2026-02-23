@@ -12,10 +12,15 @@
  --border: #3a3a3a; 
  --text: #ffffff; 
  --muted: #bdbdbd; 
- --purple: #9b00ff; /* faixa roxa padrão — mais viva e saturada */
+ --purple: #6650e6; /* roxo padrão dos cards sem data (baseado na imagem) */
  --purple-dark: #2a254b; /* faixa roxa mais escura (concluído) */
  --purple-2: #d4a8ff;
  --purple-strong: #7a00ff; /* roxo mais escuro para checkboxes*/
+ --menu-purple-base: #6650e6;
+ --menu-purple-light: #7a67f0;
+ --menu-purple-deep: #4c3cad;
+ --menu-blue-soft: #5f72ff;
+ --menu-border-soft: #cfd3ff;
  --card: #2f2f2f; 
  --card-hover: #363636; 
  --card-completed: #262626; /* levemente mais escuro */ 
@@ -41,12 +46,15 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px;
-  /* Visual similar to index secondary-board: subtle purple gradient, border and rounded corners */
-  background: linear-gradient(180deg, rgba(155,0,255,0.18), rgba(155,0,255,0.08));
-  border: 1px solid rgba(155,0,255,0.56);
+  /* Paleta inspirada no og-image.svg (roxo/azul) */
+  background:
+    radial-gradient(circle at 88% -40%, color-mix(in srgb, var(--menu-purple-light) 56%, transparent), transparent 45%),
+    radial-gradient(circle at 8% 130%, color-mix(in srgb, var(--menu-blue-soft) 50%, transparent), transparent 42%),
+    linear-gradient(120deg, color-mix(in srgb, var(--menu-purple-deep) 58%, #20244a) 0%, color-mix(in srgb, var(--menu-purple-base) 52%, #2a3060) 100%);
+  border: 1px solid color-mix(in srgb, var(--menu-border-soft) 55%, transparent);
   border-radius: 0;
   color: var(--text);
-  box-shadow: 0 10px 26px rgba(0,0,0,0.25);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.28);
 }
  .brand{ font-weight: 700; letter-spacing: 0.3px; } 
 .brand{ font-size: 120%; }
@@ -68,9 +76,12 @@
 /* Menu buttons styled to match topbar: purple border and subtle outer glow */
 .topbar .menu button,
 .topbar .menu .btn {
-  border-color: rgba(155,0,255,0.46);
-  /* subtle outer purple glow + softer cast shadow (updated color/intensity) */
-  box-shadow: 0 0 7px rgba(155,0,255,0.18), 0 4px 10px rgba(155,0,255,0.10);
+  background: var(--panel-2);
+  border-color: color-mix(in srgb, var(--menu-purple-base) 70%, #ffffff 12%);
+  box-shadow:
+    0 0 7px color-mix(in srgb, var(--menu-purple-base) 28%, transparent),
+    0 0 14px color-mix(in srgb, var(--menu-blue-soft) 16%, transparent),
+    0 4px 10px rgba(0,0,0,0.20);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -81,7 +92,10 @@
 .topbar .menu button:hover,
 .topbar .menu .btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 0 10px rgba(155,0,255,0.22), 0 6px 14px rgba(155,0,255,0.12);
+  box-shadow:
+    0 0 11px color-mix(in srgb, var(--menu-purple-light) 38%, transparent),
+    0 0 18px color-mix(in srgb, var(--menu-blue-soft) 24%, transparent),
+    0 6px 14px rgba(0,0,0,0.26);
 }
  /* Board */ 
  main{ padding: 16px; padding-top: 18px; } 
@@ -611,10 +625,11 @@
   transform-origin: top center;
   transform: scaleY(0);
   transition: transform .26s cubic-bezier(.2,.9,.2,1), opacity .18s ease;
-  /* Background equal to board background */
-  background: var(--bg);
-  /* remove purple border for the opened mobile menu */
-  border: none;
+  background:
+    radial-gradient(circle at 92% -35%, color-mix(in srgb, var(--menu-purple-light) 50%, transparent), transparent 45%),
+    radial-gradient(circle at 7% 125%, color-mix(in srgb, var(--menu-blue-soft) 44%, transparent), transparent 42%),
+    linear-gradient(120deg, #12131d 0%, color-mix(in srgb, var(--menu-purple-deep) 44%, #1f2240) 100%);
+  border: 1px solid color-mix(in srgb, var(--menu-border-soft) 45%, transparent);
   border-radius: 0;
   color: var(--text);
   box-shadow: 0 10px 26px rgba(0,0,0,0.25);
@@ -655,11 +670,13 @@
   align-items: center;
   justify-content: center;
   border-radius: 8px; /* same visual as topbar buttons */
-  background: linear-gradient(180deg, rgba(95,0,155,0.34), rgba(70,0,120,0.24));
-  border: 1px solid rgba(255,255,255,0.15);
-  /* topbar purple border/shadow to match large-screen buttons */
-  box-shadow: 0 0 12px rgba(155,0,255,0.30), 0 6px 14px rgba(155,0,255,0.14);
-  border-color: rgba(155,0,255,0.78);
+  background: var(--panel-2);
+  border: 1px solid color-mix(in srgb, var(--menu-purple-base) 78%, #ffffff 10%);
+  box-shadow:
+    0 0 12px color-mix(in srgb, var(--menu-purple-base) 34%, transparent),
+    0 0 18px color-mix(in srgb, var(--menu-blue-soft) 18%, transparent),
+    0 6px 14px rgba(0,0,0,0.28);
+  border-color: color-mix(in srgb, var(--menu-purple-light) 80%, #ffffff 10%);
   color: var(--text);
 }
 @media (orientation: portrait) and (max-width: 640px){
@@ -688,8 +705,8 @@
     padding-bottom: 0;
   }
   .mobile-menu .menu .btn{
-    border-color: rgba(155,0,255,0.40);
-    box-shadow: 0 0 6px rgba(155,0,255,0.16), 0 3px 8px rgba(155,0,255,0.10);
+    border-color: color-mix(in srgb, var(--menu-purple-base) 66%, #ffffff 8%);
+    box-shadow: 0 0 7px color-mix(in srgb, var(--menu-purple-base) 24%, transparent), 0 3px 8px rgba(0,0,0,0.22);
   }
 }
 
