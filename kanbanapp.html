@@ -1,0 +1,2243 @@
+﻿<!DOCTYPE html> 
+<html lang="pt-BR"> 
+<head>
+ <meta charset="utf-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1" />
+ <meta name="description" content="Quadro KanbanApp em português: use online ou offline, sem cadastro, com dados locais privados." />
+ <link rel="canonical" href="https://kanbanapp.io/pt-br/kanbanapp.html" />
+ <link rel="alternate" hreflang="en" href="https://kanbanapp.io/en/kanbanapp.html" />
+ <link rel="alternate" hreflang="pt-BR" href="https://kanbanapp.io/pt-br/kanbanapp.html" />
+ <link rel="alternate" hreflang="x-default" href="https://kanbanapp.io/en/kanbanapp.html" />
+ <title>KanbanApp</title> 
+ <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+ <link rel="shortcut icon" href="../favicon.svg" />
+ <style> 
+ :root{ 
+ --bg: #1e1e1e; 
+ --panel: #2a2a2a; 
+ --panel-2: #242424; 
+ --border: #3a3a3a; 
+ --text: #ffffff; 
+ --muted: #bdbdbd; 
+ --purple: #6650e6; /* roxo padrão dos cards sem data (baseado na imagem) */
+ --purple-dark: #2a254b; /* faixa roxa mais escura (concluído) */
+ --purple-2: #d4a8ff;
+ --purple-strong: #7a00ff; /* roxo mais escuro para checkboxes*/
+ --menu-purple-base: #6650e6;
+ --menu-purple-light: #7a67f0;
+ --menu-purple-deep: #4c3cad;
+ --menu-blue-soft: #5f72ff;
+ --menu-border-soft: #cfd3ff;
+ --card: #2f2f2f; 
+ --card-hover: #363636; 
+ --card-completed: #262626; /* levemente mais escuro */ 
+ --shadow: 0 3px 10px rgba(0,0,0,0.25); 
+ --radius: 10px; 
+ --text-completed: #717171; 
+ --mark-bg: #ffe58f33; 
+ --mark-border: #ffd66688; 
+ } 
+ * { box-sizing: border-box; } 
+ html, body { height: 100%; } 
+ body { 
+ margin: 0; 
+ background: var(--bg); 
+ color: var(--text); 
+ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; 
+ } 
+.topbar{
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  /* Paleta inspirada no og-image.svg (roxo/azul) */
+  background:
+    radial-gradient(circle at 88% -40%, color-mix(in srgb, var(--menu-purple-light) 56%, transparent), transparent 45%),
+    radial-gradient(circle at 8% 130%, color-mix(in srgb, var(--menu-blue-soft) 50%, transparent), transparent 42%),
+    linear-gradient(120deg, #090b14 0%, color-mix(in srgb, var(--menu-purple-deep) 76%, #141a2b) 24%, color-mix(in srgb, var(--menu-purple-base) 52%, #2a3060) 100%);
+  border: 1px solid color-mix(in srgb, var(--menu-border-soft) 55%, transparent);
+  border-radius: 0;
+  color: var(--text);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.28);
+}
+ .brand{ font-weight: 700; letter-spacing: 0.3px; display: inline-flex; align-items: center; gap: 8px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.55)); } 
+.brand{ font-size: 120%; }
+.brand-icon{ width: 24px; height: 24px; display: inline-block; border-radius: 6px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.55)); }
+ .menu{ display: flex; gap: 8px; align-items: center; flex-wrap: wrap; } 
+ button, .btn{ 
+ background: var(--panel-2); 
+ color: var(--text); 
+ border: 1px solid rgba(255,255,255,0.15); 
+ padding: 8px 12px; 
+ border-radius: 8px; 
+ cursor: pointer; 
+ transition: all .15s ease; 
+ } 
+ button:hover{ transform: translateY(-1px); filter: brightness(1.05); } 
+ .btn-primary{ background: var(--purple-dark); border-color: rgba(255,255,255,0.25); } 
+ .btn-small{ padding: 6px 10px; font-size: 12px; } 
+ .btn-danger{ background: #B00020; border-color: rgba(255,255,255,0.25); color: #fff; } 
+ .btn-danger:hover{ filter: brightness(1.1); } 
+/* Menu buttons styled to match topbar: purple border and subtle outer glow */
+.topbar .menu button,
+.topbar .menu .btn {
+  background: var(--panel-2);
+  border-color: color-mix(in srgb, var(--menu-purple-base) 70%, #ffffff 12%);
+  box-shadow:
+    0 0 7px color-mix(in srgb, var(--menu-purple-base) 28%, transparent),
+    0 0 14px color-mix(in srgb, var(--menu-blue-soft) 16%, transparent),
+    0 4px 10px rgba(0,0,0,0.20);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  padding: 6px 12px;
+  transition: box-shadow .18s ease, transform .12s ease;
+}
+.topbar .menu button:hover,
+.topbar .menu .btn:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 0 11px color-mix(in srgb, var(--menu-purple-light) 38%, transparent),
+    0 0 18px color-mix(in srgb, var(--menu-blue-soft) 24%, transparent),
+    0 6px 14px rgba(0,0,0,0.26);
+}
+ /* Board */ 
+ main{ padding: 16px; padding-top: 18px; } 
+ .board{ 
+ display: flex; 
+ align-items: flex-start; 
+ gap: 16px; 
+ overflow-x: auto; 
+ padding-bottom: 12px; 
+  
+
+/* Extra spacer at board footer to ensure space larger than column shadow */
+.board-bottom-spacer{ width:100%; height:72px; /* larger than 40px shadow */ }
+
+/* Fixed transparent overlay right above the viewport scrollbar (30px height) */
+.board-scroll-overlay{ position: fixed; left: 0; right: 0; bottom: 0; height: 30px; background: transparent; pointer-events: none; z-index: 6; }
+ } 
+ .column{ 
+  min-width: 320px;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  /* Aplicar visual do primeiro quadro em index.html: fundo sutil, borda neutra, radius maior e sombra mais pronunciada */
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.35);
+  /* reduzir padding interno em 50% (valor anterior usado como referência) */
+  padding: clamp(6px, 1vw, 9px);
+    /* Espaço inferior fixo relativo à altura da viewport (5% da altura da página) */
+    margin-bottom: 5vh;
+    margin-top: 0.1vh;
+ } 
+ 
+ .column-header{ 
+ padding: 12px; 
+ border-bottom: 1px solid var(--border); 
+ display: grid; 
+ grid-template-columns: 1fr auto; 
+ gap: 8px; 
+ align-items: center; 
+ } 
+ .column-title{ 
+ width: 100%; 
+ background: var(--panel-2); 
+ color: var(--text); 
+ border: 1px solid var(--border); 
+ border-radius: 8px; 
+ /* increase font-size by 20% and increase vertical padding to raise textbox height */
+ font-size: 120%;
+ padding: calc(8px * 1.2) 10px; 
+ font-weight: 600; 
+ } 
+ .column-actions{ 
+ display: flex; 
+ gap: 6px; 
+ flex-wrap: wrap; 
+ justify-content: flex-start; 
+ } 
+ /* Filtro por coluna */ 
+ .column-filter{ 
+ grid-column: 1 / -1; 
+ display: flex; 
+ flex-direction: column; 
+ gap: 6px; 
+ } 
+ .filter-row{ 
+ display: grid; 
+ grid-template-columns: 1fr auto; 
+ gap: 6px; 
+ align-items: center; 
+ } 
+ .filter-cards{ 
+ width: 100%; 
+ background: var(--panel-2); 
+ color: var(--text); 
+ border: 1px solid var(--border); 
+ border-radius: 8px; 
+ padding: 8px 10px; 
+ } 
+ .btn-clear{ 
+ background: transparent; 
+ border: 1px dashed var(--border); 
+ color: var(--muted); 
+ } 
+ .btn-clear:hover{ 
+ background: rgba(255,255,255,0.04); 
+ color: #fff; 
+ } 
+ .filter-meta{ 
+ display: flex; align-items: center; justify-content: space-between; 
+ font-size: 12px; color: var(--muted); 
+ } 
+ .filter-count{ 
+ display: inline-block; 
+ padding: 2px 6px; 
+ border-radius: 999px; 
+ background: rgba(255,255,255,0.06); 
+ border: 1px solid var(--border); 
+ color: var(--muted); 
+ } 
+ .cards{ 
+ display: flex; 
+ flex-direction: column; 
+ gap: 10px; 
+ padding: 12px; 
+ min-height: 120px; 
+ } 
+ .cards.drag-over{ 
+ outline: 2px dashed var(--purple-2); 
+ outline-offset: 4px; 
+ border-radius: 10px; 
+ background: rgba(124,77,255,0.06); 
+ } 
+ /* Card */ 
+ .card{ 
+ background: var(--card); 
+ border: 1px solid var(--border); 
+ border-radius: 10px; 
+ /* Faixa roxa com sombra interna */ 
+ box-shadow: var(--shadow), inset 3px 0 0 var(--purple); 
+ padding: 10px; 
+ display: flex; 
+ flex-direction: column; 
+ gap: 10px; 
+ transition: gap .52s cubic-bezier(.2,.9,.2,1);
+ } 
+ .card:hover{ background: var(--card-hover); } 
+ .card.completed{ 
+ background: var(--card-completed); 
+ border-color: #333; 
+ opacity: 0.96; 
+ box-shadow: var(--shadow), inset 3px 0 0 var(--purple-dark); 
+ } 
+ .card.selected{ outline: 2px solid var(--purple-2); outline-offset: 2px; } 
+ .card-header{ 
+ display: grid; 
+ grid-template-columns: 1fr auto; 
+ gap: 8px; 
+ align-items: center; 
+ } 
+ .card-title{ 
+ width: 100%; 
+ background: var(--panel-2); 
+ color: var(--text); 
+ border: 1px solid var(--border); 
+ border-radius: 8px; 
+ padding: 8px 10px; 
+ font-weight: 600; 
+ } 
+ .card-header-actions{ 
+ display: flex; 
+ gap: 6px; 
+ align-items: center; 
+ user-select: none; 
+ font-size: 12px; 
+ color: var(--muted); 
+ } 
+ 
+ /* Checkbox escuro e arredondado para cards e checklist */
+ .card-header input[type="checkbox"],
+.checklist-item input[type="checkbox"],
+ input.card-done,
+ input.item-check {
+   -webkit-appearance: none;
+   appearance: none;
+   width: 18px;
+   height: 18px;
+   margin-right: 8px;
+   vertical-align: middle;
+   border-radius: 6px;
+   background-color: var(--card);
+   border: 1px solid var(--border);
+   display: inline-block;
+   position: relative;
+ }
+
+/* Reduce space between checklist checkbox and its text by 50% */
+.checklist-item input[type="checkbox"] { margin-right: 4px; }
+
+ .card-header input[type="checkbox"]::after,
+ .checklist-item input[type="checkbox"]::after,
+ input.card-done::after,
+ input.item-check::after {
+   content: '';
+   position: absolute;
+  left: 50%;
+  top: 50%;
+   width: 6px;
+   height: 10px;
+   border: 2px solid #fff;
+   border-top: none;
+   border-left: none;
+  transform: translate(-50%, -50%) rotate(45deg) scale(0);
+   transform-origin: center;
+   transition: transform .12s ease;
+ }
+
+ .card-header input[type="checkbox"]:checked,
+ .checklist-item input[type="checkbox"]:checked,
+ input.card-done:checked,
+ input.item-check:checked {
+   background-color: var(--purple-2);
+   border-color: rgba(255,255,255,0.12);
+ }
+
+ .card-header input[type="checkbox"]:checked::after,
+ .checklist-item input[type="checkbox"]:checked::after,
+ input.card-done:checked::after,
+ input.item-check:checked::after {
+  transform: translate(-50%, -50%) rotate(45deg) scale(1);
+ }
+ /* Timestamps abaixo do título */ 
+ .card-meta{ 
+ grid-column: 1 / -1; 
+ display: flex; 
+ gap: 12px; 
+ align-items: center; 
+ color: var(--muted); 
+ font-size: 11px; 
+ line-height: 1.2; 
+ margin-top: -2px; 
+ } 
+ .card-meta .meta-item time{ font-variant-numeric: tabular-nums;} 
+ .card-body{ 
+ display: flex; 
+ flex-direction: column; 
+ gap: 8px; 
+ overflow: hidden;
+ max-height: 2000px;
+ opacity: 1;
+ transition: max-height .52s cubic-bezier(.2,.9,.2,1), opacity .36s ease;
+ } 
+ .field-label{ font-size: 12px; color: var(--muted); } 
+ /* Descrição */ 
+ textarea.card-desc{ 
+ width: 100%; 
+ min-height: 90px; 
+ resize: vertical; 
+ background: var(--panel-2); 
+ color: var(--text); 
+ border: 1px solid var(--border); 
+ border-radius: 8px; 
+ padding: 8px 10px; 
+ font-family: inherit; 
+ } 
+ .render{ 
+ border-left: 3px solid var(--purple); 
+ background: rgba(255,255,255,0.04); 
+ padding: 8px 10px; 
+ border-radius: 6px; 
+ color: var(--muted); 
+ font-size: 13px; 
+ word-break: break-word; 
+ cursor: text; 
+ } 
+ .render a{ color: #90caf9; text-decoration: underline; } 
+ /* Checklist */ 
+ .checklist{ 
+ background: rgba(255,255,255,0.03); 
+ border: 1px dashed var(--border); 
+ padding: 8px; 
+ border-radius: 8px; 
+ display: flex; 
+ flex-direction: column; 
+ gap: 8px; 
+ } 
+
+/* Placeholder visual shown while dragging checklist items */
+.checklist-placeholder{
+  border: 2px dashed rgba(155,0,255,0.55);
+  background: rgba(155,0,255,0.08);
+  border-radius: 8px;
+  margin: 4px 0;
+}
+
+/* Checklist: hide inner checkmark and use darker purple background when checked */
+.checklist-item input[type="checkbox"]::after { display: none; }
+.checklist-item input[type="checkbox"]:checked { background-color: var(--progress-color, var(--purple)); border-color: rgba(255,255,255,0.12); }
+ .checklist-header{ 
+ display: flex; 
+ align-items: center; 
+ justify-content: space-between; 
+ font-size: 13px; 
+ color: var(--muted); 
+ } 
+ .items{ display: flex; flex-direction: column; gap: 8px; } 
+ .checklist-item{ 
+ display: grid; 
+ grid-template-columns: auto auto 1fr auto; 
+ gap: 8px; 
+ align-items: center; 
+ background: var(--panel-2); 
+ border: 1px solid var(--border); 
+ border-radius: 8px; 
+ padding: 8px; 
+ cursor: text; 
+ } 
+/* drag-handle removed: using item-level drag instead */
+ .item-view{ 
+ grid-column: 3 / 4; 
+ color: var(--muted); 
+ font-size: 13px; 
+ overflow: hidden; 
+ text-overflow: ellipsis; 
+ max-width: 100%; 
+ align-self: center;
+ }
+ .item-view a{ color: #90caf9; text-decoration: underline; } 
+ .item-editor{ 
+ grid-column: 1 / -1; 
+ margin-left: 26px; 
+ width: calc(100% - 26px); 
+ min-height: 70px; 
+ resize: vertical; 
+ background: transparent; 
+ color: var(--text); 
+ border: 1px solid var(--border); 
+ border-radius: 8px; 
+ padding: 8px 10px; 
+ font-family: inherit; 
+ } 
+ .hidden{ display: none !important; } 
+ /* Card colapsado: mostra só header */ 
+ .card.collapsed{ cursor: pointer; gap: 0; } 
+ .card.collapsed .card-header-actions { display: none; } 
+ .card.collapsed .card-body { max-height: 0; opacity: 0; pointer-events: none; } 
+ /* Título quando concluído */ 
+ .card.completed .card-title{ 
+ color: var(--text-completed); 
+ /* text-decoration: line-through; opcional */ 
+ } 
+ /* Estilo do <mark> */ 
+ .render mark{ 
+ background: var(--mark-bg); 
+ border: 1px solid var(--mark-border); 
+ border-radius: 3px; 
+ color: inherit; 
+ padding: 0 2px; 
+ } 
+ /* Scrollbars (webkit) */ 
+ ::-webkit-scrollbar { height: 4px; width: 8px; } 
+ ::-webkit-scrollbar-track { background: var(--panel-2); } 
+ ::-webkit-scrollbar-thumb { background: #555; border-radius: 20px; } 
+ ::-webkit-scrollbar-thumb:hover { background: #666; } 
+ /* DnD de colunas */ 
+ .column.dragging-col{ 
+ opacity: 0.92; 
+ outline: 2px dashed var(--purple-2); 
+ outline-offset: 2px; 
+ filter: brightness(1.02); 
+ } 
+ @media (max-width: 640px){ 
+ .column{ min-width: 92vw; } 
+ .card-header{ grid-template-columns: 1fr; } 
+ .filter-row{ grid-template-columns: 1fr auto; } 
+ } 
+ /* ===== Modal ===== */ 
+ .modal-overlay { 
+ position: fixed; inset: 0; 
+ background: rgba(0,0,0,0.55); 
+ display: flex; align-items: center; justify-content: center; 
+ z-index: 100; 
+ } 
+ .modal-overlay.hidden { display: none; } 
+ .modal { 
+ width: min(720px, 92vw); 
+ background: var(--panel); 
+ border: 1px solid var(--border); 
+ border-radius: var(--radius); 
+ box-shadow: var(--shadow); 
+ display: flex; flex-direction: column; 
+ max-height: 86vh; 
+ } 
+ .modal-header, .modal-footer { 
+ padding: 12px 14px; 
+ border-bottom: 1px solid var(--border); 
+ } 
+ .modal-footer { border-top: 1px solid var(--border); border-bottom: none; display:flex; gap:8px; justify-content:flex-end; } 
+ .modal-header { display:flex; align-items:center; justify-content:space-between; } 
+ .modal-body { padding: 12px 14px; overflow: auto; } 
+ .settings-section .section-title { margin: 6px 0 4px; font-size: 14px; } 
+ .settings-section .section-help { margin: 0 0 10px; color: var(--muted); font-size: 12px; } 
+ .rules-list { display: flex; flex-direction: column; gap: 10px; } 
+ .rule-row { 
+ display: grid; 
+ grid-template-columns: 1fr 1fr auto; 
+ gap: 10px; 
+ background: var(--panel-2); 
+ border: 1px solid var(--border); 
+ border-radius: 8px; 
+ padding: 10px; 
+ } 
+ .rule-field { display: flex; flex-direction: column; gap: 6px; } 
+ .rule-actions { display: flex; align-items: flex-end; } 
+ .rule-color, .rule-color-select, .rule-days { 
+ background: var(--panel); 
+ color: var(--text); 
+ border: 1px solid var(--border); 
+ border-radius: 8px; 
+ padding: 8px 10px; 
+ transition: background-color .15s ease, color .15s ease, border-color .15s ease; 
+ } 
+ .rule-days { max-width: 160px; } 
+ .rules-actions { margin-top: 6px; } 
+ .modal-close { background: transparent; border: 1px dashed var(--border); } 
+ .modal-close:hover { background: rgba(255,255,255,0.06); } 
+ /* ===== Campo Data de Vencimento ===== */ 
+ .card-due{ 
+ background: var(--panel-2); 
+ color: var(--text); 
+ border: 1px solid var(--border); 
+ border-radius: 8px; 
+ padding: 8px 10px; 
+ width: 100%; 
+ } 
+ .due-wrap{ display: flex; flex-direction: column; gap: 6px; } 
+ /* ===== NOVO: linha para timestamps quando colapsado ===== */ 
+ .card-collapsed-meta{ 
+ grid-column: 1 / -1; 
+ font-size: 11px; 
+ color: var(--muted); 
+ margin-top: -6px; 
+ padding-left: 4px; 
+ white-space: nowrap; 
+ overflow: hidden; 
+ text-overflow: ellipsis; 
+ } 
+/* ===== Barra de Progresso (Checklist) ===== */ 
+.progress-wrap{ 
+ grid-column: 1 / -1; 
+ display: grid; 
+ grid-template-columns: 1fr auto; 
+ gap: 8px; 
+ align-items: center; 
+ margin-top: -2px; 
+} 
+.progress{ 
+ position: relative; 
+ height: 4px; 
+ background: rgba(255,255,255,0.08); 
+ border: 1px solid var(--border); 
+ border-radius: 999px; 
+ overflow: hidden; 
+} 
+.progress-bar{ 
+ height: 100%; 
+ width: 0%; 
+ background: var(--progress-color, var(--purple)); 
+ transition: width .2s ease-in-out; 
+} 
+.card.completed .progress-bar{ 
+ background: var(--progress-color, var(--purple-dark)); 
+} 
+.progress-text{ 
+ font-size: 12px; 
+ color: var(--muted); 
+ min-width: 36px; 
+ text-align: right; 
+ font-variant-numeric: tabular-nums; 
+} 
+
+/* Modal para card (visual de card em foco) */
+.modal-card { width: min(900px, 96vw); }
+.modal-card .modal-body { background: var(--panel); }
+#cardOverlay.modal-overlay{
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .72s ease;
+}
+#cardOverlay .modal-card{
+  transform-origin: top center;
+  transform: scaleY(0);
+  opacity: 0;
+  transition: transform 1.04s cubic-bezier(.2,.9,.2,1), opacity .72s ease;
+}
+#cardOverlay.opening,
+#cardOverlay.open{
+  opacity: 1;
+  pointer-events: auto;
+}
+#cardOverlay.opening .modal-card,
+#cardOverlay.open .modal-card{
+  transform: scaleY(1);
+  opacity: 1;
+}
+#cardOverlay.opening{
+  animation: cardOverlayFadeIn .72s ease both;
+}
+#cardOverlay.opening .modal-card{
+  animation: cardModalAppear 1.04s cubic-bezier(.2,.9,.2,1) both;
+}
+@keyframes cardOverlayFadeIn{
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes cardModalAppear{
+  from { transform: translateY(12px) scaleY(0.92); opacity: 0; }
+  to { transform: translateY(0) scaleY(1); opacity: 1; }
+}
+.card-modal-ghost{
+  pointer-events: none;
+  opacity: 0.48;
+  filter: saturate(0.75) brightness(0.9);
+}
+
+/* Spacer below topbar matching board background */
+.topbar-spacer{ position: fixed; top: 0; left: 0; right: 0; width: 100%; background: var(--bg); opacity: 1; z-index: 5; pointer-events: none; }
+
+/* ===== Mobile: hamburger + vertical menu ===== */
+.hamburger{
+  display: none;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.06);
+  color: var(--text);
+  border-radius: 8px;
+  width: 40px; height: 36px;
+  align-items: center; justify-content: center;
+  font-size: 20px;
+  cursor: pointer;
+}
+.mobile-menu{
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: auto;
+  transform-origin: top center;
+  transform: scaleY(0);
+  transition: transform .26s cubic-bezier(.2,.9,.2,1), opacity .18s ease;
+  background:
+    radial-gradient(circle at 92% -35%, color-mix(in srgb, var(--menu-purple-light) 50%, transparent), transparent 45%),
+    radial-gradient(circle at 7% 125%, color-mix(in srgb, var(--menu-blue-soft) 44%, transparent), transparent 42%),
+    linear-gradient(120deg, #12131d 0%, color-mix(in srgb, var(--menu-purple-deep) 44%, #1f2240) 100%);
+  border: 1px solid color-mix(in srgb, var(--menu-border-soft) 45%, transparent);
+  border-radius: 0;
+  color: var(--text);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.25);
+  z-index: 12;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  pointer-events: none;
+}
+.mobile-menu.open{ transform: scaleY(1); opacity: 1; pointer-events: auto; }
+.mobile-menu-inner{ width: 100%; display: flex; flex-direction: column; align-items: center; gap: 12px; padding-top: 12px; }
+@media (max-width: 640px){
+  .menu{ display: none; }
+  .hamburger{ display: inline-flex; }
+  .topbar{ padding: 10px 12px; }
+  .mobile-menu{ left: 8px; right: 8px; }
+}
+
+/* When the desktop .menu is moved into the mobile panel, ensure it becomes visible
+   and displayed as a vertical centered column of buttons */
+.mobile-menu .menu {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 0 0 12px 0;
+}
+.mobile-menu .menu .btn {
+  width: 85vw; /* 85% da largura da viewport */
+  max-width: none;
+  font-size: 18px;
+  /* horizontal padding = 5% da largura da viewport */
+  padding: 12px 5vw;
+  height: 56px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px; /* same visual as topbar buttons */
+  background: var(--panel-2);
+  border: 1px solid color-mix(in srgb, var(--menu-purple-base) 78%, #ffffff 10%);
+  box-shadow:
+    0 0 12px color-mix(in srgb, var(--menu-purple-base) 34%, transparent),
+    0 0 18px color-mix(in srgb, var(--menu-blue-soft) 18%, transparent),
+    0 6px 14px rgba(0,0,0,0.28);
+  border-color: color-mix(in srgb, var(--menu-purple-light) 80%, #ffffff 10%);
+  color: var(--text);
+}
+@media (orientation: portrait) and (max-width: 640px){
+  .mobile-menu{
+    left: 0;
+    right: 0;
+  }
+  .mobile-menu.open{
+    box-shadow: 0 32px 60px rgba(0,0,0,0.88);
+  }
+  .mobile-menu.open::after{
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    height: 75vh;
+    pointer-events: none;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.78), rgba(0,0,0,0));
+  }
+  .mobile-menu-inner{
+    padding-top: 31px;
+    padding-bottom: 36px;
+  }
+  .mobile-menu .menu{
+    padding-bottom: 0;
+  }
+  .mobile-menu .menu .btn{
+    border-color: color-mix(in srgb, var(--menu-purple-base) 66%, #ffffff 8%);
+    box-shadow: 0 0 7px color-mix(in srgb, var(--menu-purple-base) 24%, transparent), 0 3px 8px rgba(0,0,0,0.22);
+  }
+}
+
+</style> 
+</head> 
+<body> 
+ <header class="topbar"> 
+ <div class="brand"><img class="brand-icon" src="../favicon.svg" alt="" aria-hidden="true">KanbanApp</div> 
+ <div class="menu"> 
+ <button id="btnAddColumn" class="btn">+ Coluna</button> 
+ <button id="btnSettings" class="btn">Configurações</button> 
+ <button id="btnSave" class="btn">Salvar JSON</button> 
+ <input type="file" id="fileJson" accept="application/json" hidden> 
+ <button id="btnLoad" class="btn">Carregar JSON</button> 
+ </div> 
+ <button id="hamburgerBtn" class="hamburger" aria-controls="mobileMenu" aria-expanded="false" aria-label="Abrir menu">☰</button>
+ </header> 
+<!-- Opaque spacer, same height as topbar, same color as board background -->
+<div id="topbarSpacer" class="topbar-spacer" aria-hidden="true"></div>
+<!-- Mobile menu container (hidden by default) -->
+<div id="mobileMenu" class="mobile-menu" aria-hidden="true"></div>
+ <main> 
+ <div id="board" class="board" aria-live="polite"></div> 
+<div class="board-bottom-spacer" aria-hidden="true"></div>
+<!-- Transparent overlay immediately above the viewport scrollbar (visual only) -->
+<div class="board-scroll-overlay" aria-hidden="true"></div>
+ </main> 
+ <!-- Templates --> 
+ <template id="tpl-column"> 
+ <div class="column" data-id=""> 
+ <div class="column-header"> 
+ <input type="text" class="column-title" placeholder="Título da coluna" /><br> 
+ <div class="column-actions"> 
+ <button class="btn-small add-card">+ Card</button> 
+ <button class="btn-small select-all" title="Selecionar todos os cards">Selecionar</button> 
+ <button class="btn-small conclude-all" title="Marcar todos os cards como concluídos">Concluir</button> 
+ <!-- NOVOS botões na coluna --> 
+ <button class="btn-small sort-date" title="Ordenar por data (alternar crescente/decrescente)">Ordenar por data</button> 
+ <button class="btn-small group-completed" title="Não concluídos primeiro, concluídos no final">Agrupar concluídos</button> 
+ <button class="btn-small btn-danger delete-column" title="Excluir esta coluna">Excluir</button> 
+ </div> 
+ <!-- Filtro por coluna --> 
+ <div class="column-filter"> 
+ <div class="filter-row"> 
+ <input 
+ type="text" 
+ class="filter-cards" 
+ placeholder="Filtrar cards (título ou descrição)" 
+ aria-label="Filtrar cards por título ou descrição" /> 
+ <button class="btn-small btn-clear clear-filter" title="Limpar filtro">Limpar</button> 
+ </div> 
+ <div class="filter-meta"> 
+ <span>Resultados</span> 
+ <span class="filter-count">0/0</span> 
+ </div> 
+ </div> 
+ </div> 
+ <div class="cards" data-droptarget="true"></div> 
+ </div> 
+ </template> 
+ <template id="tpl-card"> 
+ <div class="card" draggable="true" data-id=""> 
+ <div class="card-header"> 
+ <input type="text" class="card-title" placeholder="Título do card" /> 
+ <div class="card-header-actions"> 
+ <label><input type="checkbox" class="card-done"> Feito</label> 
+ <button class="btn-small btn-ghost open-card-modal" title="Abrir em modal">⤢</button>
+ <button class="btn-small btn-ghost delete-card" title="Excluir card">🗑</button> 
+ </div> 
+ <!-- timestamps completos (apenas quando expandido) --> 
+ <div class="card-meta"> 
+ <span class="meta-item created">🗀 <time class="created-at" datetime=""></time></span> 
+ <span class="meta-item updated">🖉 <time class="updated-at" datetime=""></time></span> 
+ </div> 
+ <!-- NOVO: linha curta (apenas quando colapsado) --> 
+ <div class="card-collapsed-meta hidden"></div> 
+ <!-- NOVO: barra de progresso (sempre visível) --> 
+ <div class="progress-wrap" aria-hidden="false"> 
+ <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Progresso do checklist"> 
+ <div class="progress-bar" style="width:0%"></div> 
+ </div> 
+ <div class="progress-text">0%</div> 
+ </div> 
+ </div> 
+ <div class="card-body"> 
+ <div class="due-wrap"> 
+ <div class="field-label">Data de vencimento:</div> 
+ <input type="date" class="card-due" aria-label="Selecionar data de vencimento" /> 
+ </div> 
+ <div class="desc-wrap"> 
+ <div class="field-label">Descrição:</div> 
+ <div class="render desc-view" aria-label="Descrição renderizada com links"></div> 
+ <textarea class="card-desc hidden" placeholder="Digite a descrição (suporta links)"></textarea> 
+ </div> 
+ <div class="checklist"> 
+ <div class="checklist-header"> 
+ <span>Checklist <span class="badge items-count">0</span></span> 
+ <button class="btn-small add-item">+ Item</button> 
+ </div> 
+ <div class="items"></div> 
+ </div> 
+ </div> 
+ </div> 
+ </template> 
+ <template id="tpl-checklist-item"> 
+ <div class="checklist-item"> 
+ 
+ <input type="checkbox" class="item-check" aria-label="Marcar item"> 
+ <div class="item-view" aria-label="Rótulo (clique para editar)"></div> 
+ <div class="item-actions"> 
+ <button class="btn-small btn-ghost delete-item" title="Remover item">✖</button> 
+ </div> 
+ <textarea class="item-editor hidden" placeholder="Texto do item (URLs ficam clicáveis na visualização)"></textarea> 
+ </div> 
+ </template> 
+ <!-- Modal de Configurações --> 
+ <div id="settingsOverlay" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="settingsTitle"> 
+ <div class="modal"> 
+ <div class="modal-header"> 
+ <h2 id="settingsTitle">Configurações</h2> 
+ <button class="btn btn-small modal-close" aria-label="Fechar">✖</button> 
+ </div> 
+ <div class="modal-body"> 
+ <section class="settings-section"> 
+ <h3 class="section-title">Regras de cor por idade do card</h3> 
+ <p class="section-help"> 
+ Defina linhas com <strong>dias</strong> e uma <strong>cor</strong>. Ex.: 7 dias → amarelo. 
+ </p> 
+ <div id="rulesList" class="rules-list" aria-live="polite"></div> 
+ <div class="rules-actions"> 
+ <button id="btnAddRule" class="btn btn-small">+ Adicionar linha</button> 
+ </div> 
+ </section> 
+ </div> 
+ <div class="modal-footer"> 
+ <button id="btnSaveSettings" class="btn btn-primary">Salvar</button> 
+ <button id="btnCancelSettings" class="btn">Cancelar</button> 
+ </div> 
+ </div> 
+ </div> 
+ <!-- Template de uma linha de regra (dias + cor) --> 
+ <template id="tpl-rule-row"> 
+ <div class="rule-row"> 
+ <div class="rule-field"> 
+ <label class="field-label">Dias</label> 
+ <input type="number" class="rule-days" min="0" step="1" inputmode="numeric" placeholder="Ex.: 7"> 
+ </div> 
+ <div class="rule-field"> 
+ <label class="field-label">Cor</label> 
+ <!-- Color picker (preferencial) --> 
+ <input type="color" class="rule-color"> 
+ <!-- Fallback: combobox de cores (tons pedidos) --> 
+ <select class="rule-color-select"> 
+ <!-- Amarelo --> 
+ <option value="#fffde7">Amarelo 50 — #fffde7</option> 
+ <option value="#fff59d">Amarelo 300 — #fff59d</option> 
+ <option value="#ffeb3b">Amarelo 500 — #ffeb3b</option> 
+ <option value="#fbc02d">Amarelo 700 — #fbc02d</option> 
+ <!-- Vermelho --> 
+ <option value="#ffebee">Vermelho 50 — #ffebee</option> 
+ <option value="#ffcdd2">Vermelho 200 — #ffcdd2</option> 
+ <option value="#ef5350">Vermelho 400 — #ef5350</option> 
+ <option value="#b71c1c">Vermelho 900 — #b71c1c</option> 
+ <!-- Azul --> 
+ <option value="#e3f2fd">Azul 50 — #e3f2fd</option> 
+ <option value="#90caf9">Azul 200 — #90caf9</option> 
+ <option value="#2196f3">Azul 500 — #2196f3</option> 
+ <option value="#0d47a1">Azul 900 — #0d47a1</option> 
+ <!-- Roxo --> 
+ <option value="#f3e5f5">Roxo 50 — #f3e5f5</option> 
+ <option value="#ce93d8">Roxo 200 — #ce93d8</option> 
+ <option value="#9c27b0">Roxo 500 — #9c27b0</option> 
+ <option value="#4a148c">Roxo 900 — #4a148c</option> 
+ <!-- Cinza --> 
+ <option value="#fafafa">Cinza 50 — #fafafa</option> 
+ <option value="#e0e0e0">Cinza 300 — #e0e0e0</option> 
+ <option value="#9e9e9e">Cinza 500 — #9e9e9e</option> 
+ <option value="#616161">Cinza 700 — #616161</option> 
+ <option value="#212121">Cinza 900 — #212121</option> 
+ <!-- Branco/Preto --> 
+ <option value="#ffffff">Branco — #ffffff</option> 
+ <option value="#000000">Preto — #000000</option> 
+ </select> 
+ </div> 
+ <div class="rule-actions"> 
+ <button class="btn btn-small btn-danger rule-remove" title="Remover linha">Remover</button> 
+ </div> 
+ </div> 
+ </template> 
+
+<!-- Modal de Card (abre o próprio card no centro) -->
+<div id="cardOverlay" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="cardModalTitle">
+  <div class="modal modal-card">
+    <div class="modal-header">
+      <h2 id="cardModalTitle">Card</h2>
+      <button class="btn btn-small modal-close" aria-label="Fechar">✖</button>
+    </div>
+    <div class="modal-body">
+      <div id="cardModalContent"></div>
+    </div>
+  </div>
+</div>
+
+ <script> 
+ /* Polyfills essenciais (Edge Legacy) */ 
+ (function polyfills(){ 
+ if (!Element.prototype.matches) { 
+ Element.prototype.matches = 
+ Element.prototype.msMatchesSelector || 
+ Element.prototype.webkitMatchesSelector; 
+ } 
+ if (!Element.prototype.closest) { 
+ Element.prototype.closest = function(s) { 
+ let el = this; 
+ if (!document.documentElement.contains(el)) return null; 
+ do { if (el.matches(s)) return el; el = el.parentElement || 
+ el.parentNode; } 
+ while (el !== null && el.nodeType === 1); 
+ return null; 
+ }; 
+ } 
+ })(); 
+ // ===== Utilidades ===== 
+ const $ = (sel, ctx=document) => ctx.querySelector(sel); 
+ const $$ = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel)); 
+ const uid = (p='id') => `${p}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`; 
+ const nextFrame = () => new Promise(r => requestAnimationFrame(() => r())); 
+// Currently dragged checklist item (handle-driven)
+let currentDraggedChecklistItem = null;
+ function escapeHtml(str){ 
+ const s = String(str == null ? '' : str); 
+ const map = { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }; 
+ return s.replace(/[&<>"']/g, m => map[m]); 
+ } 
+ // Normaliza para busca case/acento-insensível 
+ function normalizeText(s) { 
+ return String(s || '') 
+ .normalize('NFD') 
+ .replace(/[\u0300-\u036f]/g, '') 
+ .toLowerCase() 
+ .trim(); 
+ } 
+ // Linkify simples 
+ function linkify(text){ 
+ if(!text) return ''; 
+ const safe = escapeHtml(text); 
+ const urlRegex = /((https?:\/\/[\w.-]+(?:\:[0-9]+)?(?:\/[\w.,@?^=%&:/~+#-]*)?))/gi; 
+ return safe.replace(urlRegex, (raw) => { 
+ const href = raw.startsWith('http') ? raw : 'http://' + raw; 
+ // remover pontuação final solta 
+ const m = href.match(/^(.*?)([),.;!?:]+)?$/); 
+ let url = href, trailing = ''; 
+ if (m) { url = m[1]; trailing = m[2] || ''; } 
+ let display = raw; 
+ if (trailing && raw.endsWith(trailing)) { 
+ display = raw.slice(0, raw.length - trailing.length); 
+ } 
+ return `<a href="${url}" target="_blank" rel="noopener noreferrer">${display}</a>${trailing}`; 
+ }).replace(/\n/g, '<br>'); 
+ } 
+ function download(filename, content, type='application/json'){ 
+ const blob = new Blob([content], { type }); 
+ const a = document.createElement('a'); 
+ a.href = URL.createObjectURL(blob); 
+ a.download = filename; 
+ document.body.appendChild(a); 
+ a.click(); 
+ setTimeout(function(){ 
+ URL.revokeObjectURL(a.href); 
+ a.remove(); 
+ }, 0); 
+ } 
+ // ===== Timestamps ===== 
+ const nowISO = () => new Date().toISOString(); 
+ function formatDateForDisplay(iso){ 
+ try { 
+ return new Date(iso).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'medium' }); 
+ } catch(e){ 
+ return iso || ''; 
+ } 
+ } 
+ // NOVO: dd/mm/aa (sem hora) 
+ function formatShortDate(iso) { 
+ try { 
+ const d = new Date(iso); 
+ const dd = String(d.getDate()).padStart(2, '0'); 
+ const mm = String(d.getMonth() + 1).padStart(2, '0'); 
+ const yy = String(d.getFullYear()).slice(-2); 
+ return `${dd}/${mm}/${yy}`; 
+ } catch { 
+ return ""; 
+ } 
+ } 
+ function renderCardTimestamps(card){ 
+ const c = card.dataset.created || nowISO(); 
+ const u = card.dataset.updated || c; 
+ const cEl = $('.created-at', card); 
+ const uEl = $('.updated-at', card); 
+ if (cEl){ cEl.textContent = formatDateForDisplay(c); cEl.setAttribute('datetime', c); } 
+ if (uEl){ uEl.textContent = formatDateForDisplay(u); uEl.setAttribute('datetime', u); } 
+ } 
+ function touchCardUpdated(card){ 
+ card.dataset.updated = nowISO(); 
+ renderCardTimestamps(card); 
+ // NOVO: manter a linha colapsada atualizada 
+ renderCollapsedMeta(card); 
+ } 
+ // ===== Realce com <mark> mantendo HTML ===== 
+ function highlightMatchesInElement(rootEl, term){ 
+ if (!rootEl || !term) return; 
+ const nTerm = normalizeText(term); 
+ if (!nTerm) return; 
+ const walker = document.createTreeWalker(rootEl, NodeFilter.SHOW_TEXT, { 
+ acceptNode(node){ 
+ if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT; 
+ return NodeFilter.FILTER_ACCEPT; 
+ } 
+ }); 
+ const textNodes = []; 
+ while (walker.nextNode()) textNodes.push(walker.currentNode); 
+ textNodes.forEach(node => { 
+ const text = node.nodeValue; 
+ const nText = normalizeText(text); 
+ let idx = 0, last = 0; 
+ const ranges = []; 
+ while (true) { 
+ idx = nText.indexOf(nTerm, last); 
+ if (idx === -1) break; 
+ ranges.push([idx, idx + nTerm.length]); 
+ last = idx + nTerm.length; 
+ } 
+ if (!ranges.length) return; 
+ const frag = document.createDocumentFragment(); 
+ let cursor = 0; 
+ ranges.forEach(([start, end]) => { 
+ if (start > cursor) frag.appendChild(document.createTextNode(text.slice(cursor, start))); 
+ const mark = document.createElement('mark'); 
+ mark.textContent = text.slice(start, end); 
+ frag.appendChild(mark); 
+ cursor = end; 
+ }); 
+ if (cursor < text.length) frag.appendChild(document.createTextNode(text.slice(cursor))); 
+ node.parentNode.replaceChild(frag, node); 
+ }); 
+ } 
+ // ===== Datas / Vencimento ===== 
+ function parseDateOnly(str){ 
+ if(!str) return null; 
+ const parts = String(str).split('-'); 
+ if(parts.length !== 3) return null; 
+ const y = parseInt(parts[0],10), m = parseInt(parts[1],10)-1, d = parseInt(parts[2],10); 
+ const dt = new Date(y, m, d, 0, 0, 0, 0); 
+ return isNaN(dt.getTime()) ? null : dt; 
+ } 
+ function startOfToday(){ 
+ const t = new Date(); 
+ return new Date(t.getFullYear(), t.getMonth(), t.getDate(), 0,0,0,0); 
+ } 
+ function diffDays(from, to){ // to - from em dias inteiros 
+ const MS = 86400000; 
+ return Math.floor((to.getTime() - from.getTime())/MS); 
+ } 
+ // Regras de cor por dias restantes 
+ function pickColorForRemainingDays(remDays){ 
+ const rules = Array.isArray(boardMeta.ageColorRules) ? boardMeta.ageColorRules.slice() : []; 
+ if(!rules.length || remDays == null) return 'var(--purple)'; 
+ rules.forEach(r => { r._n = Math.max(0, Number(r.days) || 0); }); 
+ rules.sort((a,b)=> a._n - b._n); 
+ const target = Math.max(0, remDays); 
+ const found = rules.find(r => r._n >= target); 
+ return (found ? found.color : rules[rules.length-1].color) || 'var(--purple)'; 
+ } 
+ // NOVO: descrição amigável (Opção B) 
+ function describeRemainingDays(rem) { 
+ if (rem > 0) return `${rem} dia${rem>1?'s':''} para o vencimento`; 
+ if (rem === 0) return `Vence hoje`; 
+ const n = Math.abs(rem); 
+ return `vencido há ${n} dia${n>1?'s':''}`; 
+ } 
+ function applyDueColorToCard(card){ 
+ if(!card) return; 
+ const dueEl = $('.card-due', card); 
+ const descView = $('.desc-view', card); 
+ const dueStr = dueEl ? dueEl.value : ''; 
+ if(!dueStr){ 
+ card.style.boxShadow = ''; 
+ if(descView){ descView.style.borderLeft = ''; } 
+ // manter linha colapsada coerente 
+ renderCollapsedMeta(card); 
+ return; 
+ } 
+ const dueDt = parseDateOnly(dueStr); 
+ if(!dueDt){ 
+ card.style.boxShadow = ''; 
+ if(descView){ descView.style.borderLeft = ''; } 
+ renderCollapsedMeta(card); 
+ return; 
+ } 
+ const today = startOfToday(); 
+ const rem = diffDays(today, dueDt); 
+ const color = pickColorForRemainingDays(rem); 
+ // NOVO: expor a cor de vencimento como CSS var para a barra de progresso 
+ try { card.style.setProperty('--progress-color', color); } catch(_) {} 
+ card.style.boxShadow = `var(--shadow), inset 3px 0 0 ${color}`; 
+ if(descView){ descView.style.borderLeft = `3px solid ${color}`; } 
+ // NOVO: sempre atualizar a linha colapsada após pintar 
+ renderCollapsedMeta(card); 
+ } 
+ function applyDueColorsAll(){ $$('.card').forEach(applyDueColorToCard); } 
+ // ===== SERIALIZAÇÃO ===== 
+ function serializeBoard(){ 
+ const data = { 
+ meta: { version: 10, exportedAt: new Date().toISOString() }, 
+ columns: [] 
+ }; 
+ // regras de cor 
+ data.meta.ageColorRules = Array.isArray(boardMeta.ageColorRules) ? boardMeta.ageColorRules : []; 
+ $$('.column', board).forEach(function(col){ 
+ const colData = { 
+ id: col.dataset.id, 
+ title: $('.column-title', col).value.trim(), 
+ cards: [] 
+ }; 
+ $$('.card', col).forEach(function(card){ 
+ const checklist = []; 
+ $$('.checklist-item', card).forEach(function(it){ 
+ const editor = $('.item-editor', it); 
+ checklist.push({ 
+ checked: $('.item-check', it).checked, 
+ label: editor ? editor.value : '' 
+ }); 
+ }); 
+ colData.cards.push({ 
+ id: card.dataset.id, 
+ title: $('.card-title', card).value, 
+ description: $('.card-desc', card).value, 
+ completed: $('.card-done', card).checked, 
+ checklist: checklist, 
+ createdAt: card.dataset.created || nowISO(), 
+ updatedAt: card.dataset.updated || card.dataset.created || nowISO(), 
+ dueDate: ($('.card-due', card).value || '') 
+ }); 
+ }); 
+ data.columns.push(colData); 
+ }); 
+ return data; 
+ } 
+ async function loadBoardSequential(data){ 
+ if(!data || !Array.isArray(data.columns)){ 
+ alert('JSON inválido: objeto não contém "columns".'); 
+ return; 
+ } 
+ // carregar regras 
+ try { 
+ const rules = data.meta && Array.isArray(data.meta.ageColorRules) ? data.meta.ageColorRules : []; 
+ boardMeta.ageColorRules = rules.map(r => ({ 
+ days: Number(r.days) >= 0 ? Number(r.days) : 0, 
+ color: typeof r.color === 'string' ? r.color : '#000000' 
+ })); 
+ } catch (_) { 
+ boardMeta.ageColorRules = []; 
+ } 
+ board.innerHTML = ''; 
+ for(let ci = 0; ci < data.columns.length; ci++){ 
+ const colData = data.columns[ci] || {}; 
+ const colNode = createColumn(colData.id || uid('col'), colData.title || ''); 
+ board.appendChild(colNode); 
+ await nextFrame(); 
+ const cardsArr = Array.isArray(colData.cards) ? colData.cards : []; 
+ const cardsWrap = $('.cards', colNode); 
+ for(let cj = 0; cj < cardsArr.length; cj++){ 
+ const cd = cardsArr[cj] || {}; 
+ const cnode = createCard(cd.id || uid('card')); 
+ cardsWrap.appendChild(cnode); 
+ await nextFrame(); 
+ // detalhes do card 
+ $('.card-title', cnode).value = cd.title || ''; 
+ const ta = $('.card-desc', cnode); 
+ const view = $('.desc-view', cnode); 
+ ta.value = cd.description || ''; 
+ view.innerHTML = linkify(cd.description || ''); 
+ const done = $('.card-done', cnode); 
+ done.checked = !!cd.completed; 
+ cnode.classList.toggle('completed', done.checked); 
+ // timestamps 
+ const created = cd.createdAt || nowISO(); 
+ const updated = cd.updatedAt || created; 
+ cnode.dataset.created = created; 
+ cnode.dataset.updated = updated; 
+ renderCardTimestamps(cnode); 
+ // due date 
+ const due = $('.card-due', cnode); 
+ if (due) due.value = (cd.dueDate || ''); 
+ // checklist 
+ const itemsWrap = $('.items', cnode); 
+ const checklist = Array.isArray(cd.checklist) ? cd.checklist : []; 
+ const orderedChecklist = checklist
+ .map((it, idx) => ({ it, idx }))
+ .sort((a, b) => {
+ const av = a.it && a.it.checked ? 1 : 0;
+ const bv = b.it && b.it.checked ? 1 : 0;
+ return av - bv || a.idx - b.idx;
+ })
+ .map(x => x.it);
+ for(let ck = 0; ck < orderedChecklist.length; ck++){ 
+ const it = orderedChecklist[ck] || {}; 
+ const inode = createChecklistItem(it.label || '', !!it.checked); 
+ itemsWrap.appendChild(inode); 
+ await nextFrame(); 
+ } 
+ updateItemsCount(cnode); 
+ updateChecklistProgress(cnode); 
+ await nextFrame(); 
+ // card inicia colapsado 
+ setCollapsed(cnode, true); 
+ // aplicar cor por vencimento 
+ applyDueColorToCard(cnode); 
+ } 
+ // aplica filtro inicial (se houver valor no input) 
+ applyColumnFilter(colNode); 
+ } 
+ // opcional: se modal já foi inicializado, atualiza a UI 
+ if (settingsUI.overlay) renderSettingsRows(boardMeta.ageColorRules); 
+ // garantia 
+ applyDueColorsAll(); 
+ }
+ 
+ function getDefaultBoardData(){
+ const now = nowISO();
+ return {
+ meta: { version: 10, exportedAt: now, ageColorRules: Array.isArray(boardMeta.ageColorRules) ? boardMeta.ageColorRules : [] },
+ columns: [
+ {
+ id: uid('col'),
+ title: 'A Fazer',
+ cards: [
+ { id: uid('card'), title: 'Definir escopo da semana', description: 'Listar prioridades e alinhar expectativas do time. Referencia: https://www.atlassian.com/agile/project-management', completed: false, checklist: [{ checked: true, label: 'Levantar demandas com o time' }, { checked: false, label: 'Definir prioridades da sprint' }, { checked: false, label: 'Validar capacidade semanal' }], createdAt: now, updatedAt: now, dueDate: '' },
+ { id: uid('card'), title: 'Organizar backlog', description: 'Revisar tarefas pendentes e ordenar por prioridade. Exemplo de tecnica: https://www.scrum.org/resources/what-is-a-product-backlog', completed: false, checklist: [{ checked: true, label: 'Remover itens duplicados' }, { checked: true, label: 'Padronizar titulos' }, { checked: false, label: 'Repriorizar historias' }], createdAt: now, updatedAt: now, dueDate: '' },
+ { id: uid('card'), title: 'Planejar entrega', description: 'Separar itens da proxima entrega e responsaveis. Checklist base: https://www.productplan.com/glossary/release-plan/', completed: false, checklist: [{ checked: false, label: 'Definir janela de release' }, { checked: false, label: 'Mapear riscos da entrega' }, { checked: true, label: 'Listar responsaveis' }], createdAt: now, updatedAt: now, dueDate: '' }
+ ]
+ },
+ {
+ id: uid('col'),
+ title: 'Fazendo',
+ cards: [
+ { id: uid('card'), title: 'Implementar tela inicial', description: 'Ajustar layout e textos principais da pagina. Guia de usabilidade: https://www.nngroup.com/articles/ten-usability-heuristics/', completed: false, checklist: [{ checked: true, label: 'Criar estrutura HTML base' }, { checked: false, label: 'Ajustar espacamentos mobile' }, { checked: false, label: 'Revisar contraste das cores' }], createdAt: now, updatedAt: now, dueDate: '' },
+ { id: uid('card'), title: 'Validar fluxo de uso', description: 'Testar abertura do app e exportacao/importacao JSON. Referencia de JSON: https://developer.mozilla.org/docs/Learn_web_development/Core/Scripting/JSON', completed: false, checklist: [{ checked: true, label: 'Testar criacao de coluna' }, { checked: false, label: 'Testar importacao JSON' }, { checked: false, label: 'Testar exportacao JSON' }], createdAt: now, updatedAt: now, dueDate: '' },
+ { id: uid('card'), title: 'Revisar criterios de pronto', description: 'Conferir padrao para mover tarefa para Feito. Exemplo: https://www.agilealliance.org/glossary/definition-of-done/', completed: false, checklist: [{ checked: true, label: 'Definir checklist minimo' }, { checked: true, label: 'Alinhar com o time' }, { checked: false, label: 'Publicar criterio final' }], createdAt: now, updatedAt: now, dueDate: '' }
+ ]
+ },
+ {
+ id: uid('col'),
+ title: 'Feito',
+ cards: [
+ { id: uid('card'), title: 'Criar estrutura do quadro', description: 'Quadro inicial configurado com colunas padrao. Modelo kanban: https://kanban.university/kanban-guide/', completed: true, checklist: [{ checked: true, label: 'Criar colunas iniciais' }, { checked: true, label: 'Adicionar acoes de card' }, { checked: true, label: 'Validar drag and drop' }], createdAt: now, updatedAt: now, dueDate: '' },
+ { id: uid('card'), title: 'Publicar primeira versao', description: 'Primeira versao disponibilizada para o time. Registro de release: https://keepachangelog.com/pt-BR/1.1.0/', completed: true, checklist: [{ checked: true, label: 'Gerar pacote da versao' }, { checked: true, label: 'Atualizar changelog' }, { checked: true, label: 'Comunicar stakeholders' }], createdAt: now, updatedAt: now, dueDate: '' },
+ { id: uid('card'), title: 'Validar links nas descricoes', description: 'Links de suporte convertidos para clique automatico. Documentacao: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String/replace', completed: true, checklist: [{ checked: true, label: 'Testar link http' }, { checked: true, label: 'Testar link https' }, { checked: true, label: 'Confirmar abertura em nova aba' }], createdAt: now, updatedAt: now, dueDate: '' }
+ ]
+ }
+ ]
+ };
+ }
+ // ===== Criação de elementos ===== 
+ const board = document.getElementById('board'); 
+ const tplColumn = document.getElementById('tpl-column'); 
+ const tplCard = document.getElementById('tpl-card'); 
+ const tplItem = document.getElementById('tpl-checklist-item'); 
+ function createColumn(id, title){ 
+ const node = tplColumn.content.firstElementChild.cloneNode(true); 
+ node.dataset.id = id; 
+ $('.column-title', node).value = title || ''; 
+ // Filtro 
+ const filterInput = $('.filter-cards', node); 
+ const filterCount = $('.filter-count', node); 
+ const clearBtn = $('.clear-filter', node); 
+ if (filterInput) { 
+ filterInput.addEventListener('input', (e) => { 
+ e.stopPropagation(); 
+ applyColumnFilter(node); 
+ }); 
+ filterInput.addEventListener('keydown', (e) => { 
+ const key = e.key || e.code || ''; 
+ if (key === 'Escape' || key === 'Esc') { 
+ filterInput.value = ''; 
+ applyColumnFilter(node); 
+ } 
+ }); 
+ } 
+ if (clearBtn) { 
+ clearBtn.addEventListener('click', (e) => { 
+ e.stopPropagation(); 
+ filterInput.value = ''; 
+ applyColumnFilter(node); 
+ filterInput.focus(); 
+ }); 
+ } 
+ // contagem inicial 
+ if (filterCount) { 
+ const total = $$('.card', node).length; 
+ filterCount.textContent = `${total}/${total}`; 
+ } 
+ // Ações 
+ $('.add-card', node).addEventListener('click', function(e){ 
+ e.stopPropagation(); 
+ const c = createCard(uid('card')); 
+ $('.cards', node).appendChild(c); 
+ setCollapsed(c, true); 
+ applyColumnFilter(node); 
+ applyDueColorToCard(c); 
+ }); 
+ $('.select-all', node).addEventListener('click', function(e){ 
+ e.stopPropagation(); 
+ const cards = $$('.card', node); 
+ const allSelected = cards.length && cards.every(c => c.classList.contains('selected')); 
+ cards.forEach(c => c.classList.toggle('selected', !allSelected)); 
+ }); 
+ // Concluir todos 
+ $('.conclude-all', node).addEventListener('click', function(e){ 
+ e.stopPropagation(); 
+ const cards = $$('.card', node); 
+ const haveUncompleted = cards.some(c => !$('.card-done', c).checked); 
+ cards.forEach(function(c){ 
+ const chk = $('.card-done', c); 
+ chk.checked = haveUncompleted; 
+ c.classList.toggle('completed', chk.checked); 
+ if (haveUncompleted) { 
+ $('.cards', node).appendChild(c); 
+ } 
+ applyDueColorToCard(c); 
+ }); 
+ applyColumnFilter(node); 
+ }); 
+ // Ordenar por data (edição) toggle desc/asc 
+ const sortBtn = $('.sort-date', node); 
+ if (sortBtn){ 
+ node.dataset.sortNext = 'desc'; // 1º clique = desc 
+ sortBtn.addEventListener('click', function(e){ 
+ e.stopPropagation(); 
+ const dir = node.dataset.sortNext || 'desc'; 
+ sortCardsByDate(node, dir); 
+ node.dataset.sortNext = (dir === 'desc' ? 'asc' : 'desc'); 
+ }); 
+ } 
+ // Agrupar concluídos 
+ const groupBtn = $('.group-completed', node); 
+ if (groupBtn){ 
+ groupBtn.addEventListener('click', function(e){ 
+ e.stopPropagation(); 
+ groupByCompletion(node); 
+ }); 
+ } 
+ // Excluir coluna 
+ $('.delete-column', node).addEventListener('click', function(e){ 
+ e.stopPropagation(); 
+ const title = (($('.column-title', node).value || '').trim()) || 'Sem título'; 
+ if (confirm(`Excluir a coluna "${title}"?\nTodos os cards dentro dela serão removidos.`)) { 
+ node.remove(); 
+ } 
+ }); 
+ // Drag & drop (container) 
+ const cardsWrap = $('.cards', node); 
+ cardsWrap.addEventListener('dragover', function(e){ 
+ e.preventDefault(); 
+ try { e.dataTransfer.dropEffect = 'move'; } catch(_) {} 
+ cardsWrap.classList.add('drag-over'); 
+ const after = getDragAfterElement(cardsWrap, e.clientY); 
+ const dragging = $('.dragging'); 
+ if(dragging){ 
+ if(after == null) { cardsWrap.appendChild(dragging); } 
+ else { cardsWrap.insertBefore(dragging, after); } 
+ } 
+ }); 
+ cardsWrap.addEventListener('dragleave', function(){ 
+ cardsWrap.classList.remove('drag-over'); 
+ }); 
+ cardsWrap.addEventListener('drop', function(e){ 
+ e.preventDefault(); 
+ cardsWrap.classList.remove('drag-over'); 
+ applyColumnFilter(node); 
+ $$('.card', node).forEach(applyDueColorToCard); 
+ }); 
+ // Filtro inicial 
+ applyColumnFilter(node); 
+ return node; 
+ } 
+ /* Helpers para colapsar/expandir */ 
+ function setCollapsed(cardNode, collapsed){ 
+ cardNode.classList.toggle('collapsed', !!collapsed); 
+ const metaFull = cardNode.querySelector('.card-meta'); 
+ const metaCollapsed = cardNode.querySelector('.card-collapsed-meta'); 
+ if (!metaFull || !metaCollapsed) return; 
+ if (collapsed) { 
+ metaFull.classList.add('hidden'); 
+ renderCollapsedMeta(cardNode); 
+ metaCollapsed.classList.remove('hidden'); 
+ } else { 
+ metaFull.classList.remove('hidden'); 
+ metaCollapsed.classList.add('hidden'); 
+ } 
+ } 
+ function makeCardCollapsible(cardNode){ 
+ setCollapsed(cardNode, true); 
+ cardNode.addEventListener('click', function(){ 
+ setCollapsed(cardNode, false); 
+ }); 
+ cardNode.addEventListener('focusin', function(){ 
+ setCollapsed(cardNode, false); 
+ }); 
+ } 
+ // NOVO: linha de meta quando colapsado 
+ function renderCollapsedMeta(card) { 
+ const box = card.querySelector('.card-collapsed-meta'); 
+ if (!box) return; 
+ const latestISO = card.dataset.updated || card.dataset.created || nowISO(); 
+ const shortDate = formatShortDate(latestISO); 
+ const dueEl = card.querySelector('.card-due'); 
+ const dueStr = dueEl ? dueEl.value : ''; 
+ let right = 'Sem data de vencimento'; 
+ if (dueStr) { 
+ const dueDt = parseDateOnly(dueStr); 
+ if (dueDt) { 
+ const today = startOfToday(); 
+ const rem = diffDays(today, dueDt); 
+ right = describeRemainingDays(rem); 
+ } else { 
+ right = 'Sem data de vencimento'; 
+ } 
+ } 
+ box.textContent = `${shortDate} — ${right}`; 
+} 
+ function createCard(id){ 
+ const node = tplCard.content.firstElementChild.cloneNode(true); 
+ node.dataset.id = id; 
+ // timestamps iniciais 
+ node.dataset.created = nowISO(); 
+ node.dataset.updated = node.dataset.created; 
+ renderCardTimestamps(node); 
+ // Descrição: ver → editar 
+ const ta = $('.card-desc', node); 
+ const view = $('.desc-view', node); 
+ const due = $('.card-due', node); 
+ const enterDescEdit = function(){ 
+ ta.dataset.original = ta.value; 
+ ta.classList.remove('hidden'); 
+ view.classList.add('hidden'); 
+ ta.focus(); 
+ }; 
+ const exitDescEdit = function(save=true){ 
+ if(!save) ta.value = ta.dataset.original || ta.value; 
+ view.innerHTML = linkify(ta.value); 
+ // destaque do filtro se ativo 
+ const col = node.closest('.column'); 
+ const term = col ? $('.filter-cards', col).value : ''; 
+ if (term) highlightMatchesInElement(view, term); 
+ if (save) touchCardUpdated(node); 
+ ta.classList.add('hidden'); 
+ view.classList.remove('hidden'); 
+ }; 
+ view.addEventListener('click', function(e){ 
+ if(e.target && e.target.tagName && e.target.tagName.toLowerCase() === 'a') return; 
+ enterDescEdit(); 
+ }); 
+ ta.addEventListener('blur', function(){ exitDescEdit(true); }); 
+ ta.addEventListener('keydown', function(e){ 
+ const key = e.key || e.code || ''; 
+ if(key === 'Escape' || key === 'Esc'){ exitDescEdit(false); ta.blur(); } 
+ if((e.ctrlKey || e.metaKey) && (key === 'Enter')){ ta.blur(); } 
+ }); 
+ view.innerHTML = linkify(ta.value || ''); 
+ // due date altera 'Editado' + repintar + re-render colapsado 
+ if (due) { 
+ due.addEventListener('change', function(){ 
+ touchCardUpdated(node); 
+ applyDueColorToCard(node); 
+ }); 
+ } 
+ // Checklist 
+ const itemsWrap = $('.items', node); 
+ $('.add-item', node).addEventListener('click', function(e){ 
+ e.stopPropagation(); 
+ const newItem = createChecklistItem();
+ // inserir no topo da lista (aparecer por cima)
+ if (itemsWrap.firstChild) itemsWrap.insertBefore(newItem, itemsWrap.firstChild);
+ else itemsWrap.appendChild(newItem);
+ updateItemsCount(node); 
+ touchCardUpdated(node); 
+ const col = node.closest('.column'); 
+ if (col) applyColumnFilter(col); 
+ }); 
+  // Habilita arrastar/soltar para reordenar itens de checklist dentro deste card
+  itemsWrap.addEventListener('dragover', function(e){
+    e.preventDefault();
+    const dragged = currentDraggedChecklistItem;
+    if (!dragged) return;
+    const after = (function(container, y){
+      const items = Array.from(container.querySelectorAll('.checklist-item:not(.dragging)'));
+      for (let i=0;i<items.length;i++){
+        const box = items[i].getBoundingClientRect();
+        if (y < box.top + box.height/2) return items[i];
+      }
+      return null;
+    })(itemsWrap, e.clientY);
+    if (after == null) itemsWrap.appendChild(dragged);
+    else itemsWrap.insertBefore(dragged, after);
+  });
+  itemsWrap.addEventListener('drop', function(e){
+    e.preventDefault();
+    const card = node; // card node is outer scope here
+    updateItemsCount(card);
+    touchCardUpdated(card);
+    currentDraggedChecklistItem = null;
+  });
+ // Concluir card: move para o fim se marcado 
+ const done = $('.card-done', node); 
+ done.addEventListener('change', function(e){ 
+ e.stopPropagation(); 
+ node.classList.toggle('completed', done.checked); 
+ const col = node.closest('.column'); 
+ if (done.checked) { 
+ const wrap = col ? $('.cards', col) : node.parentElement; 
+ if (wrap) wrap.appendChild(node); 
+ } 
+ if (col) applyColumnFilter(col); 
+ applyDueColorToCard(node); 
+ // por especificação, marcar concluído NÃO altera updatedAt 
+ }); 
+ // Excluir card 
+ $('.delete-card', node).addEventListener('click', function(e){ 
+ e.stopPropagation(); 
+ if(confirm('Excluir este card?')) { 
+ node.remove(); 
+ const col = node.closest('.column'); 
+ if (col) applyColumnFilter(col); 
+ } 
+ }); 
+ // Drag & drop (card) 
+ node.addEventListener('dragstart', function(e){ 
+ // NOVO: impedir arrastar quando expandido 
+ if (!node.classList.contains('collapsed')) { 
+ try { e.preventDefault(); } catch(_) {} 
+ return; 
+ } 
+ node.classList.add('dragging'); 
+ try { 
+ e.dataTransfer.effectAllowed = 'move'; 
+ e.dataTransfer.setData('text/plain', node.dataset.id || 'card'); 
+ } catch(_) {} 
+ }); 
+ node.addEventListener('dragend', function(){ 
+ node.classList.remove('dragging'); 
+ const col = node.closest('.column'); 
+ if (col) applyColumnFilter(col); 
+ applyDueColorToCard(node); 
+ }); 
+ // Mudanças no título reavaliam filtro e atualizam timestamp (on change) 
+ $('.card-title', node).addEventListener('input', function(){ 
+ const col = node.closest('.column'); 
+ if (col) applyColumnFilter(col); 
+ }); 
+ $('.card-title', node).addEventListener('change', function(){ 
+ touchCardUpdated(node); 
+ }); 
+ // Mudanças na descrição durante a digitação: reavaliam filtro 
+ ta.addEventListener('input', function(){ 
+ const col = node.closest('.column'); 
+ if (col) applyColumnFilter(col); 
+ }); 
+ // Colapso/expansão 
+ makeCardCollapsible(node); 
+ // pinta inicialmente (caso due pré-definido) e compõe linha colapsada 
+ applyDueColorToCard(node); 
+ renderCollapsedMeta(node); 
+ updateChecklistProgress(node); 
+ return node; 
+ } 
+ function createChecklistItem(labelText='', checked=false){ 
+ const node = tplItem.content.firstElementChild.cloneNode(true); 
+  // make whole item draggable (no visible handle)
+  node.draggable = true;
+  node.addEventListener('dragstart', function(e){
+    currentDraggedChecklistItem = node;
+    node.classList.add('dragging');
+    try{ e.dataTransfer.setData('text/plain', ''); e.dataTransfer.effectAllowed = 'move'; }catch(_){ }
+  });
+  node.addEventListener('dragend', function(e){
+    node.classList.remove('dragging');
+    currentDraggedChecklistItem = null;
+    const card = node.closest('.card'); if (card) { updateItemsCount(card); touchCardUpdated(card); }
+  });
+ const chk = $('.item-check', node); 
+ const view = $('.item-view', node); 
+ const editor = $('.item-editor', node); 
+ chk.checked = !!checked; 
+ editor.value = labelText || ''; 
+ const syncView = () => { view.innerHTML = linkify(editor.value); }; 
+ const enterEdit = function(){ 
+ editor.dataset.original = editor.value; 
+ editor.classList.remove('hidden'); 
+ view.classList.add('hidden'); 
+ editor.focus(); 
+ try { editor.selectionStart = editor.selectionEnd = editor.value.length; } catch(_) {} 
+ }; 
+ const exitEdit = function(save=true){ 
+ if(!save) editor.value = editor.dataset.original || editor.value; 
+ syncView(); 
+ editor.classList.add('hidden'); 
+ view.classList.remove('hidden'); 
+ }; 
+  view.addEventListener('click', function(e){ 
+    if(e.target && e.target.tagName && e.target.tagName.toLowerCase() === 'a') return; 
+    enterEdit(); 
+  });
+  node.addEventListener('click', function(e){ 
+    const t = e.target; 
+    if (t && t.classList && t.classList.contains('item-check')) return; 
+    if (t && t.closest && t.closest('.delete-item')) return; 
+    if (t && t.tagName && t.tagName.toLowerCase() === 'a') return; 
+    if (editor.classList.contains('hidden')) enterEdit(); 
+  });
+ editor.addEventListener('blur', function(){ 
+ exitEdit(true); 
+ const card = node.closest('.card'); 
+ if(card) { updateItemsCount(card); touchCardUpdated(card); } 
+ const col = node.closest('.column'); 
+ if (col) applyColumnFilter(col); 
+ }); 
+ editor.addEventListener('keydown', function(e){ 
+ const key = e.key || e.code || ''; 
+ if(key === 'Escape' || key === 'Esc'){ exitEdit(false); editor.blur(); } 
+ if((e.ctrlKey || e.metaKey) && (key === 'Enter')){ editor.blur(); } 
+ }); 
+  chk.addEventListener('change', function(e){ 
+    e.stopPropagation(); 
+    const card = node.closest('.card'); 
+    const itemsWrap = node.closest('.items');
+    if (card) {
+      // quando checado, mover o item para o fim do checklist
+      if (chk.checked) {
+        if (itemsWrap) itemsWrap.appendChild(node);
+      } else {
+        // quando deschecado, mover para o topo da lista
+        if (itemsWrap) {
+          const first = itemsWrap.querySelector('.checklist-item');
+          if (first && first !== node) itemsWrap.insertBefore(node, first);
+        }
+      }
+      touchCardUpdated(card);
+      // atualizar contadores/progresso
+      updateItemsCount(card);
+    }
+    const col = node.closest('.column'); if (col) applyColumnFilter(col); 
+  }); 
+ $('.delete-item', node).addEventListener('click', function(e){ 
+ e.stopPropagation(); 
+ node.remove(); 
+ const card = node.closest('.card'); 
+ if(card) { updateItemsCount(card); touchCardUpdated(card); } 
+ const col = node.closest('.column'); 
+ if (col) applyColumnFilter(col); 
+ }); 
+  syncView(); 
+  return node; 
+ } 
+ function updateItemsCount(cardNode){ 
+ const count = $$('.checklist-item', cardNode).length; 
+ const badge = $('.items-count', cardNode); 
+ if(badge) badge.textContent = String(count); 
+ // NOVO: atualizar barra de progresso sempre que o count mudar 
+ updateChecklistProgress(cardNode); 
+} 
+function updateChecklistProgress(cardNode){ 
+ if (!cardNode) return; 
+ const items = $$('.checklist-item', cardNode); 
+ const total = items.length; 
+ const checked = items.filter(it => $('.item-check', it)?.checked).length; 
+ const pct = total > 0 ? Math.round((checked / total) * 100) : 0; 
+ const wrap = $('.progress-wrap', cardNode); 
+ const bar = $('.progress-bar', cardNode); 
+ const prog = $('.progress', cardNode); 
+ const txt = $('.progress-text', cardNode); 
+ if (wrap && bar && prog && txt){ 
+ bar.style.width = pct + '%'; 
+ txt.textContent = pct + '%'; 
+ prog.setAttribute('aria-valuenow', String(pct)); 
+ prog.setAttribute('aria-valuemin', '0'); 
+ prog.setAttribute('aria-valuemax', '100'); 
+ prog.title = total > 0 ? `${checked}/${total} itens` : `0/0 itens`; 
+ } 
+} 
+ function getDragAfterElement(container, y){ 
+ const els = $$('.card:not(.dragging)', container); 
+ let closest = { offset: Number.POSITIVE_INFINITY, element: null }; 
+ els.forEach(function(el){ 
+ const box = el.getBoundingClientRect(); 
+ const offset = y - box.top - box.height / 2; 
+ if(offset < 0 && Math.abs(offset) < closest.offset){ 
+ closest = { offset: Math.abs(offset), element: el }; 
+ } 
+ }); 
+ return closest.element; 
+ } 
+ // ===== Filtro por coluna ===== 
+ function renderDescriptionWithHighlight(cardNode, term){ 
+ const ta = $('.card-desc', cardNode); 
+ const view = $('.desc-view', cardNode); 
+ if (!ta || !view) return; 
+ view.innerHTML = linkify(ta.value || ''); 
+ if (term) highlightMatchesInElement(view, term); 
+ } 
+ function applyColumnFilter(columnNode){ 
+ const input = $('.filter-cards', columnNode); 
+ const countEl = $('.filter-count', columnNode); 
+ const term = (input ? input.value : '') || ''; 
+ const nTerm = normalizeText(term); 
+ const cards = $$('.card', columnNode); 
+ const total = cards.length; 
+ let matched = 0; 
+ cards.forEach(card => { 
+ const title = normalizeText($('.card-title', card).value); 
+ const desc = normalizeText($('.card-desc', card).value); 
+ const match = !nTerm || title.includes(nTerm) || desc.includes(nTerm); 
+ card.style.display = match ? '' : 'none'; 
+ if (match) { 
+ matched++; 
+ renderDescriptionWithHighlight(card, term); 
+ } else { 
+ const ta = $('.card-desc', card); 
+ const view = $('.desc-view', card); 
+ if (view && ta) view.innerHTML = linkify(ta.value || ''); 
+ } 
+ }); 
+ if (countEl) countEl.textContent = `${matched}/${total}`; 
+ } 
+ // ===== Ordenação e agrupamento ===== 
+ function sortCardsByDate(columnNode, dir='desc'){ 
+ const wrap = $('.cards', columnNode); 
+ const cards = $$('.card', wrap); 
+ const parseKey = (card) => Date.parse(card.dataset.updated || card.dataset.created || 0) || 0; 
+ cards.sort((a,b)=>{ 
+ const da = parseKey(a), db = parseKey(b); 
+ return dir === 'asc' ? (da - db) : (db - da); 
+ }).forEach(c => wrap.appendChild(c)); 
+ applyColumnFilter(columnNode); 
+ } 
+ function groupByCompletion(columnNode){ 
+ const wrap = $('.cards', columnNode); 
+ const cards = $$('.card', wrap); 
+ cards.sort((a,b)=>{ 
+ const ac = $('.card-done', a).checked ? 1 : 0; 
+ const bc = $('.card-done', b).checked ? 1 : 0; 
+ if (ac === bc){ 
+ const da = Date.parse(a.dataset.updated || a.dataset.created || 0) || 0; 
+ const db = Date.parse(b.dataset.updated || b.dataset.created || 0) || 0; 
+ return db - da; // dentro do grupo, mais novos primeiro 
+ } 
+ return ac - bc; // não concluído (0) antes de concluído (1) 
+ }).forEach(c => wrap.appendChild(c)); 
+ applyColumnFilter(columnNode); 
+ } 
+ // ===== DnD de COLUNAS ===== 
+ function isInteractiveTarget(t){ 
+ return !!(t && (t.closest('button, input, textarea, select, label, a') 
+ || t.closest('.column-actions') 
+ || t.closest('.column-filter') 
+ || t.closest('.cards') 
+ || t.closest('.card'))); 
+ } 
+ function getColAfterElement(container, x){ 
+ const els = $$('.column:not(.dragging-col)', container); 
+ let closest = { offset: Number.POSITIVE_INFINITY, element: null }; 
+ els.forEach(function(el){ 
+ const box = el.getBoundingClientRect(); 
+ const offset = x - (box.left + box.width/2); 
+ if (offset < 0 && Math.abs(offset) < closest.offset){ 
+ closest = { offset: Math.abs(offset), element: el }; 
+ } 
+ }); 
+ return closest.element; 
+ } 
+ // habilita draggable somente se mousedown for em área não-interativa 
+ document.addEventListener('mousedown', function(e){ 
+ const col = e.target.closest && e.target.closest('.column'); 
+ if (!col) return; 
+ col.draggable = !isInteractiveTarget(e.target); 
+ }); 
+ // drag de coluna 
+ board.addEventListener('dragstart', function(e){ 
+ const col = e.target.closest && e.target.closest('.column'); 
+ if (!col || !col.draggable) return; 
+ col.classList.add('dragging-col'); 
+ try{ e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', col.dataset.id || 'col'); }catch(_){} 
+ }); 
+ board.addEventListener('dragover', function(e){ 
+ if (!$('.dragging-col')) return; 
+ e.preventDefault(); 
+ const draggingCol = $('.dragging-col'); 
+ const after = getColAfterElement(board, e.clientX); 
+ if (after == null){ board.appendChild(draggingCol); } 
+ else { board.insertBefore(draggingCol, after); } 
+ }); 
+ board.addEventListener('drop', function(e){ 
+ const draggingCol = $('.dragging-col'); 
+ if (draggingCol){ e.preventDefault(); draggingCol.classList.remove('dragging-col'); draggingCol.draggable = false; } 
+ }); 
+ board.addEventListener('dragend', function(){ 
+ const draggingCol = $('.dragging-col'); 
+ if (draggingCol){ draggingCol.classList.remove('dragging-col'); draggingCol.draggable = false; } 
+ }); 
+ // ===== Configurações / Metadados do board ===== 
+ let boardMeta = { 
+ ageColorRules: [] // [{ days: number, color: "#rrggbb" }] 
+ }; 
+ const settingsUI = { 
+ overlay: null, 
+ tplRow: null, 
+ rulesList: null, 
+ btnAdd: null, 
+ btnSave: null, 
+ btnCancel: null 
+ }; 
+ function isColorInputSupported() { 
+ const i = document.createElement('input'); 
+ i.setAttribute('type', 'color'); 
+ return i.type === 'color'; 
+ } 
+ function hexToRgb(hex){ 
+ const m = String(hex || '').trim().match(/^#?([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i); 
+ if(!m) return {r:0,g:0,b:0}; 
+ return { r: parseInt(m[1],16), g: parseInt(m[2],16), b: parseInt(m[3],16) }; 
+ } 
+ function idealTextOnBg(hex){ 
+ const {r,g,b} = hexToRgb(hex); 
+ const lum = (0.2126*r + 0.7152*g + 0.0722*b)/255; 
+ return lum > 0.6 ? '#000000' : '#ffffff'; 
+ } 
+ function applyColorSwatchToControl(control, color){ 
+ if(!control) return; 
+ control.style.backgroundColor = color; 
+ control.style.color = idealTextOnBg(color); 
+ control.style.borderColor = 'rgba(255,255,255,0.25)'; 
+ } 
+ function openSettingsModal() { 
+ ensureSettingsRefs(); 
+ renderSettingsRows(boardMeta.ageColorRules && boardMeta.ageColorRules.length 
+ ? boardMeta.ageColorRules 
+ : [{ days: 7, color: '#ffeb3b' }]); // padrão 
+ settingsUI.overlay.classList.remove('hidden'); 
+ const firstInput = settingsUI.rulesList.querySelector('.rule-days'); 
+ if (firstInput) firstInput.focus(); 
+ } 
+ function closeSettingsModal() { 
+ ensureSettingsRefs(); 
+ settingsUI.overlay.classList.add('hidden'); 
+ } 
+ function ensureSettingsRefs() { 
+ if (settingsUI.overlay) return; 
+ settingsUI.overlay = document.getElementById('settingsOverlay'); 
+ settingsUI.tplRow = document.getElementById('tpl-rule-row'); 
+ settingsUI.rulesList = document.getElementById('rulesList'); 
+ settingsUI.btnAdd = document.getElementById('btnAddRule'); 
+ settingsUI.btnSave = document.getElementById('btnSaveSettings'); 
+ settingsUI.btnCancel = document.getElementById('btnCancelSettings'); 
+ // Eventos 
+ settingsUI.overlay.querySelector('.modal-close').addEventListener('click', closeSettingsModal); 
+ settingsUI.btnCancel.addEventListener('click', closeSettingsModal); 
+ settingsUI.btnSave.addEventListener('click', () => { 
+ boardMeta.ageColorRules = collectSettingsRows(); 
+ closeSettingsModal(); 
+ applyDueColorsAll(); 
+ }); 
+ settingsUI.btnAdd.addEventListener('click', () => addSettingsRow()); 
+ // ESC fecha 
+ settingsUI.overlay.addEventListener('keydown', (e) => { 
+ const key = e.key || e.code || ''; 
+ if (key === 'Escape' || key === 'Esc') closeSettingsModal(); 
+ }); 
+ // clique fora fecha 
+ settingsUI.overlay.addEventListener('click', (e) => { 
+ if (e.target === settingsUI.overlay) closeSettingsModal(); 
+ }); 
+ } 
+ function renderSettingsRows(rules) { 
+ ensureSettingsRefs(); 
+ settingsUI.rulesList.innerHTML = ''; 
+ (rules || []).forEach(r => addSettingsRow(r.days, r.color)); 
+ if ((rules || []).length === 0) addSettingsRow(); 
+ } 
+ function addSettingsRow(days = '', color = '#ffeb3b') { 
+ const row = settingsUI.tplRow.content.firstElementChild.cloneNode(true); 
+ const daysInput = $('.rule-days', row); 
+ const colorInput = $('.rule-color', row); 
+ const colorSelect = $('.rule-color-select', row); 
+ const removeBtn = $('.rule-remove', row); 
+ daysInput.value = days; 
+ colorInput.value = color; 
+ colorSelect.value = color; 
+ const supported = isColorInputSupported(); 
+ colorInput.style.display = supported ? '' : 'none'; 
+ colorSelect.style.display = supported ? 'none' : ''; 
+ function syncAndPaint(newColor){ 
+ if (supported) { 
+ colorInput.value = newColor; 
+ applyColorSwatchToControl(colorInput, newColor); 
+ const opt = Array.from(colorSelect.options).find(o => o.value.toLowerCase() === newColor.toLowerCase()); 
+ if (opt) colorSelect.value = opt.value; 
+ } else { 
+ colorSelect.value = newColor; 
+ applyColorSwatchToControl(colorSelect, newColor); 
+ } 
+ } 
+ colorInput.addEventListener('input', () => { 
+ const val = colorInput.value || '#000000'; 
+ syncAndPaint(val); 
+ }); 
+ colorSelect.addEventListener('change', () => { 
+ const val = colorSelect.value || '#000000'; 
+ syncAndPaint(val); 
+ }); 
+ removeBtn.addEventListener('click', () => { 
+ row.remove(); 
+ }); 
+ syncAndPaint(color); 
+ settingsUI.rulesList.appendChild(row); 
+ } 
+ function collectSettingsRows() { 
+ ensureSettingsRefs(); 
+ const rules = []; 
+ $$('.rule-row', settingsUI.rulesList).forEach(row => { 
+ const daysEl = $('.rule-days', row); 
+ const colorInput = $('.rule-color', row); 
+ const colorSelect = $('.rule-color-select', row); 
+ const valueDays = parseInt(daysEl.value, 10); 
+ if (Number.isFinite(valueDays) && valueDays >= 0) { 
+ const color = isColorInputSupported() ? (colorInput.value || '#000000') : (colorSelect.value || '#000000'); 
+ rules.push({ days: valueDays, color: color }); 
+ } 
+ }); 
+ rules.sort((a,b) => a.days - b.days); 
+ return rules; 
+ } 
+ 
+
+
+// ====== NOVO: suporte a Modal de Card (com título dinâmico) ======
+const CARD_MODAL_ANIM_MS = 224;
+function ensureCardModalRefs(){
+  if (window.__cardModal) return window.__cardModal;
+  const overlay = document.getElementById('cardOverlay');
+  const content = document.getElementById('cardModalContent');
+  const closeBtn = overlay ? overlay.querySelector('.modal-close') : null;
+  window.__cardModal = {
+    overlay, content, closeBtn, currentCard: null, columnGhost: null,
+    _titleInput: null, _titleHandler: null, isClosing: false, closeTimer: null
+  };
+  if (overlay){
+    if (closeBtn) closeBtn.addEventListener('click', closeCardModal);
+    overlay.addEventListener('click', function(e){ if (e.target === overlay) closeCardModal(); });
+    overlay.addEventListener('keydown', function(e){ const k = e.key || e.code || ''; if (k === 'Escape' || k === 'Esc') closeCardModal(); });
+  }
+  return window.__cardModal;
+}
+function openCardModal(card){
+  const modal = ensureCardModalRefs();
+  if (!modal || !modal.overlay || !modal.content) return;
+  if (modal.closeTimer){ clearTimeout(modal.closeTimer); modal.closeTimer = null; }
+  modal.isClosing = false;
+  if (modal.currentCard) closeCardModal(true);
+  // card fantasma para manter contexto visual da posição original
+  modal.columnGhost = card.cloneNode(true);
+  modal.columnGhost.classList.add('card-modal-ghost');
+  modal.columnGhost.setAttribute('aria-hidden', 'true');
+  card.parentNode.insertBefore(modal.columnGhost, card);
+  // expande o card
+  setCollapsed(card, false);
+  // move para o modal
+  modal.content.appendChild(card);
+  modal.currentCard = card;
+  // --- título dinâmico ---
+  const titleInput = card.querySelector('.card-title');
+  const titleEl = modal.overlay ? modal.overlay.querySelector('#cardModalTitle') : null;
+  function __syncModalTitle(){ if (titleEl) titleEl.textContent = (titleInput && titleInput.value.trim()) ? titleInput.value.trim() : 'Sem título'; }
+  __syncModalTitle();
+  if (titleInput){
+    modal._titleInput = titleInput;
+    modal._titleHandler = __syncModalTitle;
+    titleInput.addEventListener('input', __syncModalTitle);
+    titleInput.addEventListener('change', __syncModalTitle);
+  }
+  modal.overlay.classList.remove('hidden');
+  modal.overlay.classList.remove('closing', 'open');
+  modal.overlay.classList.add('opening');
+  modal.overlay.getBoundingClientRect();
+  requestAnimationFrame(function(){
+    modal.overlay.classList.remove('opening');
+    modal.overlay.classList.add('open');
+  });
+  try { (titleInput||{}).focus?.(); } catch(_){}
+}
+function closeCardModal(immediate){
+  const modal = ensureCardModalRefs();
+  if (!modal || !modal.overlay) return;
+  const shouldCloseInstant = immediate === true;
+  const finishClose = function(){
+    if (modal._titleInput && modal._titleHandler){
+      modal._titleInput.removeEventListener('input', modal._titleHandler);
+      modal._titleInput.removeEventListener('change', modal._titleHandler);
+      modal._titleInput = null;
+      modal._titleHandler = null;
+    }
+    if (modal.currentCard && modal.columnGhost && modal.columnGhost.parentNode){
+      modal.columnGhost.parentNode.insertBefore(modal.currentCard, modal.columnGhost);
+      modal.columnGhost.remove();
+    }
+    if (modal.currentCard) setCollapsed(modal.currentCard, true);
+    modal.currentCard = null;
+    modal.columnGhost = null;
+    modal.overlay.classList.remove('opening', 'open', 'closing');
+    modal.overlay.classList.add('hidden');
+    modal.isClosing = false;
+    if (modal.closeTimer){ clearTimeout(modal.closeTimer); modal.closeTimer = null; }
+  };
+  if (!modal.currentCard) {
+    modal.overlay.classList.remove('opening', 'open', 'closing');
+    modal.overlay.classList.add('hidden');
+    return;
+  }
+  if (modal.isClosing) return;
+  modal.isClosing = true;
+  modal.overlay.classList.remove('opening', 'open');
+  modal.overlay.classList.add('closing');
+  if (shouldCloseInstant) {
+    finishClose();
+    return;
+  }
+  modal.closeTimer = setTimeout(finishClose, CARD_MODAL_ANIM_MS);
+}
+// Delegação para botões que abrem em modal
+// (funciona com .open-card-modal ou .expand-card)
+document.addEventListener('click', function(e){
+  const btn = (e.target && e.target.closest && (e.target.closest('.open-card-modal') || e.target.closest('.expand-card')));
+  if (!btn) return;
+  e.stopPropagation();
+  const card = btn.closest('.card');
+  if (card) openCardModal(card);
+});
+
+ // ===== Menu ===== 
+ document.getElementById('btnAddColumn').addEventListener('click', function(){ 
+ const col = createColumn(uid('col'), 'Nova coluna'); 
+ board.appendChild(col); 
+ applyColumnFilter(col); 
+ }); 
+ document.getElementById('btnSettings').addEventListener('click', function(){ 
+ openSettingsModal(); 
+ }); 
+ document.getElementById('btnSave').addEventListener('click', function(){ 
+ try{ 
+ const data = serializeBoard(); 
+ const file = `kanban-${new Date().toISOString().replace(/[T:.Z]/g,'-')}.json`; 
+ download(file, JSON.stringify(data, null, 2)); 
+ }catch(err){ 
+ console.error('Erro ao salvar JSON:', err); 
+ alert('Falha ao salvar. Veja o console para detalhes.'); 
+ } 
+ }); 
+ const fileInput = document.getElementById('fileJson'); 
+ document.getElementById('btnLoad').addEventListener('click', function(){ fileInput.click(); }); 
+ fileInput.addEventListener('change', async function(e){ 
+ const file = e.target.files && e.target.files[0]; 
+ if(!file) return; 
+ try{ 
+ const txt = await file.text(); 
+ const data = JSON.parse(txt); 
+ await loadBoardSequential(data); 
+ }catch(err){ 
+ console.error('Erro ao ler/carregar JSON:', err); 
+ alert('Falha ao carregar JSON. Verifique o arquivo.'); 
+ }finally{ 
+ fileInput.value = ''; 
+ } 
+ }); 
+ // Clique fora de qualquer card → minimiza todos; clique em um card → expande somente aquele 
+document.addEventListener('click', function(e){ 
+const clickedCard = e.target.closest && e.target.closest('.card'); 
+ $$('.card').forEach(function(card){ 
+ setCollapsed(card, card !== clickedCard); 
+ }); 
+}); 
+ // ===== AUTOSAVE (LocalStorage) ===== 
+ (function enableAutosave(){ 
+ const AUTOSAVE_KEY = 'kanbanBoardAutosave.v1'; 
+ let lastSnapshot = null; 
+ function debounce(fn, ms){ let t; return function(){ clearTimeout(t); const args = arguments; t = setTimeout(function(){ fn.apply(null, args); }, ms); }; } 
+ function safeSerialize(){ try{ return JSON.stringify(serializeBoard()); } catch(e){ console.warn('Autosave: serialize failed', e); return null; } } 
+ function saveToLocalIfChanged(){ 
+ const json = safeSerialize(); 
+ if(!json) return; 
+ if(json === lastSnapshot) return; // no meaningful change 
+ try{ localStorage.setItem(AUTOSAVE_KEY, json); lastSnapshot = json; } 
+ catch(e){ console.warn('Autosave: localStorage setItem failed', e); } 
+ } 
+ const scheduleAutosave = debounce(saveToLocalIfChanged, 500); 
+ async function restoreFromAutosave(){ 
+ try{ 
+ const json = localStorage.getItem(AUTOSAVE_KEY); 
+ if(!json) return false; 
+ const data = JSON.parse(json); 
+ const hasColumns = data && Array.isArray(data.columns) && data.columns.length > 0; 
+ if(!hasColumns) return false; 
+ await loadBoardSequential(data); 
+ lastSnapshot = json; // align snapshot to avoid immediate re-save 
+ return true; 
+ }catch(e){ console.warn('Autosave: restore failed', e); return false; } 
+ } 
+ // Global listeners for edits (ignore column filters) 
+ document.addEventListener('input', function(e){ if(e.target && e.target.closest && e.target.closest('.column-filter')) return; scheduleAutosave(); }, true); 
+ document.addEventListener('change', function(e){ if(e.target && e.target.closest && e.target.closest('.column-filter')) return; scheduleAutosave(); }, true); 
+ // Drops (cards/columns) 
+ if (typeof board !== 'undefined' && board){ 
+ board.addEventListener('drop', function(){ scheduleAutosave(); }, true); 
+ } 
+ // Structural changes 
+ if (typeof board !== 'undefined' && board){ 
+ const mo = new MutationObserver(function(){ scheduleAutosave(); }); 
+ mo.observe(board, { childList: true, subtree: true }); 
+ } 
+ // Try to restore on first load 
+ (async function(){ const restored = await restoreFromAutosave(); if(!restored){ await loadBoardSequential(getDefaultBoardData()); } })(); 
+// Sync spacer height to match the topbar height so it sits immediately below the menu
+function syncTopbarSpacer(){
+  try{
+    const tb = document.querySelector('.topbar');
+    const sp = document.getElementById('topbarSpacer');
+    if (!tb || !sp) return;
+    const h = Math.ceil(tb.getBoundingClientRect().height);
+    sp.style.height = h + 'px';
+    // place spacer just beneath topbar so it does not appear above it
+    sp.style.top = '0px';
+    // ensure spacer uses the current board bg color variable
+    const rootStyles = getComputedStyle(document.documentElement);
+    const bg = rootStyles.getPropertyValue('--bg') || '';
+    if (bg) sp.style.background = bg.trim();
+  }catch(e){ /* ignore */ }
+}
+window.addEventListener('resize', syncTopbarSpacer);
+// observe topbar size changes (responsive) and adjust
+const tbObs = new ResizeObserver(syncTopbarSpacer);
+const tbEl = document.querySelector('.topbar'); if (tbEl) tbObs.observe(tbEl);
+// initial sync (defer a frame to ensure layout computed)
+requestAnimationFrame(syncTopbarSpacer);
+ })(); 
+// ===== Mobile menu behaviour: move menu into a vertical mobile panel on narrow viewports =====
+(function(){
+  const topbar = document.querySelector('.topbar');
+  const desktopMenu = topbar ? topbar.querySelector('.menu') : null;
+  const mobileMenu = document.getElementById('mobileMenu');
+  const hamburger = document.getElementById('hamburgerBtn');
+  if(!desktopMenu || !mobileMenu || !hamburger) return;
+
+  // Keep a reference to original parent/position so we can restore
+  const originalParent = desktopMenu.parentElement;
+  const originalNext = desktopMenu.nextSibling;
+
+  function placeMenuMobile(){
+    if(window.innerWidth <= 640){
+      // move menu into mobile container if not already
+      if(!mobileMenu.contains(desktopMenu)){
+        const inner = document.createElement('div');
+        inner.className = 'mobile-menu-inner';
+        mobileMenu.appendChild(inner);
+        inner.appendChild(desktopMenu);
+      }
+      hamburger.setAttribute('aria-expanded','false');
+      mobileMenu.setAttribute('aria-hidden','true');
+      mobileMenu.classList.remove('open');
+      // position mobile menu directly below the topbar and let its height fit-content
+      const rect = topbar.getBoundingClientRect();
+      mobileMenu.style.top = Math.ceil(rect.bottom) + 'px';
+      mobileMenu.style.height = '';
+    } else {
+      // restore menu to original place
+      if(!originalParent.contains(desktopMenu)){
+        originalParent.insertBefore(desktopMenu, originalNext);
+      }
+      mobileMenu.classList.remove('open');
+      mobileMenu.setAttribute('aria-hidden','true');
+      hamburger.setAttribute('aria-expanded','false');
+      // clear mobile sizing overrides
+      mobileMenu.style.top = '';
+      mobileMenu.style.height = '';
+    }
+    // when not in fullscreen, JS may position the mobile menu under the topbar; we clear here
+  }
+
+  // Toggle open/close
+  hamburger.addEventListener('click', function(){
+    const open = mobileMenu.classList.toggle('open');
+    mobileMenu.setAttribute('aria-hidden', String(!open));
+    hamburger.setAttribute('aria-expanded', String(open));
+    // recompute top in case layout changed
+    const rect = topbar.getBoundingClientRect();
+    mobileMenu.style.top = Math.ceil(rect.bottom) + 'px';
+  });
+
+  // Close mobile menu if clicking outside
+  document.addEventListener('click', function(e){
+    if(!mobileMenu.classList.contains('open')) return;
+    if(e.target === hamburger) return;
+    if(mobileMenu.contains(e.target)) return;
+    mobileMenu.classList.remove('open');
+    mobileMenu.setAttribute('aria-hidden','true');
+    hamburger.setAttribute('aria-expanded','false');
+  }, true);
+
+  window.addEventListener('resize', placeMenuMobile);
+  // initial placement
+  placeMenuMobile();
+})();
+ </script> 
+</body> 
+</html>
+
+
+
+
+
