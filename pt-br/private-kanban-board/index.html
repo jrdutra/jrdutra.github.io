@@ -1,0 +1,201 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR" prefix="og: https://ogp.me/ns#">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="application-name" content="KanbanApp" />
+  <meta name="author" content="KanbanApp" />
+  <meta name="theme-color" content="#7c4dff" />
+  <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1" />
+  <meta name="description" content="Use abordagem de quadro Kanban privado com tratamento local e menor exposição externa." />
+
+  <title>Quadro Kanban Privado | Mais Controle de Exposição de Dados</title>
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <link rel="shortcut icon" href="../../favicon.svg" />
+
+  <link rel="canonical" href="https://kanbanapp.io/pt-br/private-kanban-board/" />
+  <link rel="alternate" hreflang="en" href="https://kanbanapp.io/private-kanban-board/" />
+  <link rel="alternate" hreflang="pt-BR" href="https://kanbanapp.io/pt-br/private-kanban-board/" />
+  <link rel="alternate" hreflang="x-default" href="https://kanbanapp.io/private-kanban-board/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://kanbanapp.io/pt-br/private-kanban-board/" />
+  <meta property="og:title" content="Quadro Kanban Privado | Mais Controle de Exposição de Dados" />
+  <meta property="og:description" content="Use abordagem de quadro Kanban privado com tratamento local e menor exposição externa." />
+  <meta property="og:image" content="https://kanbanapp.io/og-image.jpg" />
+
+  <style>
+    :root {
+      --bg: #13131a;
+      --panel: #1e1e2a;
+      --panel-2: #2c2c3d;
+      --text: #f5f5ff;
+      --muted: #b8b8c7;
+      --primary: #7c4dff;
+      --primary-hover: #6b3ff2;
+      --border: #3b3b52;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(circle at top, #1e1e2f 0%, var(--bg) 55%);
+      color: var(--text);
+      padding: 24px;
+    }
+    main {
+      width: min(980px, 100%);
+      margin: 0 auto;
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: clamp(24px, 4vw, 48px);
+      box-shadow: 0 20px 40px rgba(0,0,0,.35);
+    }
+    h1 { margin: 0 0 14px; text-align: center; font-size: clamp(1.6rem, 4vw, 2.3rem); line-height: 1.2; }
+    h2 { margin: 28px 0 10px; font-size: clamp(1.08rem, 2.4vw, 1.35rem); }
+    p { margin: 0 0 12px; color: var(--muted); line-height: 1.65; }
+    .site-brand { display: inline-flex; align-items: center; gap: 10px; }
+    .site-brand-icon { width: 44px; height: 44px; border-radius: 6px; }
+    .site-brand-name { font-weight: 800; color: var(--text); }
+    .tagline { margin: 6px 0 0; color: var(--muted); }
+    .center { text-align: center; max-width: 82ch; margin: 0 auto; }
+    .home-nav { margin: 0 0 14px; }
+    .home-link { text-decoration: none; padding: 9px 14px; border-radius: 10px; border: 1px solid var(--border); background: var(--panel-2); color: var(--text); font-weight: 700; display: inline-block; }
+    .home-link:hover { background: var(--primary); color: #fff; }
+    .hero-image { width: 100%; border-radius: 12px; border: 1px solid var(--border); background: rgba(255,255,255,.03); margin-top: 0; }
+    .metrics {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(220px, 1fr));
+      gap: 10px;
+    }
+    .metric {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(255,255,255,.02);
+      padding: 12px 14px;
+    }
+    .metric strong { display: block; font-size: 1.15rem; color: var(--text); }
+    .callout {
+      margin-top: 14px;
+      border-left: 3px solid var(--primary);
+      background: rgba(124,77,255,.08);
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .checklist {
+      margin-top: 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(255,255,255,.02);
+      padding: 0 14px 12px;
+    }
+    .checklist h2 { margin: 0 0 10px; }
+    .checklist ul { margin: 0; padding-left: 20px; color: var(--muted); line-height: 1.6; }
+    .cta { margin: 24px 0 8px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+    .btn { text-decoration: none; padding: 12px 18px; border-radius: 12px; border: 1px solid transparent; font-weight: 700; display: inline-block; }
+    .btn-download { background: var(--panel-2); color: var(--text); border-color: var(--border); }
+    .btn-open { background: var(--primary); color: #fff; }
+    .btn-open:hover { background: var(--primary-hover); }
+    .related { margin-top: 22px; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: rgba(255,255,255,.02); }
+    .related h2 { margin: 0 0 10px; }
+    .related ul { margin: 0; padding-left: 20px; }
+    .related a { color: #c9b9ff; text-underline-offset: 2px; }
+    footer { text-align: center; color: rgba(255,255,255,.35); margin-top: 18px; font-size: .9rem; }
+    @media (max-width: 760px) {
+      .metrics { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      body { padding: 14px; }
+      .btn { width: 100%; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <header role="banner" aria-label="Site header" class="center">
+    <div class="site-brand">
+      <img class="site-brand-icon" src="../../favicon.svg" alt="" aria-hidden="true" />
+      <div>
+        <div class="site-brand-name">KanbanApp</div>
+        <p class="tagline">Quadro Kanban online e offline</p>
+      </div>
+    </div>
+  </header>
+
+  <div aria-hidden="true" style="height:18px;"></div>
+  <main>
+    <nav class="home-nav" aria-label="Home navigation">
+      <a class="home-link" rel="home" href="/pt-br/">Início</a>
+    </nav>
+
+    <header>
+      <h1>Quadro Kanban Privado para Fluxos Internos Sensíveis</h1>
+      <p class="center">Boards de planejamento costumam conter riscos de entrega, gargalos e prioridades internas. Uma configuração private-first reduz exposição desnecessária mantendo velocidade.</p>
+      <img class="hero-image" src="../../og-image.svg" alt="KanbanApp board preview" width="1200" height="630" loading="eager" decoding="async" />
+    </header>
+
+    <section class="metrics" aria-label="Key numbers">
+      <article class="metric"><strong>0 conta externa obrigatória</strong><span>Sem fluxo obrigatório de identidade externa para iniciar.</span></article>
+      <article class="metric"><strong>Tratamento local-first</strong><span>Dados podem permanecer em contexto local de navegador.</span></article>
+      <article class="metric"><strong>Exportação controlada</strong><span>JSON pode seguir regras internas de acesso e retenção.</span></article>
+      <article class="metric"><strong>Baixa dependência externa</strong><span>Menos pontos externos no fluxo diário de planejamento.</span></article>
+    </section>
+
+    <section>
+      <h2>O que “privado” significa na prática</h2>
+      <p>Privado aqui significa minimizar transmissão desnecessária e concentrar controle em ambientes gerenciados pela própria equipe. Isso simplifica discussões de conformidade e aprovação interna.</p>
+    </section>
+
+    <section>
+      <h2>Valor operacional com indicadores mensuráveis</h2>
+      <p>Você pode acompanhar KPIs como número de integrações externas exigidas, tempo de recuperação após limpeza de dados e percentual de boards com backup JSON em dia.</p>
+    </section>
+
+    <section>
+      <h2>Base mínima de governança recomendada</h2>
+      <p>Para convencer em gestão de risco, formalize responsável, período de retenção, frequência de exportação e testes de restauração. Assim a privacidade vira prática mensurável.</p>
+      <div class="callout">These values are practical planning references you can validate in your own workflow.</div>
+    </section>
+
+    <section class="checklist" aria-label="Decision checklist">
+      <h2>Checklist de decisão para estratégia de quadro privado</h2>
+      <ul>
+        <li>Seu board contém prioridades internas ou riscos sensíveis de entrega?</li>
+        <li>Você precisa reduzir dependência de infraestrutura externa de conta?</li>
+        <li>Seu time consegue cumprir política de backup e retenção?</li>
+      </ul>
+    </section>
+
+    <section class="cta" aria-label="Primary actions">
+      <a class="btn btn-download" href="../kanbanapp.html" download="kanbanapp.html">Download do kanbanapp.html</a>
+      <a class="btn btn-open" href="../kanbanapp.html" target="_blank" rel="noopener noreferrer">Acessar app</a>
+    </section>
+
+    <aside class="related" aria-label="Related content links">
+      <h2>Conteúdos relacionados</h2>
+      <ul>
+        <li><a href="/pt-br/kanban-offline/">Kanban Offline</a></li>
+        <li><a href="/pt-br/kanban-sem-login/">Kanban Sem Cadastro</a></li>
+        <li><a href="/pt-br/private-kanban-board/">Quadro Kanban Privado</a></li>
+        <li><a href="/pt-br/download-kanban-html/">Download do Kanban em HTML</a></li>
+        <li><a href="/pt-br/alternativa-board-em-nuvem/">Alternativa às Soluções de Board em Nuvem</a></li>
+      </ul>
+    </aside>
+  </main>
+
+  <footer>
+    <p>© 2026 KanbanApp</p>
+  </footer>
+</body>
+</html>
+
+
+
+
+
+
+
+
+

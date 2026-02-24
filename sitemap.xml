@@ -1,21 +1,113 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://kanbanapp.io/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-br" href="https://kanbanapp.io/pt-br/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kanbanapp.io/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kanbanapp.io/" />
     <lastmod>2026-02-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://kanbanapp.io/en/</loc>
+    <loc>https://kanbanapp.io/offline-kanban-app/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-br" href="https://kanbanapp.io/pt-br/kanban-offline/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kanbanapp.io/offline-kanban-app/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kanbanapp.io/" />
     <lastmod>2026-02-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://kanbanapp.io/pt-br/</loc>
+    <loc>https://kanbanapp.io/kanban-no-signup/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-br" href="https://kanbanapp.io/pt-br/kanban-sem-login/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kanbanapp.io/kanban-no-signup/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kanbanapp.io/" />
+    <lastmod>2026-02-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://kanbanapp.io/private-kanban-board/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-br" href="https://kanbanapp.io/pt-br/private-kanban-board/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kanbanapp.io/private-kanban-board/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kanbanapp.io/" />
     <lastmod>2026-02-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+  <url>
+    <loc>https://kanbanapp.io/cloud-board-alternative/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-br" href="https://kanbanapp.io/pt-br/alternativa-board-em-nuvem/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kanbanapp.io/cloud-board-alternative/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kanbanapp.io/" />
+    <lastmod>2026-02-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://kanbanapp.io/download-kanban-html/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-br" href="https://kanbanapp.io/pt-br/download-kanban-html/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kanbanapp.io/download-kanban-html/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kanbanapp.io/" />
+    <lastmod>2026-02-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://kanbanapp.io/pt-br/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-br" href="https://kanbanapp.io/pt-br/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kanbanapp.io/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kanbanapp.io/" />
+    <lastmod>2026-02-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://kanbanapp.io/pt-br/kanban-offline/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-br" href="https://kanbanapp.io/pt-br/kanban-offline/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kanbanapp.io/offline-kanban-app/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kanbanapp.io/" />
+    <lastmod>2026-02-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://kanbanapp.io/pt-br/kanban-sem-login/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-br" href="https://kanbanapp.io/pt-br/kanban-sem-login/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kanbanapp.io/kanban-no-signup/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kanbanapp.io/" />
+    <lastmod>2026-02-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://kanbanapp.io/pt-br/download-kanban-html/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-br" href="https://kanbanapp.io/pt-br/download-kanban-html/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kanbanapp.io/download-kanban-html/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kanbanapp.io/" />
+    <lastmod>2026-02-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://kanbanapp.io/pt-br/private-kanban-board/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-br" href="https://kanbanapp.io/pt-br/private-kanban-board/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kanbanapp.io/private-kanban-board/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kanbanapp.io/" />
+    <lastmod>2026-02-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://kanbanapp.io/pt-br/alternativa-board-em-nuvem/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-br" href="https://kanbanapp.io/pt-br/alternativa-board-em-nuvem/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://kanbanapp.io/cloud-board-alternative/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://kanbanapp.io/" />
+    <lastmod>2026-02-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
 </urlset>
+
