@@ -276,22 +276,59 @@
       background: #2c2c3d;
       color: var(--text);
       border-radius: 10px;
-      padding: 8px 10px;
+      padding: 8px;
       font-size: 1rem;
       line-height: 1;
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
     }
 
     .quick-links-menu summary::-webkit-details-marker { display: none; }
 
+    .quick-links-toggle {
+      width: 20px;
+      height: 14px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .quick-links-toggle span {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: currentColor;
+      border-radius: 2px;
+      transition: transform .15s ease, opacity .15s ease;
+    }
+
+    .quick-links-toggle span:nth-child(1) { top: 0; }
+    .quick-links-toggle span:nth-child(2) { top: 6px; }
+    .quick-links-toggle span:nth-child(3) { top: 12px; }
+
+    .quick-links-menu details[open] .quick-links-toggle span:nth-child(1) {
+      transform: translateY(6px) rotate(45deg);
+    }
+
+    .quick-links-menu details[open] .quick-links-toggle span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .quick-links-menu details[open] .quick-links-toggle span:nth-child(3) {
+      transform: translateY(-6px) rotate(-45deg);
+    }
+
     .quick-links-list {
-      margin: 8px 0 0;
+      margin: 6px 0 0;
       padding: 10px 12px;
       list-style: none;
       border: 1px solid var(--border);
       border-radius: 10px;
       background: #1e1e2a;
       min-width: 240px;
-      box-shadow: 0 14px 28px rgba(0,0,0,.35);
+      box-shadow: 0 22px 46px rgba(0,0,0,.68), 0 8px 18px rgba(0,0,0,.52);
     }
 
     .quick-links-list li + li { margin-top: 8px; }
@@ -509,7 +546,13 @@
   <main id="maincontent" aria-label="KanbanApp main page">
     <nav class="quick-links-menu" aria-label="Related content menu">
       <details>
-        <summary aria-label="Open related content menu" title="Related content">☰</summary>
+        <summary aria-label="Open related content menu" title="Related content">
+          <span class="quick-links-toggle" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </summary>
         <ul class="quick-links-list">
           <li><a class="text-link" href="/download-kanban-html/">Download Kanban HTML</a></li>
           <li><a class="text-link" href="/kanban-no-signup/">Kanban With No Signup</a></li>
@@ -739,6 +782,35 @@
   </footer>
 
   <script>
+    (function () {
+      var menuDetails = document.querySelector('.quick-links-menu details');
+      if (!menuDetails) return;
+
+      function closeMenu() {
+        if (menuDetails.hasAttribute('open')) {
+          menuDetails.removeAttribute('open');
+        }
+      }
+
+      document.addEventListener('click', function (event) {
+        if (!menuDetails.hasAttribute('open')) return;
+        if (menuDetails.contains(event.target)) return;
+        closeMenu();
+      }, true);
+
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') closeMenu();
+      });
+
+      var links = menuDetails.querySelectorAll('.quick-links-list a');
+      for (var i = 0; i < links.length; i += 1) {
+        var link = links[i];
+        link.addEventListener('click', function () {
+          closeMenu();
+        });
+      }
+    })();
+
     // Language preference only. Does not affect board JSON logic.
     (function () {
       const LANG_KEY = "kanbanapp.lang.v1";
