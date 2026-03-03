@@ -63,8 +63,15 @@
   color: var(--text);
   box-shadow: 0 10px 26px rgba(0,0,0,0.28);
 }
- .brand{ font-weight: 700; letter-spacing: 0.3px; display: inline-flex; align-items: center; gap: 8px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.55)); } 
+.brand{ font-weight: 700; letter-spacing: 0.3px; display: inline-flex; align-items: center; gap: 8px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.55)); } 
 .brand{ font-size: 120%; }
+.brand-link,
+.brand-link:visited,
+.brand-link:hover,
+.brand-link:active{
+  color: inherit;
+  text-decoration: none;
+}
 .brand-icon{ width: 24px; height: 24px; display: inline-block; border-radius: 6px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.55)); }
  .menu{ display: flex; gap: 8px; align-items: center; flex-wrap: wrap; } 
  button, .btn{ 
@@ -122,8 +129,8 @@
 .board-scroll-overlay{ position: fixed; left: 0; right: 0; bottom: 0; height: 30px; background: transparent; pointer-events: none; z-index: 6; }
  } 
  .column{ 
-  min-width: 320px;
-  max-width: 380px;
+  min-width: 352px;
+  max-width: 418px;
   display: flex;
   flex-direction: column;
   /* Aplicar visual do primeiro quadro em index.html: fundo sutil, borda neutra, radius maior e sombra mais pronunciada */
@@ -232,6 +239,9 @@
  transition: gap .52s cubic-bezier(.2,.9,.2,1);
  } 
  .card:hover{ background: var(--card-hover); } 
+ .card.dragging{
+ opacity: 0.45;
+ }
  .card.completed{ 
  background: var(--card-completed); 
  border-color: #333; 
@@ -350,6 +360,9 @@
  padding: 8px 10px; 
  font-family: inherit; 
  } 
+ .card-desc.empty-desc{
+ min-height: calc(2.2em + 20px);
+ }
  .render{ 
  border-left: 3px solid var(--purple); 
  background: rgba(255,255,255,0.04); 
@@ -390,6 +403,15 @@
  font-size: 13px; 
  color: var(--muted); 
  } 
+ .filter-checklist{
+ width: 100%;
+ background: var(--panel-2);
+ color: var(--text);
+ border: 1px solid var(--border);
+ border-radius: 8px;
+ padding: 8px 10px;
+ font-size: 13px;
+ }
  .items{ display: flex; flex-direction: column; gap: 8px; } 
  .checklist-item{ 
  display: grid; 
@@ -400,9 +422,24 @@
  border: 1px solid var(--border); 
  border-radius: 8px; 
  padding: 8px; 
- cursor: text; 
+ cursor: default; 
  } 
-/* drag-handle removed: using item-level drag instead */
+ .item-drag-handle{
+  width: 20px;
+  height: 20px;
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  user-select: none;
+  line-height: 1;
+  font-size: 12px;
+  background: rgba(255,255,255,0.02);
+ }
+ .item-drag-handle:active{ cursor: grabbing; }
  .item-view{ 
  grid-column: 3 / 4; 
  color: var(--muted); 
@@ -411,8 +448,31 @@
  text-overflow: ellipsis; 
  max-width: 100%; 
  align-self: center;
+ cursor: text;
  }
  .item-view a{ color: #90caf9; text-decoration: underline; } 
+ .item-actions{
+ display: flex;
+ align-items: center;
+ gap: 6px;
+ }
+ .open-item-note{
+ color: #ffffff;
+ display: inline-flex;
+ align-items: center;
+ justify-content: center;
+ min-width: 28px;
+ min-height: 28px;
+ padding: 4px 6px;
+ }
+ .open-item-note svg{
+ width: 14px;
+ height: 14px;
+ display: block;
+ }
+ .open-item-note.has-content{
+ color: var(--progress-color, var(--purple));
+ }
  .item-editor{ 
  grid-column: 1 / -1; 
  margin-left: 26px; 
@@ -429,7 +489,9 @@
  .hidden{ display: none !important; } 
  /* Card colapsado: mostra só header */ 
  .card.collapsed{ cursor: pointer; gap: 0; } 
+ .card.collapsed .card-header { grid-template-columns: 1fr; }
  .card.collapsed .card-header-actions { display: none; } 
+ .card.collapsed .card-title { grid-column: 1 / -1; }
  .card.collapsed .card-body { max-height: 0; opacity: 0; pointer-events: none; } 
  /* Título quando concluído */ 
  .card.completed .card-title{ 
@@ -511,6 +573,21 @@
  .rules-actions { margin-top: 6px; } 
  .modal-close { background: transparent; border: 1px dashed var(--border); } 
  .modal-close:hover { background: rgba(255,255,255,0.06); } 
+ .checklist-transfer-modal{
+ width: auto;
+ max-width: 92vw;
+ }
+ .checklist-transfer-actions{
+ padding: 12px;
+ display: flex;
+ flex-direction: column;
+ gap: 8px;
+ min-width: 220px;
+ }
+ .checklist-transfer-actions .btn{
+ width: 100%;
+ justify-content: center;
+ }
  /* ===== Campo Data de Vencimento ===== */ 
  .card-due{ 
  background: var(--panel-2); 
@@ -520,18 +597,33 @@
  padding: 8px 10px; 
  width: 100%; 
  } 
+ .card-due::-webkit-calendar-picker-indicator{
+ filter: invert(1) brightness(1.1);
+ opacity: 1;
+ cursor: pointer;
+ }
  .due-wrap{ display: flex; flex-direction: column; gap: 6px; } 
  /* ===== NOVO: linha para timestamps quando colapsado ===== */ 
  .card-collapsed-meta{ 
  grid-column: 1 / -1; 
+ display: grid;
+ grid-template-columns: minmax(0, 1fr) auto;
+ column-gap: 8px;
+ align-items: center;
  font-size: 11px; 
  color: var(--muted); 
  margin-top: -6px; 
  padding-left: 4px; 
+ } 
+ .card-collapsed-meta-text{
+ min-width: 0;
  white-space: nowrap; 
  overflow: hidden; 
  text-overflow: ellipsis; 
- } 
+ }
+ .card-collapsed-meta .open-card-modal{
+ justify-self: end;
+ }
 /* ===== Barra de Progresso (Checklist) ===== */ 
 .progress-wrap{ 
  grid-column: 1 / -1; 
@@ -567,8 +659,14 @@
 } 
 
 /* Modal para card (visual de card em foco) */
-.modal-card { width: min(900px, 96vw); }
-.modal-card .modal-body { background: var(--panel); }
+.modal-card { width: min(900px, 96vw); height: min(920px, calc(100vh - 2em)); max-height: min(920px, calc(100vh - 2em)); }
+.modal-card .modal-body { background: var(--panel); flex: 1; min-height: 0; }
+#cardOverlay.modal-overlay,
+#checklistItemOverlay.modal-overlay{
+  padding-top: 2em;
+  padding-bottom: 2em;
+  box-sizing: border-box;
+}
 #cardOverlay.modal-overlay{
   opacity: 0;
   pointer-events: none;
@@ -608,6 +706,38 @@
   pointer-events: none;
   opacity: 0.48;
   filter: saturate(0.75) brightness(0.9);
+}
+#checklistItemOverlay .modal-body{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+#checklistItemOverlay .field-label{
+  font-weight: 700;
+  font-size: 14px;
+}
+#checklistItemContentView,
+#checklistItemContentEditor{
+  flex: 1;
+  min-height: 0;
+}
+#checklistItemContentView{
+  border-left: 3px solid var(--item-modal-accent, var(--purple));
+}
+.item-note-editor{
+  width: 100%;
+  min-height: 100%;
+  resize: vertical;
+  background: var(--panel-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--item-modal-accent, var(--purple));
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-family: inherit;
+}
+#cardOverlay .open-card-modal{
+  display: none !important;
 }
 
 /* Spacer below topbar matching board background */
@@ -722,7 +852,7 @@
 </head> 
 <body> 
  <header class="topbar"> 
- <div class="brand"><img class="brand-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJLYW5iYW5BcHAgZmF2aWNvbiI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMxMjEzMWQiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjNjY1MGU2Ii8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cmVjdCB4PSIyIiB5PSIyIiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHJ4PSIxNCIgZmlsbD0idXJsKCNiZykiLz4KICA8cmVjdCB4PSIxNCIgeT0iMTYiIHdpZHRoPSIxMCIgaGVpZ2h0PSIzMiIgcng9IjMiIGZpbGw9IiNkOGQ4ZmYiIGZpbGwtb3BhY2l0eT0iLjkwIi8+CiAgPHJlY3QgeD0iMjciIHk9IjE2IiB3aWR0aD0iMTAiIGhlaWdodD0iMzIiIHJ4PSIzIiBmaWxsPSIjYmRhNmZmIiBmaWxsLW9wYWNpdHk9Ii45MiIvPgogIDxyZWN0IHg9IjQwIiB5PSIxNiIgd2lkdGg9IjEwIiBoZWlnaHQ9IjMyIiByeD0iMyIgZmlsbD0iIzdhNjdmMCIgZmlsbC1vcGFjaXR5PSIuOTUiLz4KPC9zdmc+Cg==" alt="" aria-hidden="true">KanbanApp</div> 
+ <a class="brand brand-link" href="https://kanbanapp.io" target="_blank" rel="noopener noreferrer"><img class="brand-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJLYW5iYW5BcHAgZmF2aWNvbiI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMxMjEzMWQiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjNjY1MGU2Ii8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cmVjdCB4PSIyIiB5PSIyIiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHJ4PSIxNCIgZmlsbD0idXJsKCNiZykiLz4KICA8cmVjdCB4PSIxNCIgeT0iMTYiIHdpZHRoPSIxMCIgaGVpZ2h0PSIzMiIgcng9IjMiIGZpbGw9IiNkOGQ4ZmYiIGZpbGwtb3BhY2l0eT0iLjkwIi8+CiAgPHJlY3QgeD0iMjciIHk9IjE2IiB3aWR0aD0iMTAiIGhlaWdodD0iMzIiIHJ4PSIzIiBmaWxsPSIjYmRhNmZmIiBmaWxsLW9wYWNpdHk9Ii45MiIvPgogIDxyZWN0IHg9IjQwIiB5PSIxNiIgd2lkdGg9IjEwIiBoZWlnaHQ9IjMyIiByeD0iMyIgZmlsbD0iIzdhNjdmMCIgZmlsbC1vcGFjaXR5PSIuOTUiLz4KPC9zdmc+Cg==" alt="" aria-hidden="true">KanbanApp.io</a> 
  <div class="menu"> 
  <button id="btnAddColumn" class="btn">+ Coluna</button> 
  <button id="btnSettings" class="btn">Configurações</button> 
@@ -790,7 +920,10 @@
  <span class="meta-item updated">🖉 <time class="updated-at" datetime=""></time></span> 
  </div> 
  <!-- NOVO: linha curta (apenas quando colapsado) --> 
- <div class="card-collapsed-meta hidden"></div> 
+ <div class="card-collapsed-meta hidden">
+ <span class="card-collapsed-meta-text"></span>
+ <button class="btn-small btn-ghost open-card-modal" title="Abrir em modal">⤢</button>
+ </div> 
  <!-- NOVO: barra de progresso (sempre visível) --> 
  <div class="progress-wrap" aria-hidden="false"> 
  <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Progresso do checklist"> 
@@ -814,6 +947,7 @@
  <span>Checklist <span class="badge items-count">0</span></span> 
  <button class="btn-small add-item">+ Item</button> 
  </div> 
+ <input type="text" class="filter-checklist" placeholder="Filtrar itens do checklist (titulo ou detalhes)" aria-label="Filtrar itens do checklist por titulo ou detalhes"> 
  <div class="items"></div> 
  </div> 
  </div> 
@@ -821,10 +955,11 @@
  </template> 
  <template id="tpl-checklist-item"> 
  <div class="checklist-item"> 
- 
+ <span class="item-drag-handle" title="Arrastar item" aria-label="Arrastar item" draggable="false">⋮⋮</span>
  <input type="checkbox" class="item-check" aria-label="Marcar item"> 
  <div class="item-view" aria-label="Rótulo (clique para editar)"></div> 
  <div class="item-actions"> 
+ <button class="btn-small btn-ghost open-item-note" title="Adicionar detalhes do item" aria-label="Adicionar detalhes do item"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 3.5h7.5L19 8v12.5H7z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14.5 3.5V8H19" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M10 12h6M10 15.5h6M10 19h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button> 
  <button class="btn-small btn-ghost delete-item" title="Remover item">✖</button> 
  </div> 
  <textarea class="item-editor hidden" placeholder="Texto do item (URLs ficam clicáveis na visualização)"></textarea> 
@@ -918,6 +1053,36 @@
   </div>
 </div>
 
+<!-- Modal de anotação por item de checklist -->
+<div id="checklistItemOverlay" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="checklistItemModalTitle">
+  <div class="modal modal-card">
+    <div class="modal-header">
+      <h2 id="checklistItemModalTitle">Detalhes do item do checklist</h2>
+      <button class="btn btn-small modal-close" aria-label="Fechar">✖</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-label">Detalhes:</div>
+      <div id="checklistItemContentView" class="render" aria-label="Detalhes renderizados com links"></div>
+      <textarea id="checklistItemContentEditor" class="item-note-editor hidden" placeholder="Digite os detalhes (suporta links)"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button id="btnChecklistItemSave" class="btn btn-primary">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de transferência de item de checklist entre cards -->
+<div id="checklistTransferOverlay" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="checklistTransferTitle">
+  <div class="modal checklist-transfer-modal">
+    <h2 id="checklistTransferTitle" class="hidden">Transferência de item</h2>
+    <div class="checklist-transfer-actions">
+      <button id="btnChecklistMoveHere" class="btn btn-primary">Mover</button>
+      <button id="btnChecklistCopyHere" class="btn btn-primary">Copiar</button>
+      <button id="btnChecklistCancel" class="btn">Cancelar</button>
+    </div>
+  </div>
+</div>
+
  <script> 
  /* Polyfills essenciais (Edge Legacy) */ 
  (function polyfills(){ 
@@ -944,6 +1109,38 @@
  const nextFrame = () => new Promise(r => requestAnimationFrame(() => r())); 
 // Currently dragged checklist item (handle-driven)
 let currentDraggedChecklistItem = null;
+let checklistDragMeta = null;
+function getChecklistItemContent(itemNode){
+ if(!itemNode || !itemNode.dataset) return '';
+ return String(itemNode.dataset.details || '');
+}
+function hasChecklistItemContent(itemNode){
+ return getChecklistItemContent(itemNode).trim().length > 0;
+}
+function updateChecklistItemNoteButtonState(itemNode){
+ const btn = $('.open-item-note', itemNode);
+ if(!btn) return;
+ const filled = hasChecklistItemContent(itemNode);
+ btn.classList.toggle('has-content', filled);
+ btn.title = filled ? 'Editar detalhes do item' : 'Adicionar detalhes do item';
+ btn.setAttribute('aria-label', btn.title);
+}
+function setChecklistItemContent(itemNode, content){
+ if(!itemNode || !itemNode.dataset) return;
+ const text = String(content == null ? '' : content);
+ if(text.trim()){
+ itemNode.dataset.details = text;
+ } else {
+ delete itemNode.dataset.details;
+ }
+ updateChecklistItemNoteButtonState(itemNode);
+}
+function syncCardDescriptionSizeState(cardNode){
+ const ta = $('.card-desc', cardNode);
+ if(!ta) return;
+ const empty = !String(ta.value || '').trim();
+ ta.classList.toggle('empty-desc', empty);
+}
  function escapeHtml(str){ 
  const s = String(str == null ? '' : str); 
  const map = { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }; 
@@ -1142,10 +1339,13 @@ let currentDraggedChecklistItem = null;
  const checklist = []; 
  $$('.checklist-item', card).forEach(function(it){ 
  const editor = $('.item-editor', it); 
- checklist.push({ 
+ const itemData = { 
  checked: $('.item-check', it).checked, 
  label: editor ? editor.value : '' 
- }); 
+ };
+ const noteContent = getChecklistItemContent(it);
+ if (noteContent.trim()) itemData.details = noteContent;
+ checklist.push(itemData); 
  }); 
  colData.cards.push({ 
  id: card.dataset.id, 
@@ -1195,6 +1395,7 @@ let currentDraggedChecklistItem = null;
  const ta = $('.card-desc', cnode); 
  const view = $('.desc-view', cnode); 
  ta.value = cd.description || ''; 
+ syncCardDescriptionSizeState(cnode);
  view.innerHTML = linkify(cd.description || ''); 
  const done = $('.card-done', cnode); 
  done.checked = !!cd.completed; 
@@ -1221,7 +1422,7 @@ let currentDraggedChecklistItem = null;
  .map(x => x.it);
  for(let ck = 0; ck < orderedChecklist.length; ck++){ 
  const it = orderedChecklist[ck] || {}; 
- const inode = createChecklistItem(it.label || '', !!it.checked); 
+ const inode = createChecklistItem(it.label || '', !!it.checked, (typeof it.details === 'string' ? it.details : (typeof it.content === 'string' ? it.content : ''))); 
  itemsWrap.appendChild(inode); 
  await nextFrame(); 
  } 
@@ -1381,7 +1582,7 @@ let currentDraggedChecklistItem = null;
  try { e.dataTransfer.dropEffect = 'move'; } catch(_) {} 
  cardsWrap.classList.add('drag-over'); 
  const after = getDragAfterElement(cardsWrap, e.clientY); 
- const dragging = $('.dragging'); 
+ const dragging = $('.card.dragging'); 
  if(dragging){ 
  if(after == null) { cardsWrap.appendChild(dragging); } 
  else { cardsWrap.insertBefore(dragging, after); } 
@@ -1402,9 +1603,10 @@ let currentDraggedChecklistItem = null;
  } 
  /* Helpers para colapsar/expandir */ 
  function setCollapsed(cardNode, collapsed){ 
- cardNode.classList.toggle('collapsed', !!collapsed); 
- const metaFull = cardNode.querySelector('.card-meta'); 
- const metaCollapsed = cardNode.querySelector('.card-collapsed-meta'); 
+  if (collapsed && cardNode && cardNode.dataset && cardNode.dataset.lockExpanded === '1') return;
+  cardNode.classList.toggle('collapsed', !!collapsed); 
+  const metaFull = cardNode.querySelector('.card-meta'); 
+  const metaCollapsed = cardNode.querySelector('.card-collapsed-meta'); 
  if (!metaFull || !metaCollapsed) return; 
  if (collapsed) { 
  metaFull.classList.add('hidden'); 
@@ -1415,15 +1617,17 @@ let currentDraggedChecklistItem = null;
  metaCollapsed.classList.add('hidden'); 
  } 
  } 
- function makeCardCollapsible(cardNode){ 
+function makeCardCollapsible(cardNode){ 
  setCollapsed(cardNode, true); 
- cardNode.addEventListener('click', function(){ 
+ cardNode.addEventListener('click', function(e){ 
+ if (e && e.target && e.target.closest && e.target.closest('.open-card-modal')) return;
  setCollapsed(cardNode, false); 
  }); 
- cardNode.addEventListener('focusin', function(){ 
+ cardNode.addEventListener('focusin', function(e){ 
+ if (e && e.target && e.target.closest && e.target.closest('.open-card-modal')) return;
  setCollapsed(cardNode, false); 
  }); 
- } 
+} 
  // NOVO: linha de meta quando colapsado 
  function renderCollapsedMeta(card) { 
  const box = card.querySelector('.card-collapsed-meta'); 
@@ -1443,9 +1647,12 @@ let currentDraggedChecklistItem = null;
  right = 'Sem data de vencimento'; 
  } 
  } 
- box.textContent = `${shortDate} — ${right}`; 
+ const collapsedText = `${shortDate} — ${right}`;
+ const textNode = box.querySelector('.card-collapsed-meta-text');
+ if (textNode) textNode.textContent = collapsedText;
+ else box.textContent = collapsedText;
 } 
- function createCard(id){ 
+function createCard(id){ 
  const node = tplCard.content.firstElementChild.cloneNode(true); 
  node.dataset.id = id; 
  // timestamps iniciais 
@@ -1464,6 +1671,7 @@ let currentDraggedChecklistItem = null;
  }; 
  const exitDescEdit = function(save=true){ 
  if(!save) ta.value = ta.dataset.original || ta.value; 
+ syncCardDescriptionSizeState(node);
  view.innerHTML = linkify(ta.value); 
  // destaque do filtro se ativo 
  const col = node.closest('.column'); 
@@ -1483,6 +1691,10 @@ let currentDraggedChecklistItem = null;
  if(key === 'Escape' || key === 'Esc'){ exitDescEdit(false); ta.blur(); } 
  if((e.ctrlKey || e.metaKey) && (key === 'Enter')){ ta.blur(); } 
  }); 
+ ta.addEventListener('input', function(){
+ syncCardDescriptionSizeState(node);
+ });
+ syncCardDescriptionSizeState(node);
  view.innerHTML = linkify(ta.value || ''); 
  // due date altera 'Editado' + repintar + re-render colapsado 
  if (due) { 
@@ -1493,6 +1705,12 @@ let currentDraggedChecklistItem = null;
  } 
  // Checklist 
  const itemsWrap = $('.items', node); 
+ const checklistFilterInput = $('.filter-checklist', node);
+ if (checklistFilterInput){
+ checklistFilterInput.addEventListener('input', function(){
+ applyChecklistFilter(node);
+ });
+ }
  $('.add-item', node).addEventListener('click', function(e){ 
  e.stopPropagation(); 
  const newItem = createChecklistItem();
@@ -1509,23 +1727,147 @@ let currentDraggedChecklistItem = null;
     e.preventDefault();
     const dragged = currentDraggedChecklistItem;
     if (!dragged) return;
-    const after = (function(container, y){
-      const items = Array.from(container.querySelectorAll('.checklist-item:not(.dragging)'));
-      for (let i=0;i<items.length;i++){
-        const box = items[i].getBoundingClientRect();
-        if (y < box.top + box.height/2) return items[i];
-      }
-      return null;
-    })(itemsWrap, e.clientY);
-    if (after == null) itemsWrap.appendChild(dragged);
-    else itemsWrap.insertBefore(dragged, after);
+    if (checklistDragMeta){
+      checklistDragMeta.targetCard = node;
+      checklistDragMeta.targetItemsWrap = itemsWrap;
+    }
+    const sameCardDrag = !!(checklistDragMeta && checklistDragMeta.sourceCard === node);
+    if (sameCardDrag){
+      const after = (function(container, y){
+        const items = Array.from(container.querySelectorAll('.checklist-item:not(.dragging)'));
+        for (let i=0;i<items.length;i++){
+          const box = items[i].getBoundingClientRect();
+          if (y < box.top + box.height/2) return items[i];
+        }
+        return null;
+      })(itemsWrap, e.clientY);
+      if (after == null) itemsWrap.appendChild(dragged);
+      else itemsWrap.insertBefore(dragged, after);
+    } else {
+      placeChecklistItemByCheckState(itemsWrap, dragged);
+    }
   });
-  itemsWrap.addEventListener('drop', function(e){
+  async function handleChecklistItemDrop(targetCard, targetItemsWrap){
+    const dragged = currentDraggedChecklistItem;
+    const meta = checklistDragMeta;
+    if (!dragged || !meta) return;
+    meta.dropHandled = true;
+    // prioridade: posição real atual do item no DOM no momento do drop
+    const domTargetWrap = dragged.closest('.items');
+    const domTargetCard = dragged.closest('.card');
+    const effectiveTargetCard = domTargetCard || targetCard || meta.targetCard || node;
+    const effectiveTargetWrap = domTargetWrap || targetItemsWrap || meta.targetItemsWrap || $('.items', effectiveTargetCard);
+    if (!effectiveTargetCard || !effectiveTargetWrap) return;
+    const sourceCard = meta.sourceCard;
+    const sourceWrap = meta.sourceItemsWrap;
+    const sourceNext = meta.sourceNextSibling;
+    const sourceCol = sourceCard ? sourceCard.closest('.column') : null;
+    const targetCol = effectiveTargetCard ? effectiveTargetCard.closest('.column') : null;
+    const isCrossCard = !!(sourceCard && effectiveTargetCard && sourceCard !== effectiveTargetCard);
+
+    function restoreToSource(){
+      if (!sourceWrap || !dragged) return;
+      if (sourceNext && sourceNext.parentNode === sourceWrap){
+        sourceWrap.insertBefore(dragged, sourceNext);
+      } else {
+        sourceWrap.appendChild(dragged);
+      }
+    }
+    function finalizeCleanup(){
+      currentDraggedChecklistItem = null;
+      checklistDragMeta = null;
+      dragged.classList.remove('dragging');
+    }
+    function refreshCardsAndFilters(refreshSource){
+      if (refreshSource && sourceCard) { updateItemsCount(sourceCard); touchCardUpdated(sourceCard); }
+      if (effectiveTargetCard) { updateItemsCount(effectiveTargetCard); touchCardUpdated(effectiveTargetCard); }
+      if (sourceCol) applyColumnFilter(sourceCol);
+      if (targetCol && targetCol !== sourceCol) applyColumnFilter(targetCol);
+    }
+
+    if (!isCrossCard){
+      updateItemsCount(effectiveTargetCard);
+      touchCardUpdated(effectiveTargetCard);
+      if (targetCol) applyColumnFilter(targetCol);
+      finalizeCleanup();
+      return;
+    }
+
+    const choice = await askChecklistTransferAction();
+    if (choice === 'copy'){
+      const label = $('.item-editor', dragged)?.value || '';
+      const checked = !!$('.item-check', dragged)?.checked;
+      const noteContent = getChecklistItemContent(dragged);
+      const copyNode = createChecklistItem(label, checked, noteContent);
+      placeChecklistItemByCheckState(effectiveTargetWrap, copyNode);
+      restoreToSource();
+      refreshCardsAndFilters(false);
+      finalizeCleanup();
+      return;
+    }
+    if (choice === 'move'){
+      placeChecklistItemByCheckState(effectiveTargetWrap, dragged);
+      refreshCardsAndFilters(true);
+      finalizeCleanup();
+      return;
+    }
+    // cancelado: volta para origem
+    restoreToSource();
+    if (sourceCard) {
+      updateItemsCount(sourceCard);
+      touchCardUpdated(sourceCard);
+      if (sourceCol) applyColumnFilter(sourceCol);
+    }
+    if (effectiveTargetCard) {
+      updateItemsCount(effectiveTargetCard);
+      if (targetCol && targetCol !== sourceCol) applyColumnFilter(targetCol);
+    }
+    finalizeCleanup();
+  }
+  itemsWrap.addEventListener('drop', async function(e){
     e.preventDefault();
-    const card = node; // card node is outer scope here
-    updateItemsCount(card);
-    touchCardUpdated(card);
-    currentDraggedChecklistItem = null;
+    const sameCardDrag = !!(checklistDragMeta && checklistDragMeta.sourceCard === node);
+    if (currentDraggedChecklistItem && !sameCardDrag) {
+      placeChecklistItemByCheckState(itemsWrap, currentDraggedChecklistItem);
+    }
+    if (checklistDragMeta){
+      checklistDragMeta.targetCard = node;
+      checklistDragMeta.targetItemsWrap = itemsWrap;
+    }
+    await handleChecklistItemDrop(node, itemsWrap);
+  });
+  // Permite dropar item mesmo quando o card destino estava colapsado
+  node.addEventListener('dragenter', function(e){
+    if (!currentDraggedChecklistItem) return;
+    e.preventDefault();
+    if (checklistDragMeta){
+      checklistDragMeta.targetCard = node;
+      checklistDragMeta.targetItemsWrap = itemsWrap;
+    }
+    if (node.classList.contains('collapsed')) setCollapsed(node, false);
+  });
+  node.addEventListener('dragover', function(e){
+    const dragged = currentDraggedChecklistItem;
+    if (!dragged) return;
+    e.preventDefault();
+    if (checklistDragMeta){
+      checklistDragMeta.targetCard = node;
+      checklistDragMeta.targetItemsWrap = itemsWrap;
+    }
+    if (node.classList.contains('collapsed')) setCollapsed(node, false);
+    // Ao pairar no card (incluindo header), posiciona no checklist para permitir soltar
+    if (!itemsWrap.contains(dragged)) itemsWrap.appendChild(dragged);
+  });
+  node.addEventListener('drop', async function(e){
+    if (!currentDraggedChecklistItem) return;
+    e.preventDefault();
+    const sameCardDrag = !!(checklistDragMeta && checklistDragMeta.sourceCard === node);
+    if (!sameCardDrag) placeChecklistItemByCheckState(itemsWrap, currentDraggedChecklistItem);
+    if (checklistDragMeta){
+      checklistDragMeta.targetCard = node;
+      checklistDragMeta.targetItemsWrap = itemsWrap;
+    }
+    await handleChecklistItemDrop(node, itemsWrap);
   });
  // Concluir card: move para o fim se marcado 
  const done = $('.card-done', node); 
@@ -1550,6 +1892,13 @@ let currentDraggedChecklistItem = null;
  if (col) applyColumnFilter(col); 
  } 
  }); 
+ // Abrir card em modal sem expandir o card ao clicar no botao
+ $$('.open-card-modal', node).forEach(function(btn){
+ btn.addEventListener('click', function(e){
+ e.stopPropagation();
+ openCardModal(node);
+ });
+ });
  // Drag & drop (card) 
  node.addEventListener('dragstart', function(e){ 
  // NOVO: impedir arrastar quando expandido 
@@ -1559,12 +1908,28 @@ let currentDraggedChecklistItem = null;
  } 
  node.classList.add('dragging'); 
  try { 
+ const rect = node.getBoundingClientRect();
+ const dragImage = node.cloneNode(true);
+ dragImage.classList.remove('dragging');
+ dragImage.style.position = 'fixed';
+ dragImage.style.top = '-10000px';
+ dragImage.style.left = '-10000px';
+ dragImage.style.width = rect.width + 'px';
+ dragImage.style.pointerEvents = 'none';
+ dragImage.style.opacity = '0.98';
+ document.body.appendChild(dragImage);
+ node.__dragImageEl = dragImage;
+ e.dataTransfer.setDragImage(dragImage, Math.min(40, Math.max(8, rect.width / 2)), 20);
  e.dataTransfer.effectAllowed = 'move'; 
  e.dataTransfer.setData('text/plain', node.dataset.id || 'card'); 
  } catch(_) {} 
  }); 
  node.addEventListener('dragend', function(){ 
  node.classList.remove('dragging'); 
+ if (node.__dragImageEl && node.__dragImageEl.parentNode) {
+ node.__dragImageEl.parentNode.removeChild(node.__dragImageEl);
+ }
+ node.__dragImageEl = null;
  const col = node.closest('.column'); 
  if (col) applyColumnFilter(col); 
  applyDueColorToCard(node); 
@@ -1590,23 +1955,83 @@ let currentDraggedChecklistItem = null;
  updateChecklistProgress(node); 
  return node; 
  } 
- function createChecklistItem(labelText='', checked=false){ 
+function createChecklistItem(labelText='', checked=false, itemContentText=''){ 
  const node = tplItem.content.firstElementChild.cloneNode(true); 
-  // make whole item draggable (no visible handle)
-  node.draggable = true;
-  node.addEventListener('dragstart', function(e){
+  // drag iniciado pelo handle; o item é o objeto movido
+  node.draggable = false;
+ const dragHandle = $('.item-drag-handle', node);
+ if (dragHandle){
+  dragHandle.draggable = true;
+  dragHandle.addEventListener('dragstart', function(e){
+    e.stopPropagation();
+    const sourceCard = node.closest('.card');
+    const sourceItemsWrap = node.closest('.items');
     currentDraggedChecklistItem = node;
+    checklistDragMeta = {
+      sourceCard: sourceCard,
+      sourceItemsWrap: sourceItemsWrap,
+      sourceNextSibling: node.nextElementSibling,
+      targetCard: sourceCard,
+      targetItemsWrap: sourceItemsWrap,
+      dropHandled: false
+    };
     node.classList.add('dragging');
-    try{ e.dataTransfer.setData('text/plain', ''); e.dataTransfer.effectAllowed = 'move'; }catch(_){ }
+    try{
+      const rect = node.getBoundingClientRect();
+      const dragImage = node.cloneNode(true);
+      dragImage.style.position = 'fixed';
+      dragImage.style.top = '-10000px';
+      dragImage.style.left = '-10000px';
+      dragImage.style.width = rect.width + 'px';
+      dragImage.style.pointerEvents = 'none';
+      dragImage.style.opacity = '0.98';
+      document.body.appendChild(dragImage);
+      node.__dragImageEl = dragImage;
+      e.dataTransfer.setDragImage(dragImage, Math.min(40, Math.max(8, rect.width / 2)), 20);
+      e.dataTransfer.setData('text/plain', node.dataset.id || '');
+      e.dataTransfer.effectAllowed = 'move';
+    }catch(_){ }
   });
-  node.addEventListener('dragend', function(e){
+  dragHandle.addEventListener('dragend', function(e){
+    e.stopPropagation();
+    const meta = checklistDragMeta;
+    if (meta && !meta.dropHandled && currentDraggedChecklistItem === node){
+      const sourceWrap = meta.sourceItemsWrap;
+      const sourceNext = meta.sourceNextSibling;
+      const sourceCard = meta.sourceCard;
+      if (sourceWrap){
+        if (sourceNext && sourceNext.parentNode === sourceWrap) sourceWrap.insertBefore(node, sourceNext);
+        else sourceWrap.appendChild(node);
+      }
+      if (sourceCard){
+        updateItemsCount(sourceCard);
+        const sourceCol = sourceCard.closest('.column');
+        if (sourceCol) applyColumnFilter(sourceCol);
+      }
+      const targetCardNow = node.closest('.card');
+      if (targetCardNow && targetCardNow !== sourceCard){
+        updateItemsCount(targetCardNow);
+        const targetCol = targetCardNow.closest('.column');
+        if (targetCol) applyColumnFilter(targetCol);
+      }
+    }
     node.classList.remove('dragging');
-    currentDraggedChecklistItem = null;
-    const card = node.closest('.card'); if (card) { updateItemsCount(card); touchCardUpdated(card); }
+    if (node.__dragImageEl && node.__dragImageEl.parentNode) {
+      node.__dragImageEl.parentNode.removeChild(node.__dragImageEl);
+    }
+    node.__dragImageEl = null;
+    if (currentDraggedChecklistItem === node) currentDraggedChecklistItem = null;
+    if (checklistDragMeta && checklistDragMeta.sourceCard === node.closest('.card')) checklistDragMeta = null;
   });
+  dragHandle.addEventListener('click', function(e){
+    e.stopPropagation();
+    e.preventDefault();
+  });
+ }
  const chk = $('.item-check', node); 
  const view = $('.item-view', node); 
  const editor = $('.item-editor', node); 
+ const noteBtn = $('.open-item-note', node);
  chk.checked = !!checked; 
  editor.value = labelText || ''; 
  const syncView = () => { view.innerHTML = linkify(editor.value); }; 
@@ -1627,12 +2052,18 @@ let currentDraggedChecklistItem = null;
     if(e.target && e.target.tagName && e.target.tagName.toLowerCase() === 'a') return; 
     enterEdit(); 
   });
-  node.addEventListener('click', function(e){ 
-    const t = e.target; 
-    if (t && t.classList && t.classList.contains('item-check')) return; 
-    if (t && t.closest && t.closest('.delete-item')) return; 
-    if (t && t.tagName && t.tagName.toLowerCase() === 'a') return; 
-    if (editor.classList.contains('hidden')) enterEdit(); 
+  node.addEventListener('click', function(e){
+    const t = e.target;
+    if (!t) return;
+    if (t.closest && t.closest('.item-drag-handle')) return; // área esquerda: drag
+    if (t.closest && t.closest('.item-check')) return; // checkbox mantém função própria
+    if (t.closest && t.closest('.delete-item')) return; // botão excluir
+    if (t.closest && t.closest('.open-item-note')) return; // botão anotação
+    if (t.tagName && t.tagName.toLowerCase() === 'a') return; // links na visualização
+    const chkRect = chk.getBoundingClientRect();
+    if (typeof e.clientX === 'number' && e.clientX > chkRect.right){
+      if (editor.classList.contains('hidden')) enterEdit();
+    }
   });
  editor.addEventListener('blur', function(){ 
  exitEdit(true); 
@@ -1675,15 +2106,198 @@ let currentDraggedChecklistItem = null;
  const col = node.closest('.column'); 
  if (col) applyColumnFilter(col); 
  }); 
+ if (noteBtn){
+ noteBtn.addEventListener('click', function(e){
+ e.stopPropagation();
+ openChecklistItemModal(node);
+ });
+ }
+ setChecklistItemContent(node, itemContentText || '');
   syncView(); 
   return node; 
- } 
- function updateItemsCount(cardNode){ 
- const count = $$('.checklist-item', cardNode).length; 
- const badge = $('.items-count', cardNode); 
- if(badge) badge.textContent = String(count); 
- // NOVO: atualizar barra de progresso sempre que o count mudar 
- updateChecklistProgress(cardNode); 
+} 
+const checklistItemModalUI = {
+ overlay: null,
+ title: null,
+ view: null,
+ editor: null,
+ saveBtn: null,
+ closeBtn: null,
+ currentItem: null
+};
+function ensureChecklistItemModalRefs(){
+ if (checklistItemModalUI.overlay) return checklistItemModalUI;
+ const ui = checklistItemModalUI;
+ ui.overlay = document.getElementById('checklistItemOverlay');
+ ui.title = document.getElementById('checklistItemModalTitle');
+ ui.view = document.getElementById('checklistItemContentView');
+ ui.editor = document.getElementById('checklistItemContentEditor');
+ ui.saveBtn = document.getElementById('btnChecklistItemSave');
+ ui.closeBtn = ui.overlay ? ui.overlay.querySelector('.modal-close') : null;
+ if (!ui.overlay || !ui.view || !ui.editor) return ui;
+ const enterEdit = function(){
+ ui.editor.dataset.original = ui.editor.value;
+ ui.editor.classList.remove('hidden');
+ ui.view.classList.add('hidden');
+ ui.editor.focus();
+ try { ui.editor.selectionStart = ui.editor.selectionEnd = ui.editor.value.length; } catch(_) {}
+ };
+ const exitEdit = function(save=true){
+ if(!save) ui.editor.value = ui.editor.dataset.original || ui.editor.value;
+ ui.view.innerHTML = linkify(ui.editor.value || '');
+ ui.editor.classList.add('hidden');
+ ui.view.classList.remove('hidden');
+ };
+ ui.view.addEventListener('click', function(e){
+ if(e.target && e.target.tagName && e.target.tagName.toLowerCase() === 'a') return;
+ enterEdit();
+ });
+ ui.editor.addEventListener('blur', function(){ exitEdit(true); });
+ ui.editor.addEventListener('keydown', function(e){
+ const key = e.key || e.code || '';
+ if (key === 'Escape' || key === 'Esc'){ exitEdit(false); ui.editor.blur(); }
+ if ((e.ctrlKey || e.metaKey) && key === 'Enter'){ ui.editor.blur(); }
+ });
+ if (ui.saveBtn) ui.saveBtn.addEventListener('click', closeChecklistItemModal);
+ if (ui.closeBtn) ui.closeBtn.addEventListener('click', closeChecklistItemModal);
+ ui.overlay.addEventListener('click', function(e){ if (e.target === ui.overlay) closeChecklistItemModal(); });
+ ui.overlay.addEventListener('keydown', function(e){
+ const key = e.key || e.code || '';
+ if (key === 'Escape' || key === 'Esc') closeChecklistItemModal();
+ });
+ return ui;
+}
+function openChecklistItemModal(itemNode){
+ const ui = ensureChecklistItemModalRefs();
+ if (!ui || !ui.overlay || !itemNode) return;
+ if (ui.currentItem && ui.currentItem !== itemNode) closeChecklistItemModal();
+ ui.currentItem = itemNode;
+ const ownerCard = itemNode.closest('.card');
+ const accent = ownerCard ? (getComputedStyle(ownerCard).getPropertyValue('--progress-color') || '').trim() : '';
+ if (ui.overlay && ui.overlay.style){
+ ui.overlay.style.setProperty('--item-modal-accent', accent || 'var(--purple)');
+ }
+ const label = ($('.item-editor', itemNode)?.value || '').trim();
+ if (ui.title) ui.title.textContent = label || 'Item sem título';
+ const content = getChecklistItemContent(itemNode);
+ ui.editor.value = content;
+ ui.view.innerHTML = linkify(content);
+ ui.editor.classList.add('hidden');
+ ui.view.classList.remove('hidden');
+ ui.overlay.classList.remove('hidden');
+ try {
+ const active = document.activeElement;
+ if (active && typeof active.blur === 'function') active.blur();
+ ui.editor.blur();
+ } catch(_) {}
+}
+function closeChecklistItemModal(){
+ const ui = ensureChecklistItemModalRefs();
+ if (!ui || !ui.overlay) return;
+ if (!ui.currentItem) {
+ ui.overlay.classList.add('hidden');
+ return;
+ }
+ const text = ui.editor ? ui.editor.value : '';
+ setChecklistItemContent(ui.currentItem, text);
+ const card = ui.currentItem.closest('.card');
+ const col = ui.currentItem.closest('.column');
+ if (card){
+ updateItemsCount(card);
+ touchCardUpdated(card);
+ }
+ if (col) applyColumnFilter(col);
+ ui.currentItem = null;
+ ui.overlay.classList.add('hidden');
+}
+function applyChecklistFilter(cardNode){
+ if (!cardNode) return;
+ const input = $('.filter-checklist', cardNode);
+ const term = normalizeText(input ? input.value : '');
+ $$('.checklist-item', cardNode).forEach(function(item){
+ const label = normalizeText($('.item-editor', item)?.value || '');
+ const contentRaw = getChecklistItemContent(item);
+ const content = normalizeText(contentRaw);
+ const match = !term || label.includes(term) || (content ? content.includes(term) : false);
+ item.style.display = match ? '' : 'none';
+ });
+}
+function placeChecklistItemByCheckState(itemsWrap, itemNode){
+ if (!itemsWrap || !itemNode) return;
+ const checked = !!($('.item-check', itemNode) && $('.item-check', itemNode).checked);
+ if (checked){
+ itemsWrap.appendChild(itemNode);
+ return;
+ }
+ const first = itemsWrap.firstElementChild;
+ if (!first){
+ itemsWrap.appendChild(itemNode);
+ return;
+ }
+ if (first !== itemNode){
+ itemsWrap.insertBefore(itemNode, first);
+ }
+}
+function collapseAllCards(){
+ $$('.card').forEach(function(card){ setCollapsed(card, true); });
+}
+const checklistTransferUI = {
+ overlay: null,
+ btnCopy: null,
+ btnMove: null,
+ btnCancel: null,
+ closeBtn: null,
+ _resolver: null
+};
+function ensureChecklistTransferRefs(){
+ if (checklistTransferUI.overlay) return;
+ checklistTransferUI.overlay = document.getElementById('checklistTransferOverlay');
+ if (!checklistTransferUI.overlay) return;
+ checklistTransferUI.btnCopy = document.getElementById('btnChecklistCopyHere');
+ checklistTransferUI.btnMove = document.getElementById('btnChecklistMoveHere');
+ checklistTransferUI.btnCancel = document.getElementById('btnChecklistCancel');
+ checklistTransferUI.closeBtn = checklistTransferUI.overlay.querySelector('.modal-close');
+ const close = function(choice){
+ const ov = checklistTransferUI.overlay;
+ if (ov) ov.classList.add('hidden');
+ const resolve = checklistTransferUI._resolver;
+ checklistTransferUI._resolver = null;
+ if (resolve) resolve(choice || null);
+ };
+ if (checklistTransferUI.btnCopy) checklistTransferUI.btnCopy.addEventListener('click', function(){ close('copy'); });
+ if (checklistTransferUI.btnMove) checklistTransferUI.btnMove.addEventListener('click', function(){ close('move'); });
+ if (checklistTransferUI.btnCancel) checklistTransferUI.btnCancel.addEventListener('click', function(){ close(null); });
+ if (checklistTransferUI.closeBtn) checklistTransferUI.closeBtn.addEventListener('click', function(){ close(null); });
+ checklistTransferUI.overlay.addEventListener('click', function(e){ if (e.target === checklistTransferUI.overlay) close(null); });
+ checklistTransferUI.overlay.addEventListener('keydown', function(e){
+ const key = e.key || e.code || '';
+ if (key === 'Escape' || key === 'Esc') close(null);
+ });
+}
+function askChecklistTransferAction(){
+ ensureChecklistTransferRefs();
+ return new Promise(function(resolve){
+ const ov = checklistTransferUI.overlay;
+ if (!ov){
+ resolve('move');
+ return;
+ }
+ if (checklistTransferUI._resolver) {
+ try { checklistTransferUI._resolver(null); } catch(_) {}
+ checklistTransferUI._resolver = null;
+ }
+ checklistTransferUI._resolver = resolve;
+ ov.classList.remove('hidden');
+ try { (checklistTransferUI.btnMove || checklistTransferUI.btnCopy || checklistTransferUI.btnCancel || ov).focus(); } catch(_) {}
+ });
+}
+function updateItemsCount(cardNode){ 
+const count = $$('.checklist-item', cardNode).length; 
+const badge = $('.items-count', cardNode); 
+if(badge) badge.textContent = String(count); 
+ applyChecklistFilter(cardNode);
+// NOVO: atualizar barra de progresso sempre que o count mudar 
+updateChecklistProgress(cardNode); 
 } 
 function updateChecklistProgress(cardNode){ 
  if (!cardNode) return; 
@@ -1988,6 +2602,7 @@ function openCardModal(card){
   modal.columnGhost.setAttribute('aria-hidden', 'true');
   card.parentNode.insertBefore(modal.columnGhost, card);
   // expande o card
+  card.dataset.lockExpanded = '1';
   setCollapsed(card, false);
   // move para o modal
   modal.content.appendChild(card);
@@ -2028,6 +2643,7 @@ function closeCardModal(immediate){
       modal.columnGhost.parentNode.insertBefore(modal.currentCard, modal.columnGhost);
       modal.columnGhost.remove();
     }
+    if (modal.currentCard && modal.currentCard.dataset) delete modal.currentCard.dataset.lockExpanded;
     if (modal.currentCard) setCollapsed(modal.currentCard, true);
     modal.currentCard = null;
     modal.columnGhost = null;
@@ -2103,6 +2719,18 @@ const clickedCard = e.target.closest && e.target.closest('.card');
  setCollapsed(card, card !== clickedCard); 
  }); 
 }); 
+// Durante drag de checklist: em área inválida de drop ("proibido"), fecha todos os cards
+document.addEventListener('dragover', function(e){
+ if (!currentDraggedChecklistItem) return;
+ const x = Number(e.clientX);
+ const y = Number(e.clientY);
+ if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+ const hovered = document.elementFromPoint(x, y);
+ const isValidChecklistDropArea = !!(hovered && hovered.closest && (hovered.closest('.items') || hovered.closest('.card')));
+ if (!isValidChecklistDropArea){
+ collapseAllCards();
+ }
+});
  // ===== AUTOSAVE (LocalStorage) ===== 
  (function enableAutosave(){ 
  const AUTOSAVE_KEY = 'kanbanBoardAutosave.v1'; 
