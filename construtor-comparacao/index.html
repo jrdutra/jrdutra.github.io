@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Construtor de Comparação de Produtos</title>
+  <style>
+    :root {
+      --bg: #15161a;
+      --card: #1f2127;
+      --line: #353945;
+      --text: #e6e9f2;
+      --accent: #7a3cff;
+      --accent-hover: #612ee0;
+      --muted: #a4acbf;
+      --ok: #7ce3a5;
+      --control-size: 34px;
+      --control-radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at top, #252834 0%, #1a1c22 45%, #141519 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .app {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      padding: 20px;
+    }
+
+    h1 {
+      margin: 0 0 14px;
+      font-size: 1.5rem;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    button, .file-btn {
+      border: 0;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #fff;
+      padding: 10px 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.92rem;
+    }
+
+    button:hover, .file-btn:hover {
+      background: var(--accent-hover);
+    }
+
+    .file-btn {
+      display: inline-block;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .file-btn input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .products-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      background: #242730;
+    }
+
+    .card h2 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+    }
+
+    .field {
+      margin-bottom: 10px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 9px;
+      font-size: 0.92rem;
+      color: var(--text);
+      background: #171920;
+    }
+
+    input[type="file"] {
+      width: 100%;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    input[type="file"]::file-selector-button {
+      border: 0;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #fff;
+      padding: 10px 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.92rem;
+      margin-right: 10px;
+    }
+
+    input[type="file"]::file-selector-button:hover {
+      background: var(--accent-hover);
+    }
+
+    .image-name {
+      font-size: 0.82rem;
+      color: var(--ok);
+      margin-top: 5px;
+      min-height: 16px;
+      word-break: break-word;
+    }
+
+    .thumb {
+      margin-top: 8px;
+      width: 288px;
+      height: 288px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      object-fit: cover;
+      display: none;
+      background: transparent;
+    }
+
+    .attributes {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .attr-header, .attr-row {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr 1fr;
+      gap: 8px;
+      align-items: center;
+      padding: 10px;
+    }
+
+    .attr-header {
+      background: #2a2d37;
+      border-bottom: 1px solid var(--line);
+      font-weight: 700;
+      font-size: 1.08rem;
+    }
+
+    .attr-row {
+      border-bottom: 1px solid #303340;
+    }
+
+    .attr-row:last-child {
+      border-bottom: 0;
+    }
+
+    .attr-row.dragging {
+      opacity: 0.55;
+    }
+
+    .attr-row.drop-top {
+      box-shadow: inset 0 3px 0 #7a3cff;
+    }
+
+    .attr-row.drop-bottom {
+      box-shadow: inset 0 -3px 0 #7a3cff;
+    }
+
+    .attr-row input[type="text"] {
+      font-size: 1.104rem;
+    }
+
+    .attr-row button {
+      font-size: 1.104rem;
+    }
+
+    .attr-row .cell-inline button {
+      width: var(--control-size);
+      height: var(--control-size);
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      border-radius: var(--control-radius);
+    }
+
+    .drag-handle {
+      width: var(--control-size);
+      height: var(--control-size);
+      border: 1px solid var(--line);
+      border-radius: var(--control-radius);
+      background: #2b2f38;
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: grab;
+      user-select: none;
+      font-size: 1rem;
+      flex: 0 0 auto;
+    }
+
+    .drag-handle:active {
+      cursor: grabbing;
+    }
+
+    .check-label input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: var(--control-size);
+      height: var(--control-size);
+      margin: 0;
+      border: 1px solid var(--line);
+      border-radius: var(--control-radius);
+      background: #2b2f38;
+      cursor: pointer;
+      display: inline-grid;
+      place-content: center;
+    }
+
+    .check-label input[type="checkbox"]::after {
+      content: "";
+      width: 10px;
+      height: 18px;
+      border-right: 3px solid #fff;
+      border-bottom: 3px solid #fff;
+      transform: rotate(45deg) scale(0);
+      transition: transform 0.12s ease-in-out;
+    }
+
+    .check-label input[type="checkbox"]:checked {
+      background: #18a336;
+      border-color: #18a336;
+    }
+
+    .check-label input[type="checkbox"]:checked::after {
+      transform: rotate(45deg) scale(1);
+    }
+
+    .cell-inline {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .check-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .json-box {
+      margin-top: 16px;
+    }
+
+    .attr-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .attr-actions input[type="number"] {
+      width: 110px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 9px;
+      font-size: 0.95rem;
+      color: var(--text);
+      background: #171920;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 220px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.85rem;
+      resize: vertical;
+      background: #171920;
+      color: var(--text);
+    }
+
+    @media (max-width: 900px) {
+      .products-header {
+        grid-template-columns: 1fr;
+      }
+
+      .attr-header, .attr-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>Construtor de Comparação de Produtos</h1>
+
+    <div class="toolbar">
+      <label class="file-btn">
+        Carregar JSON
+        <input id="jsonInput" type="file" accept=".json,application/json" />
+      </label>
+      <button id="downloadBtn" type="button">Baixar JSON</button>
+    </div>
+
+    <div class="products-header">
+      <section class="card">
+        <h2>Produto 1</h2>
+        <div class="field">
+          <label for="nomeProduto1">Nome do Produto</label>
+          <input id="nomeProduto1" type="text" placeholder="Digite o nome do produto 1" />
+        </div>
+        <div class="field">
+          <label for="imgProduto1">Imagem do Produto</label>
+          <input id="imgProduto1" type="file" />
+          <div id="imgProduto1Nome" class="image-name"></div>
+          <img id="thumbProduto1" class="thumb" alt="Miniatura do produto 1" />
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Produto 2</h2>
+        <div class="field">
+          <label for="nomeProduto2">Nome do Produto</label>
+          <input id="nomeProduto2" type="text" placeholder="Digite o nome do produto 2" />
+        </div>
+        <div class="field">
+          <label for="imgProduto2">Imagem do Produto</label>
+          <input id="imgProduto2" type="file" />
+          <div id="imgProduto2Nome" class="image-name"></div>
+          <img id="thumbProduto2" class="thumb" alt="Miniatura do produto 2" />
+        </div>
+      </section>
+    </div>
+
+    <section class="attributes">
+      <div class="attr-header">
+        <div>Atributo (mesmo para ambos)</div>
+        <div>Produto 1 (valor + nota)</div>
+        <div>Produto 2 (nota + valor)</div>
+      </div>
+      <div id="attrsContainer"></div>
+    </section>
+    <div class="attr-actions">
+      <input id="addAttrCount" type="number" min="1" value="1" />
+      <button id="addAttrBtn" type="button">Adicionar N atributos</button>
+    </div>
+
+    <section class="json-box">
+      <h2>JSON gerado</h2>
+      <textarea id="jsonOutput" readonly></textarea>
+    </section>
+  </div>
+
+  <script>
+    const state = {
+      produto1: { nomeProduto: "", imagemProduto: "", atributosProduto: [] },
+      produto2: { nomeProduto: "", imagemProduto: "", atributosProduto: [] },
+      rows: []
+    };
+
+    const nomeProduto1 = document.getElementById("nomeProduto1");
+    const nomeProduto2 = document.getElementById("nomeProduto2");
+    const imgProduto1 = document.getElementById("imgProduto1");
+    const imgProduto2 = document.getElementById("imgProduto2");
+    const imgProduto1Nome = document.getElementById("imgProduto1Nome");
+    const imgProduto2Nome = document.getElementById("imgProduto2Nome");
+    const thumbProduto1 = document.getElementById("thumbProduto1");
+    const thumbProduto2 = document.getElementById("thumbProduto2");
+    const jsonOutput = document.getElementById("jsonOutput");
+    const attrsContainer = document.getElementById("attrsContainer");
+    const addAttrCount = document.getElementById("addAttrCount");
+    const addAttrBtn = document.getElementById("addAttrBtn");
+    const downloadBtn = document.getElementById("downloadBtn");
+    const jsonInput = document.getElementById("jsonInput");
+    let dragIndex = null;
+
+    function getCurrentData() {
+      return {
+        produto1: {
+          nomeProduto: state.produto1.nomeProduto,
+          imagemProduto: state.produto1.imagemProduto,
+          atributosProduto: state.rows.map((row) => ({
+            nomeAtributo: row.nomeAtributo,
+            valorAtributo: row.valor1,
+            notaAtributo: row.nota1 ? 1 : 0
+          }))
+        },
+        produto2: {
+          nomeProduto: state.produto2.nomeProduto,
+          imagemProduto: state.produto2.imagemProduto,
+          atributosProduto: state.rows.map((row) => ({
+            nomeAtributo: row.nomeAtributo,
+            valorAtributo: row.valor2,
+            notaAtributo: row.nota2 ? 1 : 0
+          }))
+        }
+      };
+    }
+
+    function renderOutput() {
+      jsonOutput.value = JSON.stringify(getCurrentData(), null, 2);
+    }
+
+    function createRow(row = { nomeAtributo: "", valor1: "", nota1: false, valor2: "", nota2: false }) {
+      state.rows.push(row);
+      renderRows();
+      renderOutput();
+    }
+
+    function addRows(amount) {
+      const total = Math.max(1, Number(amount) || 1);
+      for (let i = 0; i < total; i += 1) {
+        state.rows.push({ nomeAtributo: "", valor1: "", nota1: false, valor2: "", nota2: false });
+      }
+      renderRows();
+      renderOutput();
+    }
+
+    function removeRow(index) {
+      state.rows.splice(index, 1);
+      renderRows();
+      renderOutput();
+    }
+
+    function moveRow(from, to) {
+      if (from === to || from < 0 || to < 0 || from >= state.rows.length || to >= state.rows.length) return;
+      const [item] = state.rows.splice(from, 1);
+      state.rows.splice(to, 0, item);
+      renderRows();
+      renderOutput();
+    }
+
+    function renderRows() {
+      attrsContainer.innerHTML = "";
+
+      state.rows.forEach((row, index) => {
+        const rowEl = document.createElement("div");
+        rowEl.className = "attr-row";
+        rowEl.dataset.index = String(index);
+
+        rowEl.innerHTML = `
+          <div class="cell-inline">
+            <span class="drag-handle" draggable="true" data-type="drag" data-index="${index}" title="Arrastar para reordenar">::</span>
+            <input type="text" placeholder="nomeAtributo" value="${escapeHtml(row.nomeAtributo)}" data-type="nome" data-index="${index}" />
+            <button type="button" data-type="remove" data-index="${index}" title="Remover atributo">X</button>
+          </div>
+          <div class="cell-inline">
+            <input type="text" placeholder="valorAtributo" value="${escapeHtml(row.valor1)}" data-type="valor1" data-index="${index}" />
+            <label class="check-label">
+              <span>nota</span>
+              <input type="checkbox" ${row.nota1 ? "checked" : ""} data-type="nota1" data-index="${index}" />
+            </label>
+          </div>
+          <div class="cell-inline">
+            <label class="check-label">
+              <input type="checkbox" ${row.nota2 ? "checked" : ""} data-type="nota2" data-index="${index}" />
+              <span>nota</span>
+            </label>
+            <input type="text" placeholder="valorAtributo" value="${escapeHtml(row.valor2)}" data-type="valor2" data-index="${index}" />
+          </div>
+        `;
+
+        attrsContainer.appendChild(rowEl);
+      });
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    function setImageName(product, fileName) {
+      if (product === 1) {
+        state.produto1.imagemProduto = fileName || "";
+        imgProduto1Nome.textContent = fileName ? `Arquivo: ${fileName}` : "";
+      } else {
+        state.produto2.imagemProduto = fileName || "";
+        imgProduto2Nome.textContent = fileName ? `Arquivo: ${fileName}` : "";
+      }
+      renderOutput();
+    }
+
+    function setImagePreview(product, file) {
+      const thumb = product === 1 ? thumbProduto1 : thumbProduto2;
+      if (!file) {
+        thumb.removeAttribute("src");
+        thumb.style.display = "none";
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        thumb.src = reader.result;
+        thumb.style.display = "block";
+      };
+      reader.readAsDataURL(file);
+    }
+
+    nomeProduto1.addEventListener("input", () => {
+      state.produto1.nomeProduto = nomeProduto1.value;
+      renderOutput();
+    });
+
+    nomeProduto2.addEventListener("input", () => {
+      state.produto2.nomeProduto = nomeProduto2.value;
+      renderOutput();
+    });
+
+    imgProduto1.addEventListener("change", (e) => {
+      const file = e.target.files && e.target.files[0];
+      setImageName(1, file ? file.name : "");
+      setImagePreview(1, file || null);
+    });
+
+    imgProduto2.addEventListener("change", (e) => {
+      const file = e.target.files && e.target.files[0];
+      setImageName(2, file ? file.name : "");
+      setImagePreview(2, file || null);
+    });
+
+    attrsContainer.addEventListener("input", (e) => {
+      const target = e.target;
+      const index = Number(target.dataset.index);
+      const type = target.dataset.type;
+      if (Number.isNaN(index) || !type) return;
+
+      if (type === "nome") state.rows[index].nomeAtributo = target.value;
+      if (type === "valor1") state.rows[index].valor1 = target.value;
+      if (type === "valor2") state.rows[index].valor2 = target.value;
+      renderOutput();
+    });
+
+    attrsContainer.addEventListener("change", (e) => {
+      const target = e.target;
+      const index = Number(target.dataset.index);
+      const type = target.dataset.type;
+      if (Number.isNaN(index) || !type) return;
+
+      if (type === "nota1") state.rows[index].nota1 = target.checked;
+      if (type === "nota2") state.rows[index].nota2 = target.checked;
+      renderOutput();
+    });
+
+    attrsContainer.addEventListener("click", (e) => {
+      const target = e.target;
+      if (target.dataset.type === "remove") {
+        const index = Number(target.dataset.index);
+        if (!Number.isNaN(index)) removeRow(index);
+      }
+    });
+
+    attrsContainer.addEventListener("dragstart", (e) => {
+      const target = e.target;
+      if (target.dataset.type !== "drag") return;
+      dragIndex = Number(target.dataset.index);
+      const row = target.closest(".attr-row");
+      if (row) row.classList.add("dragging");
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData("text/plain", String(dragIndex));
+    });
+
+    attrsContainer.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      const row = e.target.closest(".attr-row");
+      const rows = attrsContainer.querySelectorAll(".attr-row");
+      rows.forEach((r) => r.classList.remove("drop-top", "drop-bottom"));
+      if (!row) return;
+
+      const rect = row.getBoundingClientRect();
+      const isTopHalf = e.clientY < rect.top + rect.height / 2;
+      row.classList.add(isTopHalf ? "drop-top" : "drop-bottom");
+    });
+
+    attrsContainer.addEventListener("drop", (e) => {
+      e.preventDefault();
+      const targetRow = e.target.closest(".attr-row");
+      const rows = attrsContainer.querySelectorAll(".attr-row");
+      rows.forEach((r) => r.classList.remove("drop-top", "drop-bottom", "dragging"));
+      if (dragIndex === null) return;
+
+      if (!targetRow) {
+        moveRow(dragIndex, state.rows.length - 1);
+        dragIndex = null;
+        return;
+      }
+
+      const targetIndex = Number(targetRow.dataset.index);
+      if (Number.isNaN(targetIndex)) {
+        dragIndex = null;
+        return;
+      }
+
+      const rect = targetRow.getBoundingClientRect();
+      const isTopHalf = e.clientY < rect.top + rect.height / 2;
+      let insertIndex = isTopHalf ? targetIndex : targetIndex + 1;
+      if (insertIndex > dragIndex) insertIndex -= 1;
+      if (insertIndex >= state.rows.length) insertIndex = state.rows.length - 1;
+      moveRow(dragIndex, insertIndex);
+      dragIndex = null;
+    });
+
+    attrsContainer.addEventListener("dragend", () => {
+      const rows = attrsContainer.querySelectorAll(".attr-row");
+      rows.forEach((r) => r.classList.remove("drop-top", "drop-bottom", "dragging"));
+      dragIndex = null;
+    });
+
+    addAttrBtn.addEventListener("click", () => addRows(addAttrCount.value));
+
+    downloadBtn.addEventListener("click", () => {
+      const content = JSON.stringify(getCurrentData(), null, 2);
+      const blob = new Blob([content], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "comparacao-produtos.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    jsonInput.addEventListener("change", async (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+
+      try {
+        const text = await file.text();
+        const parsed = JSON.parse(text);
+
+        const p1 = parsed.produto1 || (Array.isArray(parsed.produtos) ? parsed.produtos[0] : null);
+        const p2 = parsed.produto2 || (Array.isArray(parsed.produtos) ? parsed.produtos[1] : null);
+        if (!p1 || !p2) {
+          alert("JSON inválido. Esperado: { produto1: {...}, produto2: {...} }");
+          return;
+        }
+
+        state.produto1.nomeProduto = p1.nomeProduto || "";
+        state.produto2.nomeProduto = p2.nomeProduto || "";
+        state.produto1.imagemProduto = p1.imagemProduto || "";
+        state.produto2.imagemProduto = p2.imagemProduto || "";
+
+        nomeProduto1.value = state.produto1.nomeProduto;
+        nomeProduto2.value = state.produto2.nomeProduto;
+        imgProduto1Nome.textContent = state.produto1.imagemProduto ? `Arquivo: ${state.produto1.imagemProduto}` : "";
+        imgProduto2Nome.textContent = state.produto2.imagemProduto ? `Arquivo: ${state.produto2.imagemProduto}` : "";
+        setImagePreview(1, null);
+        setImagePreview(2, null);
+
+        const a1 = Array.isArray(p1.atributosProduto) ? p1.atributosProduto : [];
+        const a2 = Array.isArray(p2.atributosProduto) ? p2.atributosProduto : [];
+        const total = Math.max(a1.length, a2.length, 1);
+
+        state.rows = [];
+        for (let i = 0; i < total; i += 1) {
+          const r1 = a1[i] || {};
+          const r2 = a2[i] || {};
+          state.rows.push({
+            nomeAtributo: r1.nomeAtributo || r2.nomeAtributo || "",
+            valor1: r1.valorAtributo || "",
+            nota1: Number(r1.notaAtributo) === 1 || r1.notaAtributo === true,
+            valor2: r2.valorAtributo || "",
+            nota2: Number(r2.notaAtributo) === 1 || r2.notaAtributo === true
+          });
+        }
+
+        renderRows();
+        renderOutput();
+      } catch (err) {
+        alert("Erro ao ler JSON: " + err.message);
+      } finally {
+        e.target.value = "";
+      }
+    });
+
+    createRow({
+      nomeAtributo: "Preco Medio",
+      valor1: "",
+      nota1: false,
+      valor2: "",
+      nota2: false
+    });
+  </script>
+</body>
+</html>
