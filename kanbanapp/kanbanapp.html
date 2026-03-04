@@ -547,6 +547,19 @@
  .modal-footer { border-top: 1px solid var(--border); border-bottom: none; display:flex; gap:8px; justify-content:flex-end; } 
  .modal-header { display:flex; align-items:center; justify-content:space-between; } 
  .modal-body { padding: 12px 14px; overflow: auto; } 
+ #licenseOverlay .license-text{
+  margin: 0;
+  white-space: pre-wrap;
+  color: #ffffff;
+  font: inherit;
+ }
+ #licenseOverlay .modal-body,
+ #licenseOverlay .modal-body p{
+  color: #ffffff;
+ }
+ #licenseOverlay .modal-body{
+  padding-bottom: 22px;
+ }
  .settings-section .section-title { margin: 6px 0 4px; font-size: 14px; } 
  .settings-section .section-help { margin: 0 0 10px; color: var(--muted); font-size: 12px; } 
  .rules-list { display: flex; flex-direction: column; gap: 10px; } 
@@ -854,6 +867,7 @@
  <header class="topbar"> 
  <a class="brand brand-link" href="https://kanbanapp.io" target="_blank" rel="noopener noreferrer"><img class="brand-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJLYW5iYW5BcHAgZmF2aWNvbiI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMxMjEzMWQiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjNjY1MGU2Ii8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cmVjdCB4PSIyIiB5PSIyIiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHJ4PSIxNCIgZmlsbD0idXJsKCNiZykiLz4KICA8cmVjdCB4PSIxNCIgeT0iMTYiIHdpZHRoPSIxMCIgaGVpZ2h0PSIzMiIgcng9IjMiIGZpbGw9IiNkOGQ4ZmYiIGZpbGwtb3BhY2l0eT0iLjkwIi8+CiAgPHJlY3QgeD0iMjciIHk9IjE2IiB3aWR0aD0iMTAiIGhlaWdodD0iMzIiIHJ4PSIzIiBmaWxsPSIjYmRhNmZmIiBmaWxsLW9wYWNpdHk9Ii45MiIvPgogIDxyZWN0IHg9IjQwIiB5PSIxNiIgd2lkdGg9IjEwIiBoZWlnaHQ9IjMyIiByeD0iMyIgZmlsbD0iIzdhNjdmMCIgZmlsbC1vcGFjaXR5PSIuOTUiLz4KPC9zdmc+Cg==" alt="" aria-hidden="true">KanbanApp.io</a> 
  <div class="menu"> 
+ <button id="btnLicense" class="btn">Licença</button>
  <button id="btnAddColumn" class="btn">+ Coluna</button> 
  <button id="btnSettings" class="btn">Configurações</button> 
  <button id="btnSave" class="btn">Salvar JSON</button> 
@@ -990,6 +1004,41 @@
  </div> 
  </div> 
  </div> 
+ <div id="licenseOverlay" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="licenseTitle">
+ <div class="modal">
+ <div class="modal-header">
+ <h2 id="licenseTitle">MIT License</h2>
+ <button class="btn btn-small modal-close" aria-label="Fechar">✖</button>
+ </div>
+ <div class="modal-body">
+ <pre class="license-text">MIT License
+
+KanbanApp
+https://kanbanapp.io
+
+Copyright (c) 2026 Jo&atilde;o Ricardo C&ocirc;re Dutra
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+</pre>
+ </div>
+ </div>
+ </div>
  <!-- Template de uma linha de regra (dias + cor) --> 
  <template id="tpl-rule-row"> 
  <div class="rule-row"> 
@@ -2449,6 +2498,11 @@ function updateChecklistProgress(cardNode){
  btnSave: null, 
  btnCancel: null 
  }; 
+ const licenseUI = {
+ overlay: null,
+ btnOpen: null,
+ btnClose: null
+ };
  function isColorInputSupported() { 
  const i = document.createElement('input'); 
  i.setAttribute('type', 'color'); 
@@ -2510,6 +2564,31 @@ function updateChecklistProgress(cardNode){
  if (e.target === settingsUI.overlay) closeSettingsModal(); 
  }); 
  } 
+ function openLicenseModal(){
+ ensureLicenseRefs();
+ licenseUI.overlay.classList.remove('hidden');
+ }
+ function closeLicenseModal(){
+ ensureLicenseRefs();
+ licenseUI.overlay.classList.add('hidden');
+ }
+ function ensureLicenseRefs(){
+ if (licenseUI.overlay) return;
+ licenseUI.overlay = document.getElementById('licenseOverlay');
+ licenseUI.btnOpen = document.getElementById('btnLicense');
+ licenseUI.btnClose = licenseUI.overlay ? licenseUI.overlay.querySelector('.modal-close') : null;
+ if (licenseUI.btnOpen) licenseUI.btnOpen.addEventListener('click', openLicenseModal);
+ if (licenseUI.btnClose) licenseUI.btnClose.addEventListener('click', closeLicenseModal);
+ if (licenseUI.overlay) {
+  licenseUI.overlay.addEventListener('click', function(e){
+  if (e.target === licenseUI.overlay) closeLicenseModal();
+  });
+  licenseUI.overlay.addEventListener('keydown', function(e){
+  const key = e.key || e.code || '';
+  if (key === 'Escape' || key === 'Esc') closeLicenseModal();
+  });
+ }
+ }
  function renderSettingsRows(rules) { 
  ensureSettingsRefs(); 
  settingsUI.rulesList.innerHTML = ''; 
@@ -2686,6 +2765,7 @@ document.addEventListener('click', function(e){
  document.getElementById('btnSettings').addEventListener('click', function(){ 
  openSettingsModal(); 
  }); 
+ ensureLicenseRefs();
  document.getElementById('btnSave').addEventListener('click', function(){ 
  try{ 
  const data = serializeBoard(); 
