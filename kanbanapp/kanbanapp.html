@@ -73,8 +73,7 @@
   text-decoration: none;
 }
 .brand-icon{ width: 24px; height: 24px; display: inline-block; border-radius: 6px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.55)); }
- .menu{ display: flex; gap: 8px; align-items: center; flex-wrap: wrap; } 
- button, .btn{ 
+button, .btn{ 
  background: var(--panel-2); 
  color: var(--text); 
  border: 1px solid rgba(255,255,255,0.15); 
@@ -88,30 +87,6 @@
  .btn-small{ padding: 6px 10px; font-size: 12px; } 
  .btn-danger{ background: #B00020; border-color: rgba(255,255,255,0.25); color: #fff; } 
  .btn-danger:hover{ filter: brightness(1.1); } 
-/* Menu buttons styled to match topbar: purple border and subtle outer glow */
-.topbar .menu button,
-.topbar .menu .btn {
-  background: var(--panel-2);
-  border-color: color-mix(in srgb, var(--menu-purple-base) 70%, #ffffff 12%);
-  box-shadow:
-    0 0 7px color-mix(in srgb, var(--menu-purple-base) 28%, transparent),
-    0 0 14px color-mix(in srgb, var(--menu-blue-soft) 16%, transparent),
-    0 4px 10px rgba(0,0,0,0.20);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 36px;
-  padding: 6px 12px;
-  transition: box-shadow .18s ease, transform .12s ease;
-}
-.topbar .menu button:hover,
-.topbar .menu .btn:hover {
-  transform: translateY(-1px);
-  box-shadow:
-    0 0 11px color-mix(in srgb, var(--menu-purple-light) 38%, transparent),
-    0 0 18px color-mix(in srgb, var(--menu-blue-soft) 24%, transparent),
-    0 6px 14px rgba(0,0,0,0.26);
-}
  /* Board */ 
  main{ padding: 16px 16px 0; padding-top: 18px; } 
  .board{ 
@@ -212,13 +187,35 @@
  border: 1px solid var(--border); 
  color: var(--muted); 
  } 
- .cards{ 
- display: flex; 
- flex-direction: column; 
- gap: 10px; 
- padding: 12px; 
- min-height: 120px; 
- } 
+.cards{ 
+display: flex; 
+flex-direction: column; 
+gap: 10px; 
+padding: 12px; 
+min-height: 120px; 
+} 
+.board-add-column{
+ min-width: 352px;
+ max-width: 418px;
+ min-height: 50px;
+ align-self: flex-start;
+ background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+ border: 1px dashed var(--border);
+ border-radius: 18px;
+ color: var(--muted);
+ box-shadow: 0 20px 40px rgba(0,0,0,0.18);
+ display: inline-flex;
+ align-items: center;
+ justify-content: center;
+ font-size: 16px;
+ font-weight: 600;
+ padding: 12px 16px;
+}
+.board-add-column:hover{
+ color: #fff;
+ background: rgba(255,255,255,0.06);
+ border-color: rgba(255,255,255,0.24);
+}
  .cards.drag-over{ 
  outline: 2px dashed var(--purple-2); 
  outline-offset: 4px; 
@@ -395,7 +392,7 @@
 
 /* Checklist: hide inner checkmark and use darker purple background when checked */
 .checklist-item input[type="checkbox"]::after { display: none; }
-.checklist-item input[type="checkbox"]:checked { background-color: var(--progress-color, var(--purple)); border-color: rgba(255,255,255,0.12); }
+.checklist-item input[type="checkbox"]:checked { background-color: var(--item-accent-color, var(--progress-color, var(--purple))); border-color: rgba(255,255,255,0.12); }
  .checklist-header{ 
  display: flex; 
  align-items: center; 
@@ -423,7 +420,11 @@
  border-radius: 8px; 
  padding: 8px; 
  cursor: default; 
+ transition: box-shadow .15s ease;
  } 
+.checklist-item.has-due{
+ box-shadow: inset 3px 0 0 var(--item-due-color, var(--purple));
+}
  .item-drag-handle{
   width: 20px;
   height: 20px;
@@ -473,6 +474,9 @@
  .open-item-note.has-content{
  color: var(--progress-color, var(--purple));
  }
+.open-item-note.has-due{
+ color: var(--item-due-color, var(--progress-color, var(--purple)));
+}
  .item-editor{ 
  grid-column: 1 / -1; 
  margin-left: 26px; 
@@ -752,112 +756,160 @@
 #cardOverlay .open-card-modal{
   display: none !important;
 }
+#priorityReportOverlay .modal-body{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.priority-report-section{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.priority-report-filters{
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.priority-report-filters .field{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.priority-report-filters label{
+  font-size: 12px;
+  color: var(--muted);
+}
+.priority-report-filters input{
+  width: 180px;
+  background: var(--panel-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 10px;
+}
+.priority-filter-controls{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.priority-report-filters input[type="number"]{
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+.priority-report-filters input[type="number"]::-webkit-inner-spin-button,
+.priority-report-filters input[type="number"]::-webkit-outer-spin-button{
+  -webkit-appearance: none;
+  margin: 0;
+}
+.priority-filter-btn{
+  min-width: 34px;
+}
+.priority-filter-btn.clear{
+  min-width: auto;
+}
+.priority-report-section h3{
+  margin: 0;
+  font-size: 15px;
+}
+.priority-report-list{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.priority-report-entry{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.priority-report-source{
+  font-size: 11px;
+  color: #ffffff;
+  opacity: 0.9;
+  margin-left: 2px;
+}
+.priority-report-item{
+  cursor: pointer;
+}
+.priority-report-item .item-actions{
+  display: none;
+}
+.priority-report-item input,
+.priority-report-item textarea,
+.priority-report-item .item-view{
+  pointer-events: none;
+}
+.priority-report-card{
+  cursor: default;
+}
+.priority-report-card .card-title{
+  pointer-events: none;
+}
+.priority-report-empty{
+  color: var(--muted);
+  font-size: 13px;
+  background: rgba(255,255,255,0.03);
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  padding: 10px;
+}
 
 /* Spacer below topbar matching board background */
 .topbar-spacer{ position: fixed; top: 0; left: 0; right: 0; width: 100%; background: var(--bg); opacity: 1; z-index: 5; pointer-events: none; }
 
-/* ===== Mobile: hamburger + vertical menu ===== */
+/* ===== Topbar Hamburger Menu ===== */
 .hamburger{
-  display: none;
-  background: transparent;
-  border: 1px solid rgba(255,255,255,0.06);
+  margin-left: auto;
+  display: inline-flex;
+  background: var(--panel-2);
+  border: 1px solid rgba(255,255,255,0.15);
   color: var(--text);
   border-radius: 8px;
-  width: 40px; height: 36px;
+  width: 40px;
+  height: 36px;
   align-items: center; justify-content: center;
   font-size: 20px;
   cursor: pointer;
 }
 .mobile-menu{
   position: fixed;
-  left: 0;
-  right: 0;
   top: auto;
-  transform-origin: top center;
-  transform: scaleY(0);
-  transition: transform .26s cubic-bezier(.2,.9,.2,1), opacity .18s ease;
-  background:
-    radial-gradient(circle at 92% -35%, color-mix(in srgb, var(--menu-purple-light) 50%, transparent), transparent 45%),
-    radial-gradient(circle at 7% 125%, color-mix(in srgb, var(--menu-blue-soft) 44%, transparent), transparent 42%),
-    linear-gradient(120deg, #12131d 0%, color-mix(in srgb, var(--menu-purple-deep) 44%, #1f2240) 100%);
-  border: 1px solid color-mix(in srgb, var(--menu-border-soft) 45%, transparent);
-  border-radius: 0;
+  right: 16px;
+  left: auto;
+  width: auto;
+  min-width: 220px;
+  max-width: min(92vw, 320px);
+  transform-origin: top right;
+  transform: scaleY(0.96);
+  opacity: 0;
+  transition: transform .16s ease, opacity .16s ease;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
   color: var(--text);
   box-shadow: 0 10px 26px rgba(0,0,0,0.25);
   z-index: 12;
   padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: stretch;
   pointer-events: none;
 }
 .mobile-menu.open{ transform: scaleY(1); opacity: 1; pointer-events: auto; }
-.mobile-menu-inner{ width: 100%; display: flex; flex-direction: column; align-items: center; gap: 12px; padding-top: 12px; }
-@media (max-width: 640px){
-  .menu{ display: none; }
-  .hamburger{ display: inline-flex; }
-  .topbar{ padding: 10px 12px; }
-  .mobile-menu{ left: 8px; right: 8px; }
-}
-
-/* When the desktop .menu is moved into the mobile panel, ensure it becomes visible
-   and displayed as a vertical centered column of buttons */
-.mobile-menu .menu {
-  display: flex !important;
+.mobile-menu .checklist-transfer-actions{
+  padding: 12px;
+  display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 12px;
+  gap: 8px;
+  min-width: 220px;
+}
+.mobile-menu .checklist-transfer-actions .btn{
   width: 100%;
-  padding: 0 0 12px 0;
-}
-.mobile-menu .menu .btn {
-  width: 85vw; /* 85% da largura da viewport */
-  max-width: none;
-  font-size: 18px;
-  /* horizontal padding = 5% da largura da viewport */
-  padding: 12px 5vw;
-  height: 56px;
-  display: inline-flex;
-  align-items: center;
   justify-content: center;
-  border-radius: 8px; /* same visual as topbar buttons */
-  background: var(--panel-2);
-  border: 1px solid color-mix(in srgb, var(--menu-purple-base) 78%, #ffffff 10%);
-  box-shadow:
-    0 0 12px color-mix(in srgb, var(--menu-purple-base) 34%, transparent),
-    0 0 18px color-mix(in srgb, var(--menu-blue-soft) 18%, transparent),
-    0 6px 14px rgba(0,0,0,0.28);
-  border-color: color-mix(in srgb, var(--menu-purple-light) 80%, #ffffff 10%);
-  color: var(--text);
 }
-@media (orientation: portrait) and (max-width: 640px){
+@media (max-width: 640px){
+  .topbar{ padding: 10px 12px; }
   .mobile-menu{
-    left: 0;
-    right: 0;
-  }
-  .mobile-menu.open{
-    box-shadow: 0 32px 60px rgba(0,0,0,0.88);
-  }
-  .mobile-menu.open::after{
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 100%;
-    height: 75vh;
-    pointer-events: none;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.78), rgba(0,0,0,0));
-  }
-  .mobile-menu-inner{
-    padding-top: 31px;
-    padding-bottom: 36px;
-  }
-  .mobile-menu .menu{
-    padding-bottom: 0;
-  }
-  .mobile-menu .menu .btn{
-    border-color: color-mix(in srgb, var(--menu-purple-base) 66%, #ffffff 8%);
-    box-shadow: 0 0 7px color-mix(in srgb, var(--menu-purple-base) 24%, transparent), 0 3px 8px rgba(0,0,0,0.22);
+    right: 12px;
+    max-width: calc(100vw - 24px);
   }
 }
 
@@ -866,20 +918,21 @@
 <body> 
  <header class="topbar"> 
  <a class="brand brand-link" href="https://kanbanapp.io" target="_blank" rel="noopener noreferrer"><img class="brand-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJLYW5iYW5BcHAgZmF2aWNvbiI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMxMjEzMWQiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjNjY1MGU2Ii8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cmVjdCB4PSIyIiB5PSIyIiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHJ4PSIxNCIgZmlsbD0idXJsKCNiZykiLz4KICA8cmVjdCB4PSIxNCIgeT0iMTYiIHdpZHRoPSIxMCIgaGVpZ2h0PSIzMiIgcng9IjMiIGZpbGw9IiNkOGQ4ZmYiIGZpbGwtb3BhY2l0eT0iLjkwIi8+CiAgPHJlY3QgeD0iMjciIHk9IjE2IiB3aWR0aD0iMTAiIGhlaWdodD0iMzIiIHJ4PSIzIiBmaWxsPSIjYmRhNmZmIiBmaWxsLW9wYWNpdHk9Ii45MiIvPgogIDxyZWN0IHg9IjQwIiB5PSIxNiIgd2lkdGg9IjEwIiBoZWlnaHQ9IjMyIiByeD0iMyIgZmlsbD0iIzdhNjdmMCIgZmlsbC1vcGFjaXR5PSIuOTUiLz4KPC9zdmc+Cg==" alt="" aria-hidden="true">KanbanApp.io</a> 
- <div class="menu"> 
- <button id="btnLicense" class="btn">Licença</button>
- <button id="btnAddColumn" class="btn">+ Coluna</button> 
- <button id="btnSettings" class="btn">Configurações</button> 
- <button id="btnSave" class="btn">Salvar JSON</button> 
- <input type="file" id="fileJson" accept="application/json" hidden> 
- <button id="btnLoad" class="btn">Carregar JSON</button> 
- </div> 
  <button id="hamburgerBtn" class="hamburger" aria-controls="mobileMenu" aria-expanded="false" aria-label="Abrir menu">☰</button>
  </header> 
 <!-- Opaque spacer, same height as topbar, same color as board background -->
 <div id="topbarSpacer" class="topbar-spacer" aria-hidden="true"></div>
 <!-- Mobile menu container (hidden by default) -->
-<div id="mobileMenu" class="mobile-menu" aria-hidden="true"></div>
+<div id="mobileMenu" class="mobile-menu checklist-transfer-modal" aria-hidden="true">
+  <div class="checklist-transfer-actions">
+    <button id="btnLoad" class="btn">Carregar JSON</button>
+    <input type="file" id="fileJson" accept="application/json" hidden>
+    <button id="btnSave" class="btn">Salvar JSON</button>
+    <button id="btnSettings" class="btn">Configurações</button>
+    <button id="btnPriorityReport" class="btn">Relatório de prioridades</button>
+    <button id="btnLicense" class="btn">Licença</button>
+  </div>
+</div>
  <main> 
  <div id="board" class="board" aria-live="polite"></div> 
 <div class="board-bottom-spacer" aria-hidden="true"></div>
@@ -1039,9 +1092,38 @@ SOFTWARE.
  </div>
  </div>
  </div>
+ <div id="priorityReportOverlay" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="priorityReportTitle">
+ <div class="modal modal-card">
+ <div class="modal-header">
+ <h2 id="priorityReportTitle">Relatório de prioridades</h2>
+ <button class="btn btn-small modal-close" aria-label="Fechar">✖</button>
+ </div>
+ <div class="modal-body">
+ <section class="priority-report-filters">
+ <div class="field">
+ <label for="priorityMaxDays">Dias para vencer (cards com N dias ou menos)</label>
+ <div class="priority-filter-controls">
+ <input type="number" id="priorityMaxDays" min="0" step="1" placeholder="Ex.: 7" />
+ <button id="btnPriorityDaysInc" type="button" class="btn-small btn-ghost priority-filter-btn" aria-label="Aumentar dias">+</button>
+ <button id="btnPriorityDaysDec" type="button" class="btn-small btn-ghost priority-filter-btn" aria-label="Diminuir dias">-</button>
+ <button id="btnPriorityDaysClear" type="button" class="btn-small btn-ghost priority-filter-btn clear" aria-label="Limpar filtro de dias">Limpar</button>
+ </div>
+ </div>
+ </section>
+ <section class="priority-report-section">
+ <h3>Itens por prioridade:</h3>
+ <div id="priorityItemsList" class="priority-report-list"></div>
+ </section>
+ <section class="priority-report-section">
+ <h3>Cards por prioridade:</h3>
+ <div id="priorityCardsList" class="priority-report-list"></div>
+ </section>
+ </div>
+ </div>
+ </div>
  <!-- Template de uma linha de regra (dias + cor) --> 
  <template id="tpl-rule-row"> 
- <div class="rule-row"> 
+<div class="rule-row"> 
  <div class="rule-field"> 
  <label class="field-label">Dias</label> 
  <input type="number" class="rule-days" min="0" step="1" inputmode="numeric" placeholder="Ex.: 7"> 
@@ -1110,6 +1192,10 @@ SOFTWARE.
       <button class="btn btn-small modal-close" aria-label="Fechar">✖</button>
     </div>
     <div class="modal-body">
+      <div class="due-wrap">
+        <div class="field-label">Data de vencimaneto:</div>
+        <input type="date" id="checklistItemDueDate" class="card-due" aria-label="Selecionar data de vencimaneto do item do checklist" />
+      </div>
       <div class="field-label">Detalhes:</div>
       <div id="checklistItemContentView" class="render" aria-label="Detalhes renderizados com links"></div>
       <textarea id="checklistItemContentEditor" class="item-note-editor hidden" placeholder="Digite os detalhes (suporta links)"></textarea>
@@ -1163,14 +1249,41 @@ function getChecklistItemContent(itemNode){
  if(!itemNode || !itemNode.dataset) return '';
  return String(itemNode.dataset.details || '');
 }
+function getChecklistItemDueDate(itemNode){
+ if(!itemNode || !itemNode.dataset) return '';
+ return String(itemNode.dataset.dueDate || '');
+}
+function pickColorForDateString(dueStr){
+ if(!dueStr) return '';
+ const dueDt = parseDateOnly(dueStr);
+ if(!dueDt) return '';
+ const rem = diffDays(startOfToday(), dueDt);
+ return pickColorForRemainingDays(rem);
+}
+function getChecklistItemDueColor(itemNode){
+ const dueStr = getChecklistItemDueDate(itemNode);
+ return pickColorForDateString(dueStr);
+}
 function hasChecklistItemContent(itemNode){
  return getChecklistItemContent(itemNode).trim().length > 0;
 }
 function updateChecklistItemNoteButtonState(itemNode){
  const btn = $('.open-item-note', itemNode);
+ const dueColor = getChecklistItemDueColor(itemNode);
+ if (dueColor){
+ itemNode.classList.add('has-due');
+ itemNode.style.setProperty('--item-due-color', dueColor);
+ itemNode.style.setProperty('--item-accent-color', dueColor);
+ } else {
+ itemNode.classList.remove('has-due');
+ itemNode.style.removeProperty('--item-due-color');
+ itemNode.style.removeProperty('--item-accent-color');
+ }
  if(!btn) return;
  const filled = hasChecklistItemContent(itemNode);
- btn.classList.toggle('has-content', filled);
+ const hasDue = !!dueColor;
+ btn.classList.toggle('has-due', hasDue);
+ btn.classList.toggle('has-content', !hasDue && filled);
  btn.title = filled ? 'Editar detalhes do item' : 'Adicionar detalhes do item';
  btn.setAttribute('aria-label', btn.title);
 }
@@ -1181,6 +1294,16 @@ function setChecklistItemContent(itemNode, content){
  itemNode.dataset.details = text;
  } else {
  delete itemNode.dataset.details;
+ }
+ updateChecklistItemNoteButtonState(itemNode);
+}
+function setChecklistItemDueDate(itemNode, dueDate){
+ if(!itemNode || !itemNode.dataset) return;
+ const value = String(dueDate == null ? '' : dueDate).trim();
+ if(value){
+ itemNode.dataset.dueDate = value;
+ } else {
+ delete itemNode.dataset.dueDate;
  }
  updateChecklistItemNoteButtonState(itemNode);
 }
@@ -1369,11 +1492,16 @@ function syncCardDescriptionSizeState(cardNode){
  // NOVO: sempre atualizar a linha colapsada após pintar 
  renderCollapsedMeta(card); 
  } 
- function applyDueColorsAll(){ $$('.card').forEach(applyDueColorToCard); } 
+function applyDueColorsAll(){
+ $$('.card').forEach(function(card){
+ applyDueColorToCard(card);
+ $$('.checklist-item', card).forEach(updateChecklistItemNoteButtonState);
+ });
+} 
  // ===== SERIALIZAÇÃO ===== 
  function serializeBoard(){ 
  const data = { 
- meta: { version: 10, exportedAt: new Date().toISOString() }, 
+ meta: { version: 11, exportedAt: new Date().toISOString() }, 
  columns: [] 
  }; 
  // regras de cor 
@@ -1393,7 +1521,9 @@ function syncCardDescriptionSizeState(cardNode){
  label: editor ? editor.value : '' 
  };
  const noteContent = getChecklistItemContent(it);
+ const dueDate = getChecklistItemDueDate(it);
  if (noteContent.trim()) itemData.details = noteContent;
+ if (dueDate) itemData.dueDate = dueDate;
  checklist.push(itemData); 
  }); 
  colData.cards.push({ 
@@ -1471,7 +1601,12 @@ function syncCardDescriptionSizeState(cardNode){
  .map(x => x.it);
  for(let ck = 0; ck < orderedChecklist.length; ck++){ 
  const it = orderedChecklist[ck] || {}; 
- const inode = createChecklistItem(it.label || '', !!it.checked, (typeof it.details === 'string' ? it.details : (typeof it.content === 'string' ? it.content : ''))); 
+ const inode = createChecklistItem(
+ it.label || '',
+ !!it.checked,
+ (typeof it.details === 'string' ? it.details : (typeof it.content === 'string' ? it.content : '')),
+ (typeof it.dueDate === 'string' ? it.dueDate : '')
+ ); 
  itemsWrap.appendChild(inode); 
  await nextFrame(); 
  } 
@@ -1489,13 +1624,14 @@ function syncCardDescriptionSizeState(cardNode){
  // opcional: se modal já foi inicializado, atualiza a UI 
  if (settingsUI.overlay) renderSettingsRows(boardMeta.ageColorRules); 
  // garantia 
+ ensureBoardAddColumnControl();
  applyDueColorsAll(); 
  }
  
  function getDefaultBoardData(){
  const now = nowISO();
  return {
- meta: { version: 10, exportedAt: now, ageColorRules: Array.isArray(boardMeta.ageColorRules) ? boardMeta.ageColorRules : [] },
+ meta: { version: 11, exportedAt: now, ageColorRules: Array.isArray(boardMeta.ageColorRules) ? boardMeta.ageColorRules : [] },
  columns: [
  {
  id: uid('col'),
@@ -1528,11 +1664,26 @@ function syncCardDescriptionSizeState(cardNode){
  };
  }
  // ===== Criação de elementos ===== 
- const board = document.getElementById('board'); 
- const tplColumn = document.getElementById('tpl-column'); 
- const tplCard = document.getElementById('tpl-card'); 
- const tplItem = document.getElementById('tpl-checklist-item'); 
- function createColumn(id, title){ 
+const board = document.getElementById('board'); 
+const tplColumn = document.getElementById('tpl-column'); 
+const tplCard = document.getElementById('tpl-card'); 
+const tplItem = document.getElementById('tpl-checklist-item'); 
+function ensureBoardAddColumnControl(){
+ if (!board) return null;
+ let btn = document.getElementById('btnAddColumn');
+ if (!btn){
+ btn = document.createElement('button');
+ btn.id = 'btnAddColumn';
+ btn.className = 'btn board-add-column';
+ btn.type = 'button';
+ btn.textContent = '+ Coluna';
+ }
+ if (!board.contains(btn) || board.lastElementChild !== btn){
+ board.appendChild(btn);
+ }
+ return btn;
+}
+function createColumn(id, title){ 
  const node = tplColumn.content.firstElementChild.cloneNode(true); 
  node.dataset.id = id; 
  $('.column-title', node).value = title || ''; 
@@ -1847,7 +1998,8 @@ function createCard(id){
       const label = $('.item-editor', dragged)?.value || '';
       const checked = !!$('.item-check', dragged)?.checked;
       const noteContent = getChecklistItemContent(dragged);
-      const copyNode = createChecklistItem(label, checked, noteContent);
+      const dueDate = getChecklistItemDueDate(dragged);
+      const copyNode = createChecklistItem(label, checked, noteContent, dueDate);
       placeChecklistItemByCheckState(effectiveTargetWrap, copyNode);
       restoreToSource();
       refreshCardsAndFilters(false);
@@ -2004,7 +2156,7 @@ function createCard(id){
  updateChecklistProgress(node); 
  return node; 
  } 
-function createChecklistItem(labelText='', checked=false, itemContentText=''){ 
+function createChecklistItem(labelText='', checked=false, itemContentText='', itemDueDateText=''){ 
  const node = tplItem.content.firstElementChild.cloneNode(true); 
   // drag iniciado pelo handle; o item é o objeto movido
   node.draggable = false;
@@ -2161,6 +2313,7 @@ function createChecklistItem(labelText='', checked=false, itemContentText=''){
  openChecklistItemModal(node);
  });
  }
+ setChecklistItemDueDate(node, itemDueDateText || '');
  setChecklistItemContent(node, itemContentText || '');
   syncView(); 
   return node; 
@@ -2168,22 +2321,25 @@ function createChecklistItem(labelText='', checked=false, itemContentText=''){
 const checklistItemModalUI = {
  overlay: null,
  title: null,
+ dueInput: null,
  view: null,
  editor: null,
  saveBtn: null,
  closeBtn: null,
- currentItem: null
+ currentItem: null,
+ refreshAccent: null
 };
 function ensureChecklistItemModalRefs(){
  if (checklistItemModalUI.overlay) return checklistItemModalUI;
  const ui = checklistItemModalUI;
  ui.overlay = document.getElementById('checklistItemOverlay');
  ui.title = document.getElementById('checklistItemModalTitle');
+ ui.dueInput = document.getElementById('checklistItemDueDate');
  ui.view = document.getElementById('checklistItemContentView');
  ui.editor = document.getElementById('checklistItemContentEditor');
  ui.saveBtn = document.getElementById('btnChecklistItemSave');
  ui.closeBtn = ui.overlay ? ui.overlay.querySelector('.modal-close') : null;
- if (!ui.overlay || !ui.view || !ui.editor) return ui;
+ if (!ui.overlay || !ui.view || !ui.editor || !ui.dueInput) return ui;
  const enterEdit = function(){
  ui.editor.dataset.original = ui.editor.value;
  ui.editor.classList.remove('hidden');
@@ -2207,6 +2363,20 @@ function ensureChecklistItemModalRefs(){
  if (key === 'Escape' || key === 'Esc'){ exitEdit(false); ui.editor.blur(); }
  if ((e.ctrlKey || e.metaKey) && key === 'Enter'){ ui.editor.blur(); }
  });
+ const refreshAccent = function(){
+ const itemNode = ui.currentItem;
+ const ownerCard = itemNode ? itemNode.closest('.card') : null;
+ const dueAccent = pickColorForDateString(ui.dueInput ? ui.dueInput.value : '');
+ const itemAccent = itemNode ? getChecklistItemDueColor(itemNode) : '';
+ const cardAccent = ownerCard ? (getComputedStyle(ownerCard).getPropertyValue('--progress-color') || '').trim() : '';
+ const accent = dueAccent || itemAccent || cardAccent || 'var(--purple)';
+ if (ui.overlay && ui.overlay.style){
+ ui.overlay.style.setProperty('--item-modal-accent', accent);
+ }
+ };
+ ui.refreshAccent = refreshAccent;
+ ui.dueInput.addEventListener('input', refreshAccent);
+ ui.dueInput.addEventListener('change', refreshAccent);
  if (ui.saveBtn) ui.saveBtn.addEventListener('click', closeChecklistItemModal);
  if (ui.closeBtn) ui.closeBtn.addEventListener('click', closeChecklistItemModal);
  ui.overlay.addEventListener('click', function(e){ if (e.target === ui.overlay) closeChecklistItemModal(); });
@@ -2221,15 +2391,13 @@ function openChecklistItemModal(itemNode){
  if (!ui || !ui.overlay || !itemNode) return;
  if (ui.currentItem && ui.currentItem !== itemNode) closeChecklistItemModal();
  ui.currentItem = itemNode;
- const ownerCard = itemNode.closest('.card');
- const accent = ownerCard ? (getComputedStyle(ownerCard).getPropertyValue('--progress-color') || '').trim() : '';
- if (ui.overlay && ui.overlay.style){
- ui.overlay.style.setProperty('--item-modal-accent', accent || 'var(--purple)');
- }
  const label = ($('.item-editor', itemNode)?.value || '').trim();
  if (ui.title) ui.title.textContent = label || 'Item sem título';
  const content = getChecklistItemContent(itemNode);
+ const dueDate = getChecklistItemDueDate(itemNode);
  ui.editor.value = content;
+ ui.dueInput.value = dueDate;
+ if (typeof ui.refreshAccent === 'function') ui.refreshAccent();
  ui.view.innerHTML = linkify(content);
  ui.editor.classList.add('hidden');
  ui.view.classList.remove('hidden');
@@ -2248,7 +2416,9 @@ function closeChecklistItemModal(){
  return;
  }
  const text = ui.editor ? ui.editor.value : '';
+ const dueDate = ui.dueInput ? ui.dueInput.value : '';
  setChecklistItemContent(ui.currentItem, text);
+ setChecklistItemDueDate(ui.currentItem, dueDate);
  const card = ui.currentItem.closest('.card');
  const col = ui.currentItem.closest('.column');
  if (card){
@@ -2503,6 +2673,39 @@ function updateChecklistProgress(cardNode){
  btnOpen: null,
  btnClose: null
  };
+const priorityReportUI = {
+overlay: null,
+btnOpen: null,
+btnClose: null,
+itemsList: null,
+cardsList: null,
+maxDaysInput: null,
+btnInc: null,
+btnDec: null,
+btnClear: null
+};
+function getPriorityDaysValue(){
+ const raw = priorityReportUI.maxDaysInput ? String(priorityReportUI.maxDaysInput.value || '').trim() : '';
+ if (raw === '') return null;
+ const n = parseInt(raw, 10);
+ return Number.isFinite(n) ? Math.max(0, n) : null;
+}
+function setPriorityDaysValue(value){
+ if (!priorityReportUI.maxDaysInput) return;
+ if (value == null){
+ priorityReportUI.maxDaysInput.value = '';
+ return;
+ }
+ const n = Math.max(0, parseInt(value, 10) || 0);
+ priorityReportUI.maxDaysInput.value = String(n);
+}
+function adjustPriorityDays(delta){
+ const current = getPriorityDaysValue();
+ const base = current == null ? 0 : current;
+ const next = Math.max(0, base + delta);
+ setPriorityDaysValue(next);
+ renderPriorityReport();
+}
  function isColorInputSupported() { 
  const i = document.createElement('input'); 
  i.setAttribute('type', 'color'); 
@@ -2589,6 +2792,181 @@ function updateChecklistProgress(cardNode){
   });
  }
  }
+ function collectPriorityReportData(){
+ const items = [];
+ const cards = [];
+ $$('.column').forEach(function(columnNode){
+ const columnTitle = (($('.column-title', columnNode)?.value) || '').trim() || 'Sem coluna';
+ $$('.card', columnNode).forEach(function(cardNode){
+ const cardTitle = (($('.card-title', cardNode)?.value) || '').trim() || 'Sem título';
+ const cardDue = ($('.card-due', cardNode)?.value || '').trim();
+ const cardDueDate = parseDateOnly(cardDue);
+ if (cardDueDate){
+ const daysRemaining = diffDays(startOfToday(), cardDueDate);
+ cards.push({
+ cardNode: cardNode,
+ columnTitle: columnTitle,
+ cardTitle: cardTitle,
+ dueDate: cardDue,
+ dueTs: cardDueDate.getTime(),
+ daysRemaining: daysRemaining
+ });
+ }
+ $$('.checklist-item', cardNode).forEach(function(itemNode){
+ const itemDue = getChecklistItemDueDate(itemNode).trim();
+ const itemDueDate = parseDateOnly(itemDue);
+ if (!itemDueDate) return;
+ const itemLabel = (($('.item-editor', itemNode)?.value) || '').trim() || 'Item sem título';
+ items.push({
+ itemNode: itemNode,
+ cardNode: cardNode,
+ columnTitle: columnTitle,
+ cardTitle: cardTitle,
+ itemLabel: itemLabel,
+ dueDate: itemDue,
+ dueTs: itemDueDate.getTime()
+ });
+ });
+ });
+ });
+ const byPriority = function(a, b){
+ if (a.dueTs !== b.dueTs) return a.dueTs - b.dueTs;
+ const aCard = String(a.cardTitle || '');
+ const bCard = String(b.cardTitle || '');
+ const byCard = aCard.localeCompare(bCard, 'pt-BR');
+ if (byCard !== 0) return byCard;
+ const aItem = String(a.itemLabel || '');
+ const bItem = String(b.itemLabel || '');
+ return aItem.localeCompare(bItem, 'pt-BR');
+ };
+ items.sort(byPriority);
+ cards.sort(byPriority);
+ return { items: items, cards: cards };
+ }
+function renderPriorityReport(){
+ ensurePriorityReportRefs();
+ if (!priorityReportUI.itemsList || !priorityReportUI.cardsList) return;
+ priorityReportUI.itemsList.innerHTML = '';
+ priorityReportUI.cardsList.innerHTML = '';
+ const data = collectPriorityReportData();
+ const maxDays = getPriorityDaysValue();
+ const cardsForReport = Number.isFinite(maxDays) ? data.cards.filter(function(c){ return c.daysRemaining <= maxDays; }) : data.cards;
+ if (!data.items.length){
+ const empty = document.createElement('div');
+ empty.className = 'priority-report-empty';
+ empty.textContent = 'Nenhum item de checklist com data de vencimento.';
+ priorityReportUI.itemsList.appendChild(empty);
+ } else {
+ data.items.forEach(function(entry){
+ const wrap = document.createElement('div');
+ wrap.className = 'priority-report-entry';
+ const source = document.createElement('div');
+ source.className = 'priority-report-source';
+ source.textContent = `${entry.columnTitle} > ${entry.cardTitle}`;
+ wrap.appendChild(source);
+ const preview = entry.itemNode.cloneNode(true);
+ preview.classList.add('priority-report-item');
+ const previewCheck = $('.item-check', preview);
+ const previewEditor = $('.item-editor', preview);
+ if (previewCheck) previewCheck.disabled = true;
+ if (previewEditor) previewEditor.disabled = true;
+ preview.addEventListener('click', function(e){
+ e.stopPropagation();
+ closePriorityReportModal();
+ openCardModal(entry.cardNode, { returnToPriorityReport: true });
+ });
+ wrap.appendChild(preview);
+ priorityReportUI.itemsList.appendChild(wrap);
+ });
+ }
+ if (!cardsForReport.length){
+ const empty = document.createElement('div');
+ empty.className = 'priority-report-empty';
+ empty.textContent = Number.isFinite(maxDays)
+ ? `Nenhum card com ${maxDays} dia(s) ou menos para vencer.`
+ : 'Nenhum card com data de vencimento.';
+ priorityReportUI.cardsList.appendChild(empty);
+ } else {
+ cardsForReport.forEach(function(entry){
+ const wrap = document.createElement('div');
+ wrap.className = 'priority-report-entry';
+ const source = document.createElement('div');
+ source.className = 'priority-report-source';
+ source.textContent = entry.columnTitle;
+ wrap.appendChild(source);
+ const previewCard = entry.cardNode.cloneNode(true);
+ previewCard.classList.add('priority-report-card');
+ previewCard.removeAttribute('draggable');
+ const previewTitle = $('.card-title', previewCard);
+ if (previewTitle) {
+ previewTitle.readOnly = true;
+ previewTitle.disabled = true;
+ }
+ const previewDone = $('.card-done', previewCard);
+ if (previewDone) previewDone.disabled = true;
+ setCollapsed(previewCard, true);
+ renderCollapsedMeta(previewCard);
+ previewCard.addEventListener('click', function(e){
+ e.preventDefault();
+ e.stopPropagation();
+ closePriorityReportModal();
+ openCardModal(entry.cardNode, { returnToPriorityReport: true });
+ });
+ $$('.open-card-modal', previewCard).forEach(function(btn){
+ btn.addEventListener('click', function(e){
+ e.preventDefault();
+ e.stopPropagation();
+ closePriorityReportModal();
+ openCardModal(entry.cardNode, { returnToPriorityReport: true });
+ });
+ });
+ wrap.appendChild(previewCard);
+ priorityReportUI.cardsList.appendChild(wrap);
+ });
+ }
+ }
+ function openPriorityReportModal(){
+ ensurePriorityReportRefs();
+ renderPriorityReport();
+ if (priorityReportUI.overlay) priorityReportUI.overlay.classList.remove('hidden');
+ }
+ function closePriorityReportModal(){
+ ensurePriorityReportRefs();
+ if (priorityReportUI.overlay) priorityReportUI.overlay.classList.add('hidden');
+ }
+ function ensurePriorityReportRefs(){
+ if (priorityReportUI.overlay) return;
+ priorityReportUI.overlay = document.getElementById('priorityReportOverlay');
+ priorityReportUI.btnOpen = document.getElementById('btnPriorityReport');
+ priorityReportUI.btnClose = priorityReportUI.overlay ? priorityReportUI.overlay.querySelector('.modal-close') : null;
+ priorityReportUI.itemsList = document.getElementById('priorityItemsList');
+ priorityReportUI.cardsList = document.getElementById('priorityCardsList');
+ priorityReportUI.maxDaysInput = document.getElementById('priorityMaxDays');
+ priorityReportUI.btnInc = document.getElementById('btnPriorityDaysInc');
+ priorityReportUI.btnDec = document.getElementById('btnPriorityDaysDec');
+ priorityReportUI.btnClear = document.getElementById('btnPriorityDaysClear');
+ if (priorityReportUI.btnOpen) priorityReportUI.btnOpen.addEventListener('click', openPriorityReportModal);
+ if (priorityReportUI.btnClose) priorityReportUI.btnClose.addEventListener('click', closePriorityReportModal);
+ if (priorityReportUI.maxDaysInput){
+ priorityReportUI.maxDaysInput.addEventListener('input', renderPriorityReport);
+ priorityReportUI.maxDaysInput.addEventListener('change', renderPriorityReport);
+ }
+ if (priorityReportUI.btnInc) priorityReportUI.btnInc.addEventListener('click', function(){ adjustPriorityDays(1); });
+ if (priorityReportUI.btnDec) priorityReportUI.btnDec.addEventListener('click', function(){ adjustPriorityDays(-1); });
+ if (priorityReportUI.btnClear) priorityReportUI.btnClear.addEventListener('click', function(){
+ setPriorityDaysValue(null);
+ renderPriorityReport();
+ });
+ if (priorityReportUI.overlay){
+ priorityReportUI.overlay.addEventListener('click', function(e){
+ if (e.target === priorityReportUI.overlay) closePriorityReportModal();
+ });
+ priorityReportUI.overlay.addEventListener('keydown', function(e){
+ const key = e.key || e.code || '';
+ if (key === 'Escape' || key === 'Esc') closePriorityReportModal();
+ });
+ }
+ }
  function renderSettingsRows(rules) { 
  ensureSettingsRefs(); 
  settingsUI.rulesList.innerHTML = ''; 
@@ -2660,7 +3038,8 @@ function ensureCardModalRefs(){
   const closeBtn = overlay ? overlay.querySelector('.modal-close') : null;
   window.__cardModal = {
     overlay, content, closeBtn, currentCard: null, columnGhost: null,
-    _titleInput: null, _titleHandler: null, isClosing: false, closeTimer: null
+    _titleInput: null, _titleHandler: null, isClosing: false, closeTimer: null,
+    returnToPriorityReport: false
   };
   if (overlay){
     if (closeBtn) closeBtn.addEventListener('click', closeCardModal);
@@ -2669,12 +3048,14 @@ function ensureCardModalRefs(){
   }
   return window.__cardModal;
 }
-function openCardModal(card){
+function openCardModal(card, options){
+  const opts = options || {};
   const modal = ensureCardModalRefs();
   if (!modal || !modal.overlay || !modal.content) return;
   if (modal.closeTimer){ clearTimeout(modal.closeTimer); modal.closeTimer = null; }
   modal.isClosing = false;
   if (modal.currentCard) closeCardModal(true);
+  modal.returnToPriorityReport = !!opts.returnToPriorityReport;
   // card fantasma para manter contexto visual da posição original
   modal.columnGhost = card.cloneNode(true);
   modal.columnGhost.classList.add('card-modal-ghost');
@@ -2712,6 +3093,7 @@ function closeCardModal(immediate){
   if (!modal || !modal.overlay) return;
   const shouldCloseInstant = immediate === true;
   const finishClose = function(){
+    const shouldReopenPriorityReport = !!modal.returnToPriorityReport;
     if (modal._titleInput && modal._titleHandler){
       modal._titleInput.removeEventListener('input', modal._titleHandler);
       modal._titleInput.removeEventListener('change', modal._titleHandler);
@@ -2726,12 +3108,15 @@ function closeCardModal(immediate){
     if (modal.currentCard) setCollapsed(modal.currentCard, true);
     modal.currentCard = null;
     modal.columnGhost = null;
+    modal.returnToPriorityReport = false;
     modal.overlay.classList.remove('opening', 'open', 'closing');
     modal.overlay.classList.add('hidden');
     modal.isClosing = false;
     if (modal.closeTimer){ clearTimeout(modal.closeTimer); modal.closeTimer = null; }
+    if (shouldReopenPriorityReport) openPriorityReportModal();
   };
   if (!modal.currentCard) {
+    modal.returnToPriorityReport = false;
     modal.overlay.classList.remove('opening', 'open', 'closing');
     modal.overlay.classList.add('hidden');
     return;
@@ -2757,15 +3142,19 @@ document.addEventListener('click', function(e){
 });
 
  // ===== Menu ===== 
- document.getElementById('btnAddColumn').addEventListener('click', function(){ 
- const col = createColumn(uid('col'), 'Nova coluna'); 
- board.appendChild(col); 
- applyColumnFilter(col); 
- }); 
+ board.addEventListener('click', function(e){
+ const btn = e.target && e.target.closest ? e.target.closest('#btnAddColumn') : null;
+ if (!btn) return;
+ const col = createColumn(uid('col'), 'Nova coluna');
+ board.appendChild(col);
+ ensureBoardAddColumnControl();
+ applyColumnFilter(col);
+ });
  document.getElementById('btnSettings').addEventListener('click', function(){ 
  openSettingsModal(); 
  }); 
  ensureLicenseRefs();
+ ensurePriorityReportRefs();
  document.getElementById('btnSave').addEventListener('click', function(){ 
  try{ 
  const data = serializeBoard(); 
@@ -2881,72 +3270,52 @@ const tbEl = document.querySelector('.topbar'); if (tbEl) tbObs.observe(tbEl);
 // initial sync (defer a frame to ensure layout computed)
 requestAnimationFrame(syncTopbarSpacer);
  })(); 
-// ===== Mobile menu behaviour: move menu into a vertical mobile panel on narrow viewports =====
+// ===== Topbar hamburger behaviour =====
 (function(){
-  const topbar = document.querySelector('.topbar');
-  const desktopMenu = topbar ? topbar.querySelector('.menu') : null;
   const mobileMenu = document.getElementById('mobileMenu');
   const hamburger = document.getElementById('hamburgerBtn');
-  if(!desktopMenu || !mobileMenu || !hamburger) return;
+  if(!mobileMenu || !hamburger) return;
 
-  // Keep a reference to original parent/position so we can restore
-  const originalParent = desktopMenu.parentElement;
-  const originalNext = desktopMenu.nextSibling;
-
-  function placeMenuMobile(){
-    if(window.innerWidth <= 640){
-      // move menu into mobile container if not already
-      if(!mobileMenu.contains(desktopMenu)){
-        const inner = document.createElement('div');
-        inner.className = 'mobile-menu-inner';
-        mobileMenu.appendChild(inner);
-        inner.appendChild(desktopMenu);
-      }
-      hamburger.setAttribute('aria-expanded','false');
-      mobileMenu.setAttribute('aria-hidden','true');
-      mobileMenu.classList.remove('open');
-      // position mobile menu directly below the topbar and let its height fit-content
-      const rect = topbar.getBoundingClientRect();
-      mobileMenu.style.top = Math.ceil(rect.bottom) + 'px';
-      mobileMenu.style.height = '';
-    } else {
-      // restore menu to original place
-      if(!originalParent.contains(desktopMenu)){
-        originalParent.insertBefore(desktopMenu, originalNext);
-      }
-      mobileMenu.classList.remove('open');
-      mobileMenu.setAttribute('aria-hidden','true');
-      hamburger.setAttribute('aria-expanded','false');
-      // clear mobile sizing overrides
-      mobileMenu.style.top = '';
-      mobileMenu.style.height = '';
-    }
-    // when not in fullscreen, JS may position the mobile menu under the topbar; we clear here
+  function setOpen(open){
+    mobileMenu.classList.toggle('open', !!open);
+    mobileMenu.setAttribute('aria-hidden', String(!open));
+    hamburger.setAttribute('aria-expanded', String(!!open));
+    if (open) positionMenu();
   }
 
-  // Toggle open/close
-  hamburger.addEventListener('click', function(){
-    const open = mobileMenu.classList.toggle('open');
-    mobileMenu.setAttribute('aria-hidden', String(!open));
-    hamburger.setAttribute('aria-expanded', String(open));
-    // recompute top in case layout changed
-    const rect = topbar.getBoundingClientRect();
-    mobileMenu.style.top = Math.ceil(rect.bottom) + 'px';
+  function positionMenu(){
+    const rect = hamburger.getBoundingClientRect();
+    mobileMenu.style.top = Math.ceil(rect.bottom + 8) + 'px';
+    mobileMenu.style.right = Math.max(8, Math.floor((window.innerWidth || 0) - rect.right)) + 'px';
+  }
+
+  hamburger.addEventListener('click', function(e){
+    e.stopPropagation();
+    setOpen(!mobileMenu.classList.contains('open'));
   });
 
-  // Close mobile menu if clicking outside
+  mobileMenu.addEventListener('click', function(e){
+    const btn = e.target && e.target.closest ? e.target.closest('button') : null;
+    if (btn) setOpen(false);
+  });
+
   document.addEventListener('click', function(e){
     if(!mobileMenu.classList.contains('open')) return;
     if(e.target === hamburger) return;
     if(mobileMenu.contains(e.target)) return;
-    mobileMenu.classList.remove('open');
-    mobileMenu.setAttribute('aria-hidden','true');
-    hamburger.setAttribute('aria-expanded','false');
+    setOpen(false);
   }, true);
 
-  window.addEventListener('resize', placeMenuMobile);
-  // initial placement
-  placeMenuMobile();
+  document.addEventListener('keydown', function(e){
+    const key = e.key || e.code || '';
+    if ((key === 'Escape' || key === 'Esc') && mobileMenu.classList.contains('open')) setOpen(false);
+  });
+
+  window.addEventListener('resize', function(){
+    if (mobileMenu.classList.contains('open')) positionMenu();
+  });
+
+  setOpen(false);
 })();
  </script> 
 </body> 
