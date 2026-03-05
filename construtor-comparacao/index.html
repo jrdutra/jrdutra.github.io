@@ -423,24 +423,26 @@
 
     function getCurrentData() {
       return {
-        produto1: {
-          nomeProduto: state.produto1.nomeProduto,
-          imagemProduto: state.produto1.imagemProduto,
-          atributosProduto: state.rows.map((row) => ({
-            nomeAtributo: row.nomeAtributo,
-            valorAtributo: row.valor1,
-            notaAtributo: row.nota1 ? 1 : 0
-          }))
-        },
-        produto2: {
-          nomeProduto: state.produto2.nomeProduto,
-          imagemProduto: state.produto2.imagemProduto,
-          atributosProduto: state.rows.map((row) => ({
-            nomeAtributo: row.nomeAtributo,
-            valorAtributo: row.valor2,
-            notaAtributo: row.nota2 ? 1 : 0
-          }))
-        }
+        produtos: [
+          {
+            nomeProduto: state.produto1.nomeProduto,
+            imagemProduto: state.produto1.imagemProduto,
+            atributosProduto: state.rows.map((row) => ({
+              nomeAtributo: row.nomeAtributo,
+              valorAtributo: row.valor1,
+              notaAtributo: row.nota1 ? 1 : 0
+            }))
+          },
+          {
+            nomeProduto: state.produto2.nomeProduto,
+            imagemProduto: state.produto2.imagemProduto,
+            atributosProduto: state.rows.map((row) => ({
+              nomeAtributo: row.nomeAtributo,
+              valorAtributo: row.valor2,
+              notaAtributo: row.nota2 ? 1 : 0
+            }))
+          }
+        ]
       };
     }
 
@@ -679,7 +681,7 @@
         const p1 = parsed.produto1 || (Array.isArray(parsed.produtos) ? parsed.produtos[0] : null);
         const p2 = parsed.produto2 || (Array.isArray(parsed.produtos) ? parsed.produtos[1] : null);
         if (!p1 || !p2) {
-          alert("JSON inválido. Esperado: { produto1: {...}, produto2: {...} }");
+          alert("JSON inválido. Esperado: { produtos: [{...}, {...}] }");
           return;
         }
 
