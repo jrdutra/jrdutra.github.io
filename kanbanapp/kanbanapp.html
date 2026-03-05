@@ -2822,6 +2822,8 @@ function adjustPriorityDays(delta){
  });
  }
  $$('.checklist-item', cardNode).forEach(function(itemNode){
+ const itemChecked = !!($('.item-check', itemNode)?.checked);
+ if (itemChecked) return;
  const itemDue = getChecklistItemDueDate(itemNode).trim();
  const itemDueDate = parseDateOnly(itemDue);
  if (!itemDueDate) return;
@@ -2863,7 +2865,7 @@ function renderPriorityReport(){
  if (!data.items.length){
  const empty = document.createElement('div');
  empty.className = 'priority-report-empty';
- empty.textContent = 'Nenhum item de checklist com data de vencimento.';
+ empty.textContent = 'Nenhum item de checklist não marcado com data de vencimento.';
  priorityReportUI.itemsList.appendChild(empty);
  } else {
  data.items.forEach(function(entry){
