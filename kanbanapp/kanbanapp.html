@@ -39,11 +39,12 @@
  } 
  * { box-sizing: border-box; } 
  html, body { height: 100%; } 
- body { 
+body { 
  margin: 0; 
  background: var(--bg); 
  color: var(--text); 
  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; 
+ overflow-x: auto;
  } 
 .topbar{
   position: sticky;
@@ -95,17 +96,27 @@ button, .btn{
  gap: 16px; 
  overflow-x: auto; 
  padding-bottom: 0; 
-  
+ width: 100%;
+ } 
 
+ @media (min-width: 900px){
+ .board{
+ overflow-x: visible;
+ width: max-content;
+ min-width: 100%;
+ }
+ }
+ 
 /* Extra spacer at board footer to ensure space larger than column shadow */
 .board-bottom-spacer{ width:100%; height:0; }
 
 /* Fixed transparent overlay right above the viewport scrollbar (30px height) */
 .board-scroll-overlay{ position: fixed; left: 0; right: 0; bottom: 0; height: 30px; background: transparent; pointer-events: none; z-index: 6; }
- } 
+ 
  .column{ 
   min-width: 352px;
   max-width: 418px;
+  flex: 0 0 auto;
   display: flex;
   flex-direction: column;
   /* Aplicar visual do primeiro quadro em index.html: fundo sutil, borda neutra, radius maior e sombra mais pronunciada */
@@ -928,6 +939,7 @@ min-height: 120px;
     <button id="btnLoad" class="btn">Carregar JSON</button>
     <input type="file" id="fileJson" accept="application/json" hidden>
     <button id="btnSave" class="btn">Salvar JSON</button>
+    <button id="btnAddColumn" class="btn">+ Coluna</button>
     <button id="btnSettings" class="btn">Configurações</button>
     <button id="btnPriorityReport" class="btn">Relatório de prioridades</button>
     <button id="btnLicense" class="btn">Licença</button>
@@ -1238,10 +1250,11 @@ SOFTWARE.
  } 
  })(); 
  // ===== Utilidades ===== 
- const $ = (sel, ctx=document) => ctx.querySelector(sel); 
- const $$ = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel)); 
- const uid = (p='id') => `${p}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`; 
- const nextFrame = () => new Promise(r => requestAnimationFrame(() => r())); 
+const $ = (sel, ctx=document) => ctx.querySelector(sel); 
+const $$ = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel)); 
+const uid = (p='id') => `${p}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`; 
+const nextFrame = () => new Promise(r => requestAnimationFrame(() => r())); 
+let isBoardHydrating = false;
 // Currently dragged checklist item (handle-driven)
 let currentDraggedChecklistItem = null;
 let checklistDragMeta = null;
@@ -1541,11 +1554,13 @@ function applyDueColorsAll(){
  }); 
  return data; 
  } 
- async function loadBoardSequential(data){ 
+async function loadBoardSequential(data){ 
  if(!data || !Array.isArray(data.columns)){ 
  alert('JSON inválido: objeto não contém "columns".'); 
  return; 
  } 
+ isBoardHydrating = true;
+ try{
  // carregar regras 
  try { 
  const rules = data.meta && Array.isArray(data.meta.ageColorRules) ? data.meta.ageColorRules : []; 
@@ -1624,9 +1639,11 @@ function applyDueColorsAll(){
  // opcional: se modal já foi inicializado, atualiza a UI 
  if (settingsUI.overlay) renderSettingsRows(boardMeta.ageColorRules); 
  // garantia 
- ensureBoardAddColumnControl();
  applyDueColorsAll(); 
+ } finally {
+ isBoardHydrating = false;
  }
+}
  
  function getDefaultBoardData(){
  const now = nowISO();
@@ -1668,21 +1685,6 @@ const board = document.getElementById('board');
 const tplColumn = document.getElementById('tpl-column'); 
 const tplCard = document.getElementById('tpl-card'); 
 const tplItem = document.getElementById('tpl-checklist-item'); 
-function ensureBoardAddColumnControl(){
- if (!board) return null;
- let btn = document.getElementById('btnAddColumn');
- if (!btn){
- btn = document.createElement('button');
- btn.id = 'btnAddColumn';
- btn.className = 'btn board-add-column';
- btn.type = 'button';
- btn.textContent = '+ Coluna';
- }
- if (!board.contains(btn) || board.lastElementChild !== btn){
- board.appendChild(btn);
- }
- return btn;
-}
 function createColumn(id, title){ 
  const node = tplColumn.content.firstElementChild.cloneNode(true); 
  node.dataset.id = id; 
@@ -3142,12 +3144,9 @@ document.addEventListener('click', function(e){
 });
 
  // ===== Menu ===== 
- board.addEventListener('click', function(e){
- const btn = e.target && e.target.closest ? e.target.closest('#btnAddColumn') : null;
- if (!btn) return;
+ document.getElementById('btnAddColumn').addEventListener('click', function(){
  const col = createColumn(uid('col'), 'Nova coluna');
  board.appendChild(col);
- ensureBoardAddColumnControl();
  applyColumnFilter(col);
  });
  document.getElementById('btnSettings').addEventListener('click', function(){ 
@@ -3207,6 +3206,7 @@ document.addEventListener('dragover', function(e){
  function debounce(fn, ms){ let t; return function(){ clearTimeout(t); const args = arguments; t = setTimeout(function(){ fn.apply(null, args); }, ms); }; } 
  function safeSerialize(){ try{ return JSON.stringify(serializeBoard()); } catch(e){ console.warn('Autosave: serialize failed', e); return null; } } 
  function saveToLocalIfChanged(){ 
+ if (isBoardHydrating) return;
  const json = safeSerialize(); 
  if(!json) return; 
  if(json === lastSnapshot) return; // no meaningful change 
