@@ -66,6 +66,227 @@ body {
   color: var(--text);
   box-shadow: 0 10px 26px rgba(0,0,0,0.28);
 }
+.hover-menu{
+  position: fixed;
+  top: 0;
+  left: 50%;
+  width: 95vw;
+  min-width: 320px;
+  max-width: 95vw;
+  min-height: 72px;
+  background: linear-gradient(180deg, #3b3b3f 0%, #2a2a2e 100%);
+  border-top: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom-left-radius: 18px;
+  border-bottom-right-radius: 18px;
+  box-shadow: 0 24px 52px 18px rgba(0,0,0,0.34);
+  transform: translateX(-50%) translateY(calc(-100% + 7px));
+  transition: transform .52s cubic-bezier(.22, 1, .36, 1);
+  z-index: 9;
+  pointer-events: none;
+  overflow: visible;
+  box-sizing: border-box;
+}
+.hover-menu.open{
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+  box-shadow: 0 34px 72px 26px rgba(0,0,0,0.56);
+}
+.hover-menu-content{
+  min-height: 72px;
+  min-width: max-content;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-bottom-left-radius: 18px;
+  border-bottom-right-radius: 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px 18px;
+  box-sizing: border-box;
+}
+.hover-menu-items{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.board-switch-out,
+.board-switch-in{
+  pointer-events: none;
+}
+.board-switch-out{
+  animation: boardSwitchOut .42s cubic-bezier(.22, 1, .36, 1) both;
+}
+.board-switch-in{
+  animation: boardSwitchIn .52s cubic-bezier(.22, 1, .36, 1) both;
+}
+@keyframes boardSwitchOut{
+  from{ transform: translateX(0); opacity: 1; }
+  to{ transform: translateX(calc(var(--board-switch-dir, 1) * 68px)); opacity: 0; }
+}
+@keyframes boardSwitchIn{
+  from{ transform: translateX(calc(var(--board-switch-dir, 1) * 68px)); opacity: 0; }
+  to{ transform: translateX(0); opacity: 1; }
+}
+.hover-menu-item{
+  flex: 0 0 222px;
+  width: 222px;
+  height: 44px;
+  display: block;
+  position: relative;
+  padding: 0 40px 0 40px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 6px;
+  background: var(--bg);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.22);
+  color: #f4f1ff;
+  font-size: 16.8px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  box-sizing: border-box;
+  transform: translateY(0) scale(1);
+  transition: transform .34s cubic-bezier(.22, 1, .36, 1), box-shadow .34s cubic-bezier(.22, 1, .36, 1), border-color .24s ease;
+  overflow: hidden;
+  text-align: center;
+  line-height: 42px;
+  cursor: pointer;
+  will-change: transform, box-shadow;
+}
+.hover-menu-item:hover{
+  transform: translateY(-5px) scale(1.015);
+  box-shadow: 0 20px 32px rgba(0,0,0,0.36);
+}
+.hover-menu-item.active{
+  transform: translateY(-5px) scale(1.015);
+  box-shadow: 0 20px 32px rgba(0,0,0,0.36);
+}
+.hover-menu-item.drag-target{
+  transform: translateY(-5px) scale(1.015);
+  box-shadow: 0 20px 32px rgba(0,0,0,0.36);
+}
+.hover-menu-item-text{
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.hover-menu-item-edit,
+.hover-menu-item-remove{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: var(--bg);
+  color: rgba(244,241,255,0.88);
+  font-size: 16px;
+  line-height: 1;
+  box-shadow: none;
+  cursor: pointer;
+}
+.hover-menu-item-edit{
+  left: 0;
+  border-right: 1px solid rgba(255,255,255,0.12);
+}
+.hover-menu-item-remove{
+  right: 0;
+  border-left: 1px solid rgba(255,255,255,0.12);
+}
+.hover-menu-item-remove:hover{
+  background: color-mix(in srgb, var(--bg) 82%, #ffffff);
+  transform: translateY(-50%);
+}
+.hover-menu-item-edit:hover{
+  background: color-mix(in srgb, var(--bg) 82%, #ffffff);
+  transform: translateY(-50%);
+}
+.hover-menu-editor{
+  position: fixed;
+  display: none;
+  align-items: center;
+  gap: 8px;
+  width: 240px;
+  padding: 8px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  background: #1a1d29;
+  box-shadow: 0 18px 30px rgba(0,0,0,0.42);
+  z-index: 20;
+}
+.hover-menu-editor.open{
+  display: flex;
+}
+.hover-menu-edit-input{
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 6px;
+  background: #0f121b;
+  color: var(--text);
+}
+.hover-menu-edit-save{
+  flex: 0 0 auto;
+  height: 30px;
+  padding: 0 10px;
+  border-radius: 6px;
+}
+.hover-menu-add{
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-size: 19.2px;
+  line-height: 1;
+}
+.hover-menu::after{
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -14px;
+  width: 57px;
+  height: 13px;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, #343438 0%, #2a2a2e 100%);
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  box-shadow: 0 12px 22px rgba(0,0,0,0.22);
+  pointer-events: auto;
+}
+.hover-menu::before{
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 8px solid #707076;
+  z-index: 1;
+  pointer-events: none;
+}
+.topbar-hover-trigger{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 12px;
+  z-index: 11;
+  background: transparent;
+}
 .brand{ font-weight: 700; letter-spacing: 0.3px; display: inline-flex; align-items: center; gap: 8px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.55)); } 
 .brand{ font-size: 120%; }
 .brand-link,
@@ -738,6 +959,68 @@ min-height: 120px;
   opacity: 0.48;
   filter: saturate(0.75) brightness(0.9);
 }
+.board-loading-overlay{
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(8, 10, 16, 0.74);
+  backdrop-filter: blur(4px) brightness(0.62);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .22s ease;
+  z-index: 30;
+}
+.board-loading-overlay.open{
+  opacity: 1;
+  pointer-events: auto;
+}
+.board-loading-panel{
+  min-width: min(420px, 92vw);
+  padding: 22px 24px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(25,28,40,0.96) 0%, rgba(17,19,28,0.98) 100%);
+  box-shadow: 0 26px 60px rgba(0,0,0,0.42);
+  text-align: center;
+}
+.board-loading-title{
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+.board-loading-text{
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+.board-loading-bars{
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 8px;
+  height: 42px;
+  margin: 16px 0 10px;
+}
+.board-loading-bars span{
+  width: 12px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #7a67f0 0%, #5f72ff 100%);
+  box-shadow: 0 0 18px rgba(95,114,255,0.2);
+  animation: boardLoadingPulse 1.05s ease-in-out infinite;
+}
+.board-loading-bars span:nth-child(1){ height: 18px; animation-delay: 0s; }
+.board-loading-bars span:nth-child(2){ height: 30px; animation-delay: 0.12s; }
+.board-loading-bars span:nth-child(3){ height: 24px; animation-delay: 0.24s; }
+.board-loading-bars span:nth-child(4){ height: 34px; animation-delay: 0.36s; }
+.board-loading-bars span:nth-child(5){ height: 20px; animation-delay: 0.48s; }
+@keyframes boardLoadingPulse{
+  0%, 100%{ transform: translateY(0) scaleY(0.82); opacity: 0.6; }
+  50%{ transform: translateY(-4px) scaleY(1.08); opacity: 1; }
+}
 #checklistItemOverlay .modal-body{
   display: flex;
   flex-direction: column;
@@ -932,12 +1215,36 @@ min-height: 120px;
 }
 
 </style> 
-</head> 
+ </head> 
 <body> 
  <header class="topbar"> 
  <a class="brand brand-link" href="https://kanbanapp.io" target="_blank" rel="noopener noreferrer"><img class="brand-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJLYW5iYW5BcHAgZmF2aWNvbiI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMxMjEzMWQiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjNjY1MGU2Ii8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cmVjdCB4PSIyIiB5PSIyIiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHJ4PSIxNCIgZmlsbD0idXJsKCNiZykiLz4KICA8cmVjdCB4PSIxNCIgeT0iMTYiIHdpZHRoPSIxMCIgaGVpZ2h0PSIzMiIgcng9IjMiIGZpbGw9IiNkOGQ4ZmYiIGZpbGwtb3BhY2l0eT0iLjkwIi8+CiAgPHJlY3QgeD0iMjciIHk9IjE2IiB3aWR0aD0iMTAiIGhlaWdodD0iMzIiIHJ4PSIzIiBmaWxsPSIjYmRhNmZmIiBmaWxsLW9wYWNpdHk9Ii45MiIvPgogIDxyZWN0IHg9IjQwIiB5PSIxNiIgd2lkdGg9IjEwIiBoZWlnaHQ9IjMyIiByeD0iMyIgZmlsbD0iIzdhNjdmMCIgZmlsbC1vcGFjaXR5PSIuOTUiLz4KPC9zdmc+Cg==" alt="" aria-hidden="true">KanbanApp.io</a> 
  <button id="hamburgerBtn" class="hamburger" aria-controls="mobileMenu" aria-expanded="false" aria-label="Abrir menu">☰</button>
  </header> 
+<div id="topbarHoverTrigger" class="topbar-hover-trigger" aria-hidden="true"></div>
+<div id="hoverMenu" class="hover-menu" aria-hidden="true">
+  <div id="hoverMenuContent" class="hover-menu-content">
+    <div id="hoverMenuItems" class="hover-menu-items"></div>
+    <button id="hoverMenuAddBtn" type="button" class="hover-menu-item hover-menu-add" aria-label="Adicionar item">+</button>
+  </div>
+</div>
+<div id="hoverMenuEditor" class="hover-menu-editor" aria-hidden="true">
+  <input id="hoverMenuEditorInput" class="hover-menu-edit-input" type="text" maxlength="120">
+  <button id="hoverMenuEditorSave" type="button" class="btn hover-menu-edit-save">Salvar</button>
+</div>
+<div id="boardLoadingOverlay" class="board-loading-overlay" aria-hidden="true">
+  <div class="board-loading-panel">
+    <div class="board-loading-bars" aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <p class="board-loading-title">Carregando boards</p>
+    <p class="board-loading-text">Preparando colunas e cards do quadro ativo.</p>
+  </div>
+</div>
 <!-- Opaque spacer, same height as topbar, same color as board background -->
 <div id="topbarSpacer" class="topbar-spacer" aria-hidden="true"></div>
 <!-- Mobile menu container (hidden by default) -->
@@ -1261,10 +1568,16 @@ const $ = (sel, ctx=document) => ctx.querySelector(sel);
 const $$ = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel)); 
 const uid = (p='id') => `${p}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`; 
 const nextFrame = () => new Promise(r => requestAnimationFrame(() => r())); 
+const wait = (ms) => new Promise(r => setTimeout(r, ms));
+const UNTITLED_BOARD_NAME = 'Quadro Sem Título';
+const DEFAULT_NEW_BOARD_NAME = 'Novo Quadro';
 let isBoardHydrating = false;
+let activeBoardName = UNTITLED_BOARD_NAME;
+let boardSwitchToken = 0;
 // Currently dragged checklist item (handle-driven)
 let currentDraggedChecklistItem = null;
 let checklistDragMeta = null;
+let cardBoardHoverSwitchTimer = null;
 function getChecklistItemContent(itemNode){
  if(!itemNode || !itemNode.dataset) return '';
  return String(itemNode.dataset.details || '');
@@ -1518,18 +1831,125 @@ function applyDueColorsAll(){
  $$('.checklist-item', card).forEach(updateChecklistItemNoteButtonState);
  });
 } 
+function normalizeBoardName(name, fallback){
+ const base = (typeof name === 'string' ? name : '').replace(/\s+/g, ' ').trim();
+ return base || fallback || UNTITLED_BOARD_NAME;
+}
+function normalizeBoardData(data){
+ if (!data || !Array.isArray(data.columns)) return data;
+ data.columns.forEach(function(col){
+  if (!col || typeof col !== 'object') return;
+  col.board = normalizeBoardName(col.board, UNTITLED_BOARD_NAME);
+ });
+ return data;
+}
+function getColumnBoardName(columnNode){
+ if (!columnNode || !columnNode.dataset) return UNTITLED_BOARD_NAME;
+ return normalizeBoardName(columnNode.dataset.board, UNTITLED_BOARD_NAME);
+}
+function setColumnBoardName(columnNode, boardName){
+ if (!columnNode || !columnNode.dataset) return;
+ columnNode.dataset.board = normalizeBoardName(boardName, UNTITLED_BOARD_NAME);
+}
+function getBoardNamesFromColumns(columns){
+ const names = [];
+ columns.forEach(function(col){
+  const boardName = normalizeBoardName(col && col.board, UNTITLED_BOARD_NAME);
+  if (!names.includes(boardName)) names.push(boardName);
+ });
+ return names;
+}
+function getBoardNamesFromDom(){
+ const names = [];
+ $$('.column', board).forEach(function(col){
+  const boardName = getColumnBoardName(col);
+  if (!names.includes(boardName)) names.push(boardName);
+ });
+ return names;
+}
+function getColumnsForBoardName(boardName){
+ const normalized = normalizeBoardName(boardName, UNTITLED_BOARD_NAME);
+ return $$('.column', board).filter(function(col){ return getColumnBoardName(col) === normalized; });
+}
+function notifyBoardsChanged(){
+ document.dispatchEvent(new CustomEvent('kanban:boards-changed'));
+ if (typeof window.__scheduleBoardAutosave === 'function') window.__scheduleBoardAutosave();
+}
+function ensureActiveBoardName(){
+ const boards = getBoardNamesFromDom();
+ if (!boards.length){
+  activeBoardName = null;
+  return activeBoardName;
+ }
+ if (!boards.includes(activeBoardName)) activeBoardName = boards[0];
+ return activeBoardName;
+}
+function getPreferredActiveBoardName(data){
+ if (!data || !data.meta) return null;
+ return normalizeBoardName(data.meta.activeBoard, '');
+}
+function setBoardLoadingState(open){
+ const overlay = document.getElementById('boardLoadingOverlay');
+ if (!overlay) return;
+ overlay.classList.toggle('open', !!open);
+ overlay.setAttribute('aria-hidden', String(!open));
+}
+function applyActiveBoardVisibility(){
+ const active = ensureActiveBoardName();
+ $$('.column', board).forEach(function(col){
+  col.style.display = (!active || getColumnBoardName(col) === active) ? '' : 'none';
+ });
+ if (typeof syncTopbarSpacer === 'function') syncTopbarSpacer();
+}
+async function switchActiveBoard(nextBoardName, options){
+ const opts = Object.assign({ animate: true, direction: 1, force: false }, options || {});
+ const target = normalizeBoardName(nextBoardName, UNTITLED_BOARD_NAME);
+ const previous = ensureActiveBoardName();
+ const boards = getBoardNamesFromDom();
+ if (!boards.length){
+  activeBoardName = null;
+  applyActiveBoardVisibility();
+  return;
+ }
+ const targetBoard = boards.includes(target) ? target : boards[0];
+ activeBoardName = targetBoard;
+ if (!opts.force && previous === targetBoard){
+  applyActiveBoardVisibility();
+  return;
+ }
+ if (!opts.animate || !previous){
+  applyActiveBoardVisibility();
+  return;
+ }
+ const token = ++boardSwitchToken;
+ board.style.setProperty('--board-switch-dir', String(opts.direction || 1));
+ board.classList.remove('board-switch-in', 'board-switch-out');
+ void board.offsetWidth;
+ board.classList.add('board-switch-out');
+ await wait(240);
+ if (token !== boardSwitchToken) return;
+ applyActiveBoardVisibility();
+ board.classList.remove('board-switch-out');
+ void board.offsetWidth;
+ board.classList.add('board-switch-in');
+ await wait(340);
+ if (token !== boardSwitchToken) return;
+ board.classList.remove('board-switch-in');
+}
  // ===== SERIALIZAÇÃO ===== 
- function serializeBoard(){ 
+function serializeBoard(){ 
  const data = { 
- meta: { version: 11, exportedAt: new Date().toISOString() }, 
+ meta: { version: 12, exportedAt: new Date().toISOString() }, 
  columns: [] 
  }; 
  // regras de cor 
  data.meta.ageColorRules = Array.isArray(boardMeta.ageColorRules) ? boardMeta.ageColorRules : []; 
+ data.meta.activeBoard = ensureActiveBoardName() || UNTITLED_BOARD_NAME;
  $$('.column', board).forEach(function(col){ 
  const colData = { 
  id: col.dataset.id, 
  title: $('.column-title', col).value.trim(), 
+ board: getColumnBoardName(col),
  cards: [] 
  }; 
  $$('.card', col).forEach(function(card){ 
@@ -1566,6 +1986,8 @@ async function loadBoardSequential(data){
  alert('JSON inválido: objeto não contém "columns".'); 
  return; 
  } 
+ normalizeBoardData(data);
+ setBoardLoadingState(true);
  isBoardHydrating = true;
  try{
  // carregar regras 
@@ -1578,10 +2000,11 @@ async function loadBoardSequential(data){
  } catch (_) { 
  boardMeta.ageColorRules = []; 
  } 
+ activeBoardName = getPreferredActiveBoardName(data) || activeBoardName || UNTITLED_BOARD_NAME;
  board.innerHTML = ''; 
  for(let ci = 0; ci < data.columns.length; ci++){ 
  const colData = data.columns[ci] || {}; 
- const colNode = createColumn(colData.id || uid('col'), colData.title || ''); 
+ const colNode = createColumn(colData.id || uid('col'), colData.title || '', colData.board || UNTITLED_BOARD_NAME); 
  board.appendChild(colNode); 
  await nextFrame(); 
  const cardsArr = Array.isArray(colData.cards) ? colData.cards : []; 
@@ -1647,19 +2070,24 @@ async function loadBoardSequential(data){
  if (settingsUI.overlay) renderSettingsRows(boardMeta.ageColorRules); 
  // garantia 
  applyDueColorsAll(); 
+ ensureActiveBoardName();
+ applyActiveBoardVisibility();
+ document.dispatchEvent(new CustomEvent('kanban:boards-changed'));
  } finally {
  isBoardHydrating = false;
+ setBoardLoadingState(false);
  }
 }
  
- function getDefaultBoardData(){
+function getDefaultBoardData(){
  const now = nowISO();
  return {
- meta: { version: 11, exportedAt: now, ageColorRules: Array.isArray(boardMeta.ageColorRules) ? boardMeta.ageColorRules : [] },
+ meta: { version: 12, exportedAt: now, ageColorRules: Array.isArray(boardMeta.ageColorRules) ? boardMeta.ageColorRules : [], activeBoard: UNTITLED_BOARD_NAME },
  columns: [
  {
  id: uid('col'),
  title: 'A Fazer',
+ board: UNTITLED_BOARD_NAME,
  cards: [
  { id: uid('card'), title: 'Definir escopo da semana', description: 'Listar prioridades e alinhar expectativas do time. Referencia: https://www.atlassian.com/agile/project-management', completed: false, checklist: [{ checked: true, label: 'Levantar demandas com o time' }, { checked: false, label: 'Definir prioridades da sprint' }, { checked: false, label: 'Validar capacidade semanal' }], createdAt: now, updatedAt: now, dueDate: '' },
  { id: uid('card'), title: 'Organizar backlog', description: 'Revisar tarefas pendentes e ordenar por prioridade. Exemplo de tecnica: https://www.scrum.org/resources/what-is-a-product-backlog', completed: false, checklist: [{ checked: true, label: 'Remover itens duplicados' }, { checked: true, label: 'Padronizar titulos' }, { checked: false, label: 'Repriorizar historias' }], createdAt: now, updatedAt: now, dueDate: '' },
@@ -1669,6 +2097,7 @@ async function loadBoardSequential(data){
  {
  id: uid('col'),
  title: 'Fazendo',
+ board: UNTITLED_BOARD_NAME,
  cards: [
  { id: uid('card'), title: 'Implementar tela inicial', description: 'Ajustar layout e textos principais da pagina. Guia de usabilidade: https://www.nngroup.com/articles/ten-usability-heuristics/', completed: false, checklist: [{ checked: true, label: 'Criar estrutura HTML base' }, { checked: false, label: 'Ajustar espacamentos mobile' }, { checked: false, label: 'Revisar contraste das cores' }], createdAt: now, updatedAt: now, dueDate: '' },
  { id: uid('card'), title: 'Validar fluxo de uso', description: 'Testar abertura do app e exportacao/importacao JSON. Referencia de JSON: https://developer.mozilla.org/docs/Learn_web_development/Core/Scripting/JSON', completed: false, checklist: [{ checked: true, label: 'Testar criacao de coluna' }, { checked: false, label: 'Testar importacao JSON' }, { checked: false, label: 'Testar exportacao JSON' }], createdAt: now, updatedAt: now, dueDate: '' },
@@ -1678,6 +2107,7 @@ async function loadBoardSequential(data){
  {
  id: uid('col'),
  title: 'Feito',
+ board: UNTITLED_BOARD_NAME,
  cards: [
  { id: uid('card'), title: 'Criar estrutura do quadro', description: 'Quadro inicial configurado com colunas padrao. Modelo kanban: https://kanban.university/kanban-guide/', completed: true, checklist: [{ checked: true, label: 'Criar colunas iniciais' }, { checked: true, label: 'Adicionar acoes de card' }, { checked: true, label: 'Validar drag and drop' }], createdAt: now, updatedAt: now, dueDate: '' },
  { id: uid('card'), title: 'Publicar primeira versao', description: 'Primeira versao disponibilizada para o time. Registro de release: https://keepachangelog.com/pt-BR/1.1.0/', completed: true, checklist: [{ checked: true, label: 'Gerar pacote da versao' }, { checked: true, label: 'Atualizar changelog' }, { checked: true, label: 'Comunicar stakeholders' }], createdAt: now, updatedAt: now, dueDate: '' },
@@ -1692,9 +2122,11 @@ const board = document.getElementById('board');
 const tplColumn = document.getElementById('tpl-column'); 
 const tplCard = document.getElementById('tpl-card'); 
 const tplItem = document.getElementById('tpl-checklist-item'); 
-function createColumn(id, title){ 
+function createColumn(id, title, boardName){ 
  const node = tplColumn.content.firstElementChild.cloneNode(true); 
  node.dataset.id = id; 
+ setColumnBoardName(node, boardName || activeBoardName || UNTITLED_BOARD_NAME);
+ node.style.display = (normalizeBoardName(getColumnBoardName(node), UNTITLED_BOARD_NAME) === normalizeBoardName(activeBoardName, UNTITLED_BOARD_NAME)) ? '' : 'none';
  $('.column-title', node).value = title || ''; 
  // Filtro 
  const filterInput = $('.filter-cards', node); 
@@ -1782,6 +2214,9 @@ function createColumn(id, title){
  const title = (($('.column-title', node).value || '').trim()) || 'Sem título'; 
  if (confirm(`Excluir a coluna "${title}"?\nTodos os cards dentro dela serão removidos.`)) { 
  node.remove(); 
+ notifyBoardsChanged();
+ ensureActiveBoardName();
+ applyActiveBoardVisibility();
  } 
  }); 
  // Drag & drop (container) 
@@ -2624,8 +3059,10 @@ function updateChecklistProgress(cardNode){
  || t.closest('.cards') 
  || t.closest('.card'))); 
  } 
- function getColAfterElement(container, x){ 
- const els = $$('.column:not(.dragging-col)', container); 
+function getColAfterElement(container, x){ 
+ const els = $$('.column:not(.dragging-col)', container).filter(function(el){
+ return el.style.display !== 'none';
+ }); 
  let closest = { offset: Number.POSITIVE_INFINITY, element: null }; 
  els.forEach(function(el){ 
  const box = el.getBoundingClientRect(); 
@@ -2822,12 +3259,11 @@ function adjustPriorityDays(delta){
  });
  }
  $$('.checklist-item', cardNode).forEach(function(itemNode){
- const itemChecked = !!($('.item-check', itemNode)?.checked);
- if (itemChecked) return;
  const itemDue = getChecklistItemDueDate(itemNode).trim();
  const itemDueDate = parseDateOnly(itemDue);
  if (!itemDueDate) return;
  const itemLabel = (($('.item-editor', itemNode)?.value) || '').trim() || 'Item sem título';
+ const itemDaysRemaining = diffDays(startOfToday(), itemDueDate);
  items.push({
  itemNode: itemNode,
  cardNode: cardNode,
@@ -2835,7 +3271,8 @@ function adjustPriorityDays(delta){
  cardTitle: cardTitle,
  itemLabel: itemLabel,
  dueDate: itemDue,
- dueTs: itemDueDate.getTime()
+ dueTs: itemDueDate.getTime(),
+ daysRemaining: itemDaysRemaining
  });
  });
  });
@@ -2861,14 +3298,17 @@ function renderPriorityReport(){
  priorityReportUI.cardsList.innerHTML = '';
  const data = collectPriorityReportData();
  const maxDays = getPriorityDaysValue();
+ const itemsForReport = Number.isFinite(maxDays) ? data.items.filter(function(item){ return item.daysRemaining <= maxDays; }) : data.items;
  const cardsForReport = Number.isFinite(maxDays) ? data.cards.filter(function(c){ return c.daysRemaining <= maxDays; }) : data.cards;
- if (!data.items.length){
+ if (!itemsForReport.length){
  const empty = document.createElement('div');
  empty.className = 'priority-report-empty';
- empty.textContent = 'Nenhum item de checklist não marcado com data de vencimento.';
+ empty.textContent = Number.isFinite(maxDays)
+ ? `Nenhum item de checklist com ${maxDays} dia(s) ou menos para vencer.`
+ : 'Nenhum item de checklist com data de vencimento.';
  priorityReportUI.itemsList.appendChild(empty);
  } else {
- data.items.forEach(function(entry){
+ itemsForReport.forEach(function(entry){
  const wrap = document.createElement('div');
  wrap.className = 'priority-report-entry';
  const source = document.createElement('div');
@@ -3154,9 +3594,11 @@ document.addEventListener('click', function(e){
 
  // ===== Menu ===== 
  document.getElementById('btnAddColumn').addEventListener('click', function(){
- const col = createColumn(uid('col'), 'Nova coluna');
+ const col = createColumn(uid('col'), 'Nova coluna', activeBoardName || UNTITLED_BOARD_NAME);
  board.appendChild(col);
  applyColumnFilter(col);
+ applyActiveBoardVisibility();
+ notifyBoardsChanged();
  });
  document.getElementById('btnSettings').addEventListener('click', function(){ 
  openSettingsModal(); 
@@ -3223,6 +3665,7 @@ document.addEventListener('dragover', function(e){
  catch(e){ console.warn('Autosave: localStorage setItem failed', e); } 
  } 
  const scheduleAutosave = debounce(saveToLocalIfChanged, 500); 
+ window.__scheduleBoardAutosave = scheduleAutosave;
  async function restoreFromAutosave(){ 
  try{ 
  const json = localStorage.getItem(AUTOSAVE_KEY); 
@@ -3254,6 +3697,8 @@ function syncTopbarSpacer(){
   try{
     const tb = document.querySelector('.topbar');
     const sp = document.getElementById('topbarSpacer');
+    const hoverMenu = document.getElementById('hoverMenu');
+    const hoverTrigger = document.getElementById('topbarHoverTrigger');
     if (!tb || !sp) return;
     const boardEl = document.getElementById('board');
     const mainEl = document.querySelector('main');
@@ -3262,6 +3707,14 @@ function syncTopbarSpacer(){
     const targetWidth = Math.max(viewportW, Math.ceil((boardEl ? boardEl.scrollWidth : 0) + mainPad));
     tb.style.width = targetWidth + 'px';
     const h = Math.ceil(tb.getBoundingClientRect().height);
+    if (hoverMenu){
+      hoverMenu.style.top = h + 'px';
+    }
+    if (hoverTrigger){
+      hoverTrigger.style.width = targetWidth + 'px';
+      hoverTrigger.style.height = Math.max(10, Math.ceil(h / 4)) + 'px';
+      hoverTrigger.style.top = Math.max(0, h - Math.max(10, Math.ceil(h / 4))) + 'px';
+    }
     const hamburgerEl = document.getElementById('hamburgerBtn');
     if (hamburgerEl){
       const hbH = Math.ceil(hamburgerEl.getBoundingClientRect().height || 36);
@@ -3292,6 +3745,413 @@ if (boardElForObs) boardObs.observe(boardElForObs);
 // initial sync (defer a frame to ensure layout computed)
 requestAnimationFrame(syncTopbarSpacer);
  })(); 
+// ===== Hover menu below topbar =====
+(function(){
+  const topbar = document.querySelector('.topbar');
+  const hoverTrigger = document.getElementById('topbarHoverTrigger');
+  const hoverMenu = document.getElementById('hoverMenu');
+  const hoverMenuContent = document.getElementById('hoverMenuContent');
+  const hoverMenuItems = document.getElementById('hoverMenuItems');
+  const hoverMenuAddBtn = document.getElementById('hoverMenuAddBtn');
+  const hoverMenuEditor = document.getElementById('hoverMenuEditor');
+  const hoverMenuEditorInput = document.getElementById('hoverMenuEditorInput');
+  const hoverMenuEditorSave = document.getElementById('hoverMenuEditorSave');
+  if(!topbar || !hoverTrigger || !hoverMenu || !hoverMenuContent || !hoverMenuItems || !hoverMenuAddBtn || !hoverMenuEditor || !hoverMenuEditorInput || !hoverMenuEditorSave) return;
+
+  let closeTimer = null;
+  let pointerWatchActive = false;
+  let activeEditBoardName = null;
+  let hoveredBoardDuringCardDrag = null;
+
+  function isBoardTransferDragActive(){
+    return !!($('.dragging-col') || $('.card.dragging'));
+  }
+
+  function clearCloseTimer(){
+    if (closeTimer){
+      clearTimeout(closeTimer);
+      closeTimer = null;
+    }
+  }
+
+  function setHoverMenuOpen(open){
+    if (!open && hoverMenuEditor.classList.contains('open')) return;
+    clearCloseTimer();
+    hoverMenu.classList.toggle('open', !!open);
+    hoverMenu.setAttribute('aria-hidden', String(!open));
+    pointerWatchActive = !!open;
+  }
+
+  function scheduleClose(){
+    if (isBoardTransferDragActive()) return;
+    clearCloseTimer();
+    setHoverMenuOpen(false);
+  }
+
+  function clearBoardHoverSwitchTimer(){
+    if (cardBoardHoverSwitchTimer){
+      clearTimeout(cardBoardHoverSwitchTimer);
+      cardBoardHoverSwitchTimer = null;
+    }
+  }
+
+  function getUniqueBoardName(baseName, excludeName){
+    const base = normalizeBoardName(baseName, DEFAULT_NEW_BOARD_NAME);
+    const existing = getBoardNamesFromDom().filter(function(name){ return name !== excludeName; });
+    if (!existing.includes(base)) return base;
+    let index = 2;
+    while (existing.includes(`${base} ${index}`)) index++;
+    return `${base} ${index}`;
+  }
+
+  function createHoverMenuItem(label){
+    const item = document.createElement('div');
+    const textSpan = document.createElement('span');
+    const editBtn = document.createElement('button');
+    const removeBtn = document.createElement('button');
+    item.className = 'hover-menu-item';
+    item.setAttribute('data-menu-item', 'true');
+    item.setAttribute('data-board-name', label);
+    if (normalizeBoardName(label, UNTITLED_BOARD_NAME) === normalizeBoardName(activeBoardName, UNTITLED_BOARD_NAME)){
+      item.classList.add('active');
+    }
+    textSpan.className = 'hover-menu-item-text';
+    textSpan.textContent = label;
+    editBtn.type = 'button';
+    editBtn.className = 'hover-menu-item-edit';
+    editBtn.setAttribute('aria-label', 'Editar item');
+    editBtn.textContent = '✎';
+    removeBtn.type = 'button';
+    removeBtn.className = 'hover-menu-item-remove';
+    removeBtn.setAttribute('aria-label', 'Excluir item');
+    removeBtn.textContent = '-';
+    item.appendChild(editBtn);
+    item.appendChild(textSpan);
+    item.appendChild(removeBtn);
+    return item;
+  }
+
+  function getMenuItemByBoardName(boardName){
+    return $$('.hover-menu-item[data-board-name]', hoverMenuItems).find(function(item){
+      return normalizeBoardName(item.dataset.boardName, UNTITLED_BOARD_NAME) === normalizeBoardName(boardName, UNTITLED_BOARD_NAME);
+    }) || null;
+  }
+
+  function renderHoverMenuItems(){
+    const boards = getBoardNamesFromDom();
+    hoverMenuItems.innerHTML = '';
+    boards.forEach(function(boardName){
+      hoverMenuItems.appendChild(createHoverMenuItem(boardName));
+    });
+  }
+
+  function getBoardSwitchDirection(targetBoardName){
+    const boards = getBoardNamesFromDom();
+    const currentIndex = boards.indexOf(normalizeBoardName(activeBoardName, UNTITLED_BOARD_NAME));
+    const targetIndex = boards.indexOf(normalizeBoardName(targetBoardName, UNTITLED_BOARD_NAME));
+    if (currentIndex === -1 || targetIndex === -1) return 1;
+    return targetIndex >= currentIndex ? 1 : -1;
+  }
+
+  async function activateBoardFromMenu(boardName, options){
+    const normalized = normalizeBoardName(boardName, UNTITLED_BOARD_NAME);
+    const direction = getBoardSwitchDirection(normalized);
+    await switchActiveBoard(normalized, Object.assign({ animate: true, direction: direction }, options || {}));
+    renderHoverMenuItems();
+  }
+
+  function positionEditor(item){
+    const rect = item.getBoundingClientRect();
+    const editorWidth = Math.ceil(hoverMenuEditor.getBoundingClientRect().width || 240);
+    const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 0;
+    let left = rect.left + ((rect.width - editorWidth) / 2);
+    left = Math.max(8, Math.min(left, viewportWidth - editorWidth - 8));
+    hoverMenuEditor.style.left = Math.round(left) + 'px';
+    hoverMenuEditor.style.top = Math.round(rect.bottom + 10) + 'px';
+  }
+
+  function openEditor(boardName, item){
+    activeEditBoardName = normalizeBoardName(boardName, UNTITLED_BOARD_NAME);
+    hoverMenuEditorInput.value = activeEditBoardName;
+    hoverMenuEditor.classList.add('open');
+    hoverMenuEditor.setAttribute('aria-hidden', 'false');
+    positionEditor(item);
+    hoverMenuEditorInput.focus();
+    hoverMenuEditorInput.select();
+  }
+
+  function closeAllEditPopovers(){
+    activeEditBoardName = null;
+    hoverMenuEditor.classList.remove('open');
+    hoverMenuEditor.setAttribute('aria-hidden', 'true');
+  }
+
+  async function saveBoardRename(){
+    if (!activeEditBoardName) return;
+    const nextBoardName = getUniqueBoardName(normalizeBoardName(hoverMenuEditorInput.value, UNTITLED_BOARD_NAME), activeEditBoardName);
+    getColumnsForBoardName(activeEditBoardName).forEach(function(col){
+      setColumnBoardName(col, nextBoardName);
+    });
+    if (normalizeBoardName(activeBoardName, UNTITLED_BOARD_NAME) === normalizeBoardName(activeEditBoardName, UNTITLED_BOARD_NAME)){
+      activeBoardName = nextBoardName;
+    }
+    closeAllEditPopovers();
+    notifyBoardsChanged();
+    await activateBoardFromMenu(nextBoardName, { animate: false, force: true });
+    setHoverMenuOpen(false);
+  }
+
+  async function deleteBoard(boardName){
+    const normalized = normalizeBoardName(boardName, UNTITLED_BOARD_NAME);
+    const cols = getColumnsForBoardName(normalized);
+    if (!cols.length) return;
+    if (!confirm(`Excluir o quadro "${normalized}"?\nTodas as colunas e cards deste quadro serão removidos.`)) return;
+    closeAllEditPopovers();
+    cols.forEach(function(col){ col.remove(); });
+    notifyBoardsChanged();
+    const remainingBoards = getBoardNamesFromDom();
+    if (remainingBoards.length){
+      await activateBoardFromMenu(remainingBoards[0], { animate: false, force: true });
+    } else {
+      activeBoardName = null;
+      applyActiveBoardVisibility();
+      renderHoverMenuItems();
+    }
+  }
+
+  function clearDragTargets(){
+    $$('.hover-menu-item.drag-target', hoverMenuItems).forEach(function(item){ item.classList.remove('drag-target'); });
+  }
+
+  function markDragTarget(item){
+    clearDragTargets();
+    if (item) item.classList.add('drag-target');
+  }
+
+  function scheduleBoardSwitchForDraggedCard(boardName){
+    clearBoardHoverSwitchTimer();
+    const normalized = normalizeBoardName(boardName, UNTITLED_BOARD_NAME);
+    if (normalized === normalizeBoardName(activeBoardName, UNTITLED_BOARD_NAME)) return;
+    if (hoveredBoardDuringCardDrag === normalized) return;
+    hoveredBoardDuringCardDrag = normalized;
+    activateBoardFromMenu(normalized, { animate: true });
+  }
+
+  function isInTongueZone(x, y){
+    const menuRect = hoverMenu.getBoundingClientRect();
+    const tongueWidth = 57;
+    const tongueHeight = 21;
+    const tongueLeft = (menuRect.left + (menuRect.width / 2)) - (tongueWidth / 2);
+    const tongueRight = tongueLeft + tongueWidth;
+    const tongueTop = menuRect.bottom - 2;
+    const tongueBottom = tongueTop + tongueHeight;
+    return x >= tongueLeft && x <= tongueRight && y >= tongueTop && y <= tongueBottom;
+  }
+
+  function shouldOpenHoverMenuForDrag(clientX, clientY){
+    const topbarRect = topbar.getBoundingClientRect();
+    const menuRect = hoverMenu.getBoundingClientRect();
+    const nearTopbar =
+      clientX >= topbarRect.left &&
+      clientX <= topbarRect.right &&
+      clientY >= topbarRect.top &&
+      clientY <= (topbarRect.bottom + 12);
+    const nearMenu =
+      clientX >= menuRect.left &&
+      clientX <= menuRect.right &&
+      clientY >= (menuRect.top - 16) &&
+      clientY <= (menuRect.bottom + 24);
+    return nearTopbar || nearMenu || isInTongueZone(clientX, clientY);
+  }
+
+  hoverTrigger.addEventListener('mouseenter', function(){ setHoverMenuOpen(true); });
+  topbar.addEventListener('mouseenter', function(){
+    if (hoverMenu.classList.contains('open')) setHoverMenuOpen(true);
+  });
+  hoverMenu.addEventListener('mouseenter', function(){ setHoverMenuOpen(true); });
+  hoverTrigger.addEventListener('dragenter', function(){
+    if (isBoardTransferDragActive()) setHoverMenuOpen(true);
+  });
+  topbar.addEventListener('dragenter', function(){
+    if (isBoardTransferDragActive()) setHoverMenuOpen(true);
+  });
+  topbar.addEventListener('dragover', function(e){
+    if (!isBoardTransferDragActive()) return;
+    e.preventDefault();
+    setHoverMenuOpen(true);
+  });
+  hoverMenu.addEventListener('dragenter', function(){
+    if (isBoardTransferDragActive()) setHoverMenuOpen(true);
+  });
+  hoverMenu.addEventListener('dragover', function(e){
+    if (!isBoardTransferDragActive()) return;
+    e.preventDefault();
+    setHoverMenuOpen(true);
+  });
+  hoverMenuAddBtn.addEventListener('click', async function(){
+    const newBoardName = getUniqueBoardName(DEFAULT_NEW_BOARD_NAME);
+    const col = createColumn(uid('col'), 'Nova coluna', newBoardName);
+    board.appendChild(col);
+    applyColumnFilter(col);
+    notifyBoardsChanged();
+    await activateBoardFromMenu(newBoardName, { animate: true, force: true });
+    const item = getMenuItemByBoardName(newBoardName);
+    if (item) openEditor(newBoardName, item);
+  });
+  hoverMenuContent.addEventListener('click', function(e){
+    const editBtn = e.target && e.target.closest ? e.target.closest('.hover-menu-item-edit') : null;
+    if (editBtn){
+      e.preventDefault();
+      e.stopPropagation();
+      const itemToEdit = editBtn.closest('.hover-menu-item[data-board-name]');
+      if (!itemToEdit) return;
+      const boardName = normalizeBoardName(itemToEdit.dataset.boardName, UNTITLED_BOARD_NAME);
+      if (activeEditBoardName === boardName && hoverMenuEditor.classList.contains('open')){
+        closeAllEditPopovers();
+        return;
+      }
+      openEditor(boardName, itemToEdit);
+      return;
+    }
+    const removeBtn = e.target && e.target.closest ? e.target.closest('.hover-menu-item-remove') : null;
+    if (removeBtn){
+      e.preventDefault();
+      e.stopPropagation();
+      const itemToRemove = removeBtn.closest('.hover-menu-item[data-board-name]');
+      if (!itemToRemove) return;
+      deleteBoard(itemToRemove.dataset.boardName);
+      return;
+    }
+    const item = e.target && e.target.closest ? e.target.closest('.hover-menu-item[data-board-name]') : null;
+    if (!item) return;
+    activateBoardFromMenu(item.dataset.boardName, { animate: true });
+  });
+  hoverMenuEditorSave.addEventListener('click', function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    saveBoardRename();
+  });
+  hoverMenuEditorInput.addEventListener('keydown', function(e){
+    if (!activeEditBoardName) return;
+    if (e.key === 'Enter'){
+      e.preventDefault();
+      saveBoardRename();
+      return;
+    }
+    if (e.key === 'Escape'){
+      e.preventDefault();
+      closeAllEditPopovers();
+    }
+  });
+
+  document.addEventListener('keydown', function(e){
+    const key = e.key || e.code || '';
+    if (key === 'Escape' || key === 'Esc') setHoverMenuOpen(false);
+  });
+  document.addEventListener('click', function(e){
+    if (hoverMenuContent.contains(e.target) || hoverMenuEditor.contains(e.target)) return;
+    closeAllEditPopovers();
+  });
+  window.addEventListener('resize', function(){
+    const item = activeEditBoardName ? getMenuItemByBoardName(activeEditBoardName) : null;
+    if (item && hoverMenuEditor.classList.contains('open')) positionEditor(item);
+  });
+  document.addEventListener('kanban:boards-changed', function(){
+    renderHoverMenuItems();
+    applyActiveBoardVisibility();
+  });
+  hoverMenuContent.addEventListener('dragover', function(e){
+    const item = e.target && e.target.closest ? e.target.closest('.hover-menu-item[data-board-name]') : null;
+    const draggingCol = $('.dragging-col');
+    const draggingCard = $('.card.dragging');
+    if (!draggingCol && !draggingCard) return;
+    if (!item){
+      clearBoardHoverSwitchTimer();
+      clearDragTargets();
+      return;
+    }
+    e.preventDefault();
+    markDragTarget(item);
+    if (draggingCard){
+      const targetBoardName = normalizeBoardName(item.dataset.boardName, UNTITLED_BOARD_NAME);
+      if (targetBoardName !== hoveredBoardDuringCardDrag){
+        hoveredBoardDuringCardDrag = null;
+        scheduleBoardSwitchForDraggedCard(targetBoardName);
+      }
+    }
+  });
+  hoverMenuContent.addEventListener('dragleave', function(e){
+    if (e.target === hoverMenuContent) clearDragTargets();
+  });
+  hoverMenuContent.addEventListener('drop', async function(e){
+    const item = e.target && e.target.closest ? e.target.closest('.hover-menu-item[data-board-name]') : null;
+    const draggingCol = $('.dragging-col');
+    const draggingCard = $('.card.dragging');
+    clearBoardHoverSwitchTimer();
+    clearDragTargets();
+    if (!item) return;
+    if (draggingCol){
+      e.preventDefault();
+      const targetBoard = normalizeBoardName(item.dataset.boardName, UNTITLED_BOARD_NAME);
+      setColumnBoardName(draggingCol, targetBoard);
+      draggingCol.classList.remove('dragging-col');
+      draggingCol.draggable = false;
+      notifyBoardsChanged();
+      await activateBoardFromMenu(targetBoard, { animate: true, force: true });
+      return;
+    }
+    if (draggingCard){
+      e.preventDefault();
+    }
+  });
+  document.addEventListener('dragend', function(){
+    clearBoardHoverSwitchTimer();
+    clearDragTargets();
+    hoveredBoardDuringCardDrag = null;
+  }, true);
+
+  document.addEventListener('mousemove', function(e){
+    const x = e.clientX;
+    const y = e.clientY;
+    if (isBoardTransferDragActive()){
+      if (shouldOpenHoverMenuForDrag(x, y)) setHoverMenuOpen(true);
+      return;
+    }
+    if (!hoverMenu.classList.contains('open')){
+      if (isInTongueZone(x, y)) setHoverMenuOpen(true);
+      return;
+    }
+    if (!pointerWatchActive) return;
+    const topbarRect = topbar.getBoundingClientRect();
+    const menuRect = hoverMenu.getBoundingClientRect();
+    const extendedBottom = menuRect.bottom + (menuRect.height * 0.5);
+    const insideTopbar =
+      x >= topbarRect.left &&
+      x <= topbarRect.right &&
+      y >= topbarRect.top &&
+      y <= topbarRect.bottom;
+    const nearMenu =
+      x >= menuRect.left &&
+      x <= menuRect.right &&
+      y >= menuRect.top &&
+      y <= extendedBottom;
+
+    if (insideTopbar || nearMenu){
+      clearCloseTimer();
+      return;
+    }
+    scheduleClose();
+  });
+  document.addEventListener('dragover', function(e){
+    if (!isBoardTransferDragActive()) return;
+    if (shouldOpenHoverMenuForDrag(e.clientX, e.clientY)){
+      e.preventDefault();
+      setHoverMenuOpen(true);
+    }
+  }, true);
+
+  renderHoverMenuItems();
+})();
 // ===== Topbar hamburger behaviour =====
 (function(){
   const mobileMenu = document.getElementById('mobileMenu');
@@ -3302,6 +4162,13 @@ requestAnimationFrame(syncTopbarSpacer);
     mobileMenu.classList.toggle('open', !!open);
     mobileMenu.setAttribute('aria-hidden', String(!open));
     hamburger.setAttribute('aria-expanded', String(!!open));
+    if (open){
+      const hoverMenu = document.getElementById('hoverMenu');
+      if (hoverMenu){
+        hoverMenu.classList.remove('open');
+        hoverMenu.setAttribute('aria-hidden', 'true');
+      }
+    }
     if (open) positionMenu();
   }
 
