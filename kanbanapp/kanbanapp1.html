@@ -44,7 +44,7 @@ body {
  background: var(--bg); 
  color: var(--text); 
  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; 
- overflow-x: hidden;
+ overflow-x: auto;
  } 
 .topbar{
   position: sticky;
@@ -282,12 +282,12 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
+  width: 100%;
   height: 12px;
   z-index: 11;
   background: transparent;
 }
-.brand{ font-weight: 700; letter-spacing: 0.3px; display: inline-flex; align-items: center; gap: 8px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.55)); min-width: 0; max-width: calc(100vw - 88px); } 
+.brand{ font-weight: 700; letter-spacing: 0.3px; display: inline-flex; align-items: center; gap: 8px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.55)); } 
 .brand{ font-size: 120%; }
 .brand-link,
 .brand-link:visited,
@@ -295,10 +295,6 @@ body {
 .brand-link:active{
   color: inherit;
   text-decoration: none;
-  max-width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 .brand-icon{ width: 24px; height: 24px; display: inline-block; border-radius: 6px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.55)); }
 button, .btn{ 
@@ -361,34 +357,11 @@ button, .btn{
  .column-header{ 
  padding: 12px; 
  border-bottom: 1px solid var(--border); 
- display: flex;
- flex-direction: column;
+ display: grid; 
+ grid-template-columns: 1fr auto; 
  gap: 8px; 
- align-items: stretch; 
+ align-items: center; 
  } 
- .column-title-row{
- display: grid;
- grid-template-columns: auto 1fr;
- gap: 8px;
- align-items: center;
- }
- .column-drag-handle{
-  width: 28px;
-  height: 28px;
-  border: 1px dashed var(--border);
-  border-radius: 8px;
-  color: var(--muted);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: grab;
-  user-select: none;
-  line-height: 1;
-  font-size: 14px;
-  background: rgba(255,255,255,0.03);
-  touch-action: none;
- }
- .column-drag-handle:active{ cursor: grabbing; }
  .column-title{ 
  width: 100%; 
  background: var(--panel-2); 
@@ -686,11 +659,6 @@ min-height: 120px;
 .checklist-item.has-due{
  box-shadow: inset 3px 0 0 var(--item-due-color, var(--purple));
 }
-.checklist-item.touch-dragging,
-.column.touch-dragging-col{
- opacity: 0.9;
- box-shadow: 0 24px 44px rgba(0,0,0,0.38);
-}
  .item-drag-handle{
   width: 20px;
   height: 20px;
@@ -705,7 +673,6 @@ min-height: 120px;
   line-height: 1;
   font-size: 12px;
   background: rgba(255,255,255,0.02);
-  touch-action: none;
  }
  .item-drag-handle:active{ cursor: grabbing; }
  .item-view{ 
@@ -1012,15 +979,12 @@ min-height: 120px;
 }
 .board-loading-panel{
   min-width: min(420px, 92vw);
-  width: min(420px, 92vw);
-  max-width: 92vw;
   padding: 22px 24px;
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 14px;
   background: linear-gradient(180deg, rgba(25,28,40,0.96) 0%, rgba(17,19,28,0.98) 100%);
   box-shadow: 0 26px 60px rgba(0,0,0,0.42);
   text-align: center;
-  margin: 0 auto;
 }
 .board-loading-title{
   margin: 0 0 8px;
@@ -1243,22 +1207,10 @@ min-height: 120px;
 }
 @media (max-width: 640px){
   .topbar{ padding: 10px 12px; }
-  .brand{ max-width: calc(100vw - 76px); font-size: 110%; }
   .hamburger{ right: 12px; }
   .mobile-menu{
     right: 12px;
     max-width: calc(100vw - 24px);
-  }
-}
-@media (orientation: portrait){
-  .board-loading-overlay{
-    padding: 16px;
-  }
-  .board-loading-panel{
-    min-width: 0;
-    width: min(420px, calc(100vw - 32px));
-    max-width: calc(100vw - 32px);
-    padding: 20px 18px;
   }
 }
 
@@ -1317,10 +1269,7 @@ min-height: 120px;
  <template id="tpl-column"> 
  <div class="column" data-id=""> 
  <div class="column-header"> 
- <div class="column-title-row">
- <span class="column-drag-handle" title="Arrastar coluna" aria-label="Arrastar coluna">⋮⋮</span>
- <input type="text" class="column-title" placeholder="Título da coluna" />
- </div>
+ <input type="text" class="column-title" placeholder="Título da coluna" /><br> 
  <div class="column-actions"> 
  <button class="btn-small add-card">+ Card</button> 
  <button class="btn-small select-all" title="Selecionar todos os cards">Selecionar</button> 
@@ -1628,19 +1577,7 @@ let boardSwitchToken = 0;
 // Currently dragged checklist item (handle-driven)
 let currentDraggedChecklistItem = null;
 let checklistDragMeta = null;
-let touchChecklistDragState = null;
-let touchColumnDragState = null;
 let cardBoardHoverSwitchTimer = null;
-function isCoarsePointer(){
- try{
-  return !!(window.matchMedia && (window.matchMedia('(pointer: coarse)').matches || window.matchMedia('(hover: none)').matches));
- }catch(_){
-  return false;
- }
-}
-function isTouchLikePointerEvent(e){
- return !!(e && (e.pointerType === 'touch' || e.pointerType === 'pen' || isCoarsePointer()));
-}
 function getChecklistItemContent(itemNode){
  if(!itemNode || !itemNode.dataset) return '';
  return String(itemNode.dataset.details || '');
@@ -2191,49 +2128,6 @@ function createColumn(id, title, boardName){
  setColumnBoardName(node, boardName || activeBoardName || UNTITLED_BOARD_NAME);
  node.style.display = (normalizeBoardName(getColumnBoardName(node), UNTITLED_BOARD_NAME) === normalizeBoardName(activeBoardName, UNTITLED_BOARD_NAME)) ? '' : 'none';
  $('.column-title', node).value = title || ''; 
- const dragHandle = $('.column-drag-handle', node);
- if (dragHandle && window.PointerEvent){
-  const cleanupTouchColumnDrag = function(){
-   if (!touchColumnDragState || touchColumnDragState.column !== node) return;
-   node.classList.remove('touch-dragging-col');
-   touchColumnDragState = null;
-   scheduleAutosave();
-  };
-  dragHandle.addEventListener('pointerdown', function(e){
-   if (!isTouchLikePointerEvent(e)) return;
-   if (e.button != null && e.button !== 0) return;
-   e.preventDefault();
-   e.stopPropagation();
-   touchColumnDragState = {
-    pointerId: e.pointerId,
-    column: node,
-    startX: e.clientX,
-    startY: e.clientY,
-    active: false
-   };
-   try{ dragHandle.setPointerCapture(e.pointerId); }catch(_){}
-  });
-  dragHandle.addEventListener('pointermove', function(e){
-   if (!touchColumnDragState || touchColumnDragState.column !== node || touchColumnDragState.pointerId !== e.pointerId) return;
-   const dx = Math.abs(e.clientX - touchColumnDragState.startX);
-   const dy = Math.abs(e.clientY - touchColumnDragState.startY);
-   if (!touchColumnDragState.active){
-    if (Math.max(dx, dy) < 8) return;
-    touchColumnDragState.active = true;
-    node.classList.add('touch-dragging-col');
-   }
-   e.preventDefault();
-   const after = getColAfterElement(board, e.clientX);
-   if (after == null) board.appendChild(node);
-   else if (after !== node) board.insertBefore(node, after);
-  });
-  dragHandle.addEventListener('pointerup', function(e){
-   if (!touchColumnDragState || touchColumnDragState.column !== node || touchColumnDragState.pointerId !== e.pointerId) return;
-   e.preventDefault();
-   cleanupTouchColumnDrag();
-  });
-  dragHandle.addEventListener('pointercancel', cleanupTouchColumnDrag);
- }
  // Filtro 
  const filterInput = $('.filter-cards', node); 
  const filterCount = $('.filter-count', node); 
@@ -2498,7 +2392,82 @@ function createCard(id){
     }
   });
   async function handleChecklistItemDrop(targetCard, targetItemsWrap){
-    await finalizeChecklistItemDrop(targetCard, targetItemsWrap, node);
+    const dragged = currentDraggedChecklistItem;
+    const meta = checklistDragMeta;
+    if (!dragged || !meta) return;
+    meta.dropHandled = true;
+    // prioridade: posição real atual do item no DOM no momento do drop
+    const domTargetWrap = dragged.closest('.items');
+    const domTargetCard = dragged.closest('.card');
+    const effectiveTargetCard = domTargetCard || targetCard || meta.targetCard || node;
+    const effectiveTargetWrap = domTargetWrap || targetItemsWrap || meta.targetItemsWrap || $('.items', effectiveTargetCard);
+    if (!effectiveTargetCard || !effectiveTargetWrap) return;
+    const sourceCard = meta.sourceCard;
+    const sourceWrap = meta.sourceItemsWrap;
+    const sourceNext = meta.sourceNextSibling;
+    const sourceCol = sourceCard ? sourceCard.closest('.column') : null;
+    const targetCol = effectiveTargetCard ? effectiveTargetCard.closest('.column') : null;
+    const isCrossCard = !!(sourceCard && effectiveTargetCard && sourceCard !== effectiveTargetCard);
+
+    function restoreToSource(){
+      if (!sourceWrap || !dragged) return;
+      if (sourceNext && sourceNext.parentNode === sourceWrap){
+        sourceWrap.insertBefore(dragged, sourceNext);
+      } else {
+        sourceWrap.appendChild(dragged);
+      }
+    }
+    function finalizeCleanup(){
+      currentDraggedChecklistItem = null;
+      checklistDragMeta = null;
+      dragged.classList.remove('dragging');
+    }
+    function refreshCardsAndFilters(refreshSource){
+      if (refreshSource && sourceCard) { updateItemsCount(sourceCard); touchCardUpdated(sourceCard); }
+      if (effectiveTargetCard) { updateItemsCount(effectiveTargetCard); touchCardUpdated(effectiveTargetCard); }
+      if (sourceCol) applyColumnFilter(sourceCol);
+      if (targetCol && targetCol !== sourceCol) applyColumnFilter(targetCol);
+    }
+
+    if (!isCrossCard){
+      updateItemsCount(effectiveTargetCard);
+      touchCardUpdated(effectiveTargetCard);
+      if (targetCol) applyColumnFilter(targetCol);
+      finalizeCleanup();
+      return;
+    }
+
+    const choice = await askChecklistTransferAction();
+    if (choice === 'copy'){
+      const label = $('.item-editor', dragged)?.value || '';
+      const checked = !!$('.item-check', dragged)?.checked;
+      const noteContent = getChecklistItemContent(dragged);
+      const dueDate = getChecklistItemDueDate(dragged);
+      const copyNode = createChecklistItem(label, checked, noteContent, dueDate);
+      placeChecklistItemByCheckState(effectiveTargetWrap, copyNode);
+      restoreToSource();
+      refreshCardsAndFilters(false);
+      finalizeCleanup();
+      return;
+    }
+    if (choice === 'move'){
+      placeChecklistItemByCheckState(effectiveTargetWrap, dragged);
+      refreshCardsAndFilters(true);
+      finalizeCleanup();
+      return;
+    }
+    // cancelado: volta para origem
+    restoreToSource();
+    if (sourceCard) {
+      updateItemsCount(sourceCard);
+      touchCardUpdated(sourceCard);
+      if (sourceCol) applyColumnFilter(sourceCol);
+    }
+    if (effectiveTargetCard) {
+      updateItemsCount(effectiveTargetCard);
+      if (targetCol && targetCol !== sourceCol) applyColumnFilter(targetCol);
+    }
+    finalizeCleanup();
   }
   itemsWrap.addEventListener('drop', async function(e){
     e.preventDefault();
@@ -2637,83 +2606,6 @@ function createChecklistItem(labelText='', checked=false, itemContentText='', it
   node.draggable = false;
  const dragHandle = $('.item-drag-handle', node);
  if (dragHandle){
-  if (window.PointerEvent){
-   const cleanupTouchChecklistDrag = async function(e){
-    if (!touchChecklistDragState || touchChecklistDragState.item !== node) return;
-   const state = touchChecklistDragState;
-   touchChecklistDragState = null;
-   if (!state.active){
-     node.classList.remove('touch-dragging');
-     currentDraggedChecklistItem = null;
-     checklistDragMeta = null;
-     return;
-    }
-    if (e && e.cancelable) e.preventDefault();
-    const targetCard = state.targetCard || state.sourceCard;
-    const targetItemsWrap = state.targetItemsWrap || state.sourceItemsWrap;
-    await finalizeChecklistItemDrop(targetCard, targetItemsWrap, state.sourceCard);
-    scheduleAutosave();
-   };
-   dragHandle.addEventListener('pointerdown', function(e){
-    if (!isTouchLikePointerEvent(e)) return;
-    if (e.button != null && e.button !== 0) return;
-    e.preventDefault();
-    e.stopPropagation();
-    const sourceCard = node.closest('.card');
-    const sourceItemsWrap = node.closest('.items');
-    currentDraggedChecklistItem = node;
-    checklistDragMeta = {
-     sourceCard: sourceCard,
-     sourceItemsWrap: sourceItemsWrap,
-     sourceNextSibling: node.nextElementSibling,
-     targetCard: sourceCard,
-     targetItemsWrap: sourceItemsWrap,
-     dropHandled: false
-    };
-    touchChecklistDragState = {
-     pointerId: e.pointerId,
-     item: node,
-     sourceCard: sourceCard,
-     sourceItemsWrap: sourceItemsWrap,
-     targetCard: sourceCard,
-     targetItemsWrap: sourceItemsWrap,
-     startX: e.clientX,
-     startY: e.clientY,
-     active: false
-    };
-    try{ dragHandle.setPointerCapture(e.pointerId); }catch(_){}
-   });
-   dragHandle.addEventListener('pointermove', function(e){
-    if (!touchChecklistDragState || touchChecklistDragState.item !== node || touchChecklistDragState.pointerId !== e.pointerId) return;
-    const dx = Math.abs(e.clientX - touchChecklistDragState.startX);
-    const dy = Math.abs(e.clientY - touchChecklistDragState.startY);
-    if (!touchChecklistDragState.active){
-     if (Math.max(dx, dy) < 6) return;
-     touchChecklistDragState.active = true;
-     node.classList.add('touch-dragging');
-    }
-    e.preventDefault();
-    const target = document.elementFromPoint(e.clientX, e.clientY);
-    const targetCard = target && target.closest ? target.closest('.card') : null;
-    const targetItemsWrap = targetCard ? $('.items', targetCard) : touchChecklistDragState.sourceItemsWrap;
-    if (!targetItemsWrap) return;
-    if (targetCard && targetCard.classList.contains('collapsed')) setCollapsed(targetCard, false);
-    touchChecklistDragState.targetCard = targetCard || touchChecklistDragState.sourceCard;
-    touchChecklistDragState.targetItemsWrap = targetItemsWrap;
-    if (checklistDragMeta){
-     checklistDragMeta.targetCard = touchChecklistDragState.targetCard;
-     checklistDragMeta.targetItemsWrap = targetItemsWrap;
-    }
-    const after = getChecklistItemAfterElement(targetItemsWrap, e.clientY, node);
-    if (after == null) targetItemsWrap.appendChild(node);
-    else if (after !== node) targetItemsWrap.insertBefore(node, after);
-   });
-   dragHandle.addEventListener('pointerup', function(e){
-    if (!touchChecklistDragState || touchChecklistDragState.item !== node || touchChecklistDragState.pointerId !== e.pointerId) return;
-    cleanupTouchChecklistDrag(e);
-   });
-   dragHandle.addEventListener('pointercancel', cleanupTouchChecklistDrag);
-  }
   dragHandle.draggable = true;
   dragHandle.addEventListener('dragstart', function(e){
     e.stopPropagation();
@@ -3089,94 +2981,6 @@ function updateChecklistProgress(cardNode){
  prog.title = total > 0 ? `${checked}/${total} itens` : `0/0 itens`; 
  } 
 } 
-function getChecklistItemAfterElement(container, y, draggingNode){
- const els = $$('.checklist-item', container).filter(function(el){
-  return el !== draggingNode && !el.classList.contains('dragging') && !el.classList.contains('touch-dragging');
- });
- let closest = { offset: Number.POSITIVE_INFINITY, element: null };
- els.forEach(function(el){
-  const box = el.getBoundingClientRect();
-  const offset = y - (box.top + box.height / 2);
-  if(offset < 0 && Math.abs(offset) < closest.offset){
-   closest = { offset: Math.abs(offset), element: el };
-  }
- });
- return closest.element;
-}
-async function finalizeChecklistItemDrop(targetCard, targetItemsWrap, fallbackCard){
- const dragged = currentDraggedChecklistItem;
- const meta = checklistDragMeta;
- if (!dragged || !meta) return;
- meta.dropHandled = true;
- const domTargetWrap = dragged.closest('.items');
- const domTargetCard = dragged.closest('.card');
- const effectiveTargetCard = domTargetCard || targetCard || meta.targetCard || fallbackCard || meta.sourceCard;
- const effectiveTargetWrap = domTargetWrap || targetItemsWrap || meta.targetItemsWrap || (effectiveTargetCard ? $('.items', effectiveTargetCard) : null);
- if (!effectiveTargetCard || !effectiveTargetWrap) return;
- const sourceCard = meta.sourceCard;
- const sourceWrap = meta.sourceItemsWrap;
- const sourceNext = meta.sourceNextSibling;
- const sourceCol = sourceCard ? sourceCard.closest('.column') : null;
- const targetCol = effectiveTargetCard ? effectiveTargetCard.closest('.column') : null;
- const isCrossCard = !!(sourceCard && effectiveTargetCard && sourceCard !== effectiveTargetCard);
-
- function restoreToSource(){
-  if (!sourceWrap || !dragged) return;
-  if (sourceNext && sourceNext.parentNode === sourceWrap) sourceWrap.insertBefore(dragged, sourceNext);
-  else sourceWrap.appendChild(dragged);
- }
- function finalizeCleanup(){
-  currentDraggedChecklistItem = null;
-  checklistDragMeta = null;
-  dragged.classList.remove('dragging');
-  dragged.classList.remove('touch-dragging');
- }
- function refreshCardsAndFilters(refreshSource){
-  if (refreshSource && sourceCard) { updateItemsCount(sourceCard); touchCardUpdated(sourceCard); }
-  if (effectiveTargetCard) { updateItemsCount(effectiveTargetCard); touchCardUpdated(effectiveTargetCard); }
-  if (sourceCol) applyColumnFilter(sourceCol);
-  if (targetCol && targetCol !== sourceCol) applyColumnFilter(targetCol);
- }
-
- if (!isCrossCard){
-  updateItemsCount(effectiveTargetCard);
-  touchCardUpdated(effectiveTargetCard);
-  if (targetCol) applyColumnFilter(targetCol);
-  finalizeCleanup();
-  return;
- }
-
- const choice = await askChecklistTransferAction();
- if (choice === 'copy'){
-  const label = $('.item-editor', dragged)?.value || '';
-  const checked = !!$('.item-check', dragged)?.checked;
-  const noteContent = getChecklistItemContent(dragged);
-  const dueDate = getChecklistItemDueDate(dragged);
-  const copyNode = createChecklistItem(label, checked, noteContent, dueDate);
-  placeChecklistItemByCheckState(effectiveTargetWrap, copyNode);
-  restoreToSource();
-  refreshCardsAndFilters(false);
-  finalizeCleanup();
-  return;
- }
- if (choice === 'move'){
-  placeChecklistItemByCheckState(effectiveTargetWrap, dragged);
-  refreshCardsAndFilters(true);
-  finalizeCleanup();
-  return;
- }
- restoreToSource();
- if (sourceCard) {
-  updateItemsCount(sourceCard);
-  touchCardUpdated(sourceCard);
-  if (sourceCol) applyColumnFilter(sourceCol);
- }
- if (effectiveTargetCard) {
-  updateItemsCount(effectiveTargetCard);
-  if (targetCol && targetCol !== sourceCol) applyColumnFilter(targetCol);
- }
- finalizeCleanup();
-}
  function getDragAfterElement(container, y){ 
  const els = $$('.card:not(.dragging)', container); 
  let closest = { offset: Number.POSITIVE_INFINITY, element: null }; 
@@ -3900,9 +3704,7 @@ function syncTopbarSpacer(){
     const mainEl = document.querySelector('main');
     const viewportW = window.innerWidth || document.documentElement.clientWidth || 0;
     const mainPad = mainEl ? ((parseFloat(getComputedStyle(mainEl).paddingLeft) || 0) + (parseFloat(getComputedStyle(mainEl).paddingRight) || 0)) : 0;
-    const targetWidth = isCoarsePointer()
-      ? viewportW
-      : Math.max(viewportW, Math.ceil((boardEl ? boardEl.scrollWidth : 0) + mainPad));
+    const targetWidth = Math.max(viewportW, Math.ceil((boardEl ? boardEl.scrollWidth : 0) + mainPad));
     tb.style.width = targetWidth + 'px';
     const h = Math.ceil(tb.getBoundingClientRect().height);
     if (hoverMenu){
