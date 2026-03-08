@@ -366,13 +366,13 @@ button, .btn{
  gap: 8px; 
  align-items: stretch; 
  } 
- .column-title-row{
+.column-title-row{
  display: grid;
- grid-template-columns: auto 1fr;
+ grid-template-columns: 1fr auto;
  gap: 8px;
  align-items: center;
  }
- .column-drag-handle{
+.column-drag-handle{
   width: 28px;
   height: 28px;
   border: 1px dashed var(--border);
@@ -387,6 +387,10 @@ button, .btn{
   font-size: 14px;
   background: rgba(255,255,255,0.03);
   touch-action: none;
+  justify-self: end;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
  }
  .column-drag-handle:active{ cursor: grabbing; }
  .column-title{ 
@@ -706,6 +710,9 @@ min-height: 120px;
   font-size: 12px;
   background: rgba(255,255,255,0.02);
   touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
  }
  .item-drag-handle:active{ cursor: grabbing; }
  .item-view{ 
@@ -1318,8 +1325,8 @@ min-height: 120px;
  <div class="column" data-id=""> 
  <div class="column-header"> 
  <div class="column-title-row">
- <span class="column-drag-handle" title="Arrastar coluna" aria-label="Arrastar coluna">⋮⋮</span>
  <input type="text" class="column-title" placeholder="Título da coluna" />
+ <span class="column-drag-handle" title="Arrastar coluna" aria-label="Arrastar coluna">⋮⋮</span>
  </div>
  <div class="column-actions"> 
  <button class="btn-small add-card">+ Card</button> 
@@ -2193,17 +2200,21 @@ function createColumn(id, title, boardName){
  $('.column-title', node).value = title || ''; 
  const dragHandle = $('.column-drag-handle', node);
  if (dragHandle && window.PointerEvent){
+  dragHandle.addEventListener('contextmenu', function(e){
+   e.preventDefault();
+  });
   const cleanupTouchColumnDrag = function(){
    if (!touchColumnDragState || touchColumnDragState.column !== node) return;
    node.classList.remove('touch-dragging-col');
+   if (!node.classList.contains('dragging-col')) node.draggable = false;
    touchColumnDragState = null;
    scheduleAutosave();
   };
   dragHandle.addEventListener('pointerdown', function(e){
    if (!isTouchLikePointerEvent(e)) return;
    if (e.button != null && e.button !== 0) return;
-   e.preventDefault();
    e.stopPropagation();
+   node.draggable = true;
    touchColumnDragState = {
     pointerId: e.pointerId,
     column: node,
@@ -2637,6 +2648,9 @@ function createChecklistItem(labelText='', checked=false, itemContentText='', it
   node.draggable = false;
  const dragHandle = $('.item-drag-handle', node);
  if (dragHandle){
+  dragHandle.addEventListener('contextmenu', function(e){
+   e.preventDefault();
+  });
   if (window.PointerEvent){
    const cleanupTouchChecklistDrag = async function(e){
     if (!touchChecklistDragState || touchChecklistDragState.item !== node) return;
