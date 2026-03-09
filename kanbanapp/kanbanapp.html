@@ -28,6 +28,8 @@
  --menu-purple-deep: #4c3cad;
  --menu-blue-soft: #5f72ff;
  --menu-border-soft: #cfd3ff;
+ --board-edge-gap: 16px;
+ --submenu-collapsed-peek: 7px;
  --card: #2f2f2f; 
  --card-hover: #363636; 
  --card-completed: #262626; /* levemente mais escuro */ 
@@ -46,15 +48,33 @@ body {
  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; 
  overflow-x: hidden;
  } 
+
+#window-controls{
+  display:none;
+  align-items: center;
+  gap: 8px;
+  -webkit-app-region: no-drag;
+}
+
+#window-controls button{
+  width:36px;
+  height:36px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+}
+
 .topbar{
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 10;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
-  padding-right: 64px;
+  padding: 12px 132px 12px 16px;
+  width: 100%;
   min-width: 100%;
   /* Paleta inspirada no og-image.svg (roxo/azul) */
   background:
@@ -65,6 +85,22 @@ body {
   border-radius: 0;
   color: var(--text);
   box-shadow: 0 10px 26px rgba(0,0,0,0.28);
+  -webkit-app-region: drag;
+}
+.topbar-actions{
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  -webkit-app-region: no-drag;
+}
+.brand-link,
+.hamburger{
+  -webkit-app-region: no-drag;
 }
 .hover-menu{
   position: fixed;
@@ -94,21 +130,30 @@ body {
 }
 .hover-menu-content{
   min-height: 72px;
-  min-width: max-content;
+  width: calc(100% - 28px);
+  min-width: 0;
+  margin: 0 14px;
   overflow-x: auto;
   overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable both-edges;
   border-bottom-left-radius: 18px;
   border-bottom-right-radius: 18px;
+  background: linear-gradient(180deg, #3b3b3f 0%, #2a2a2e 100%);
+  border-top: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 14px 18px 18px;
+  padding: 14px 18px 10px;
   box-sizing: border-box;
 }
 .hover-menu-items{
   display: flex;
   align-items: center;
   gap: 12px;
+  flex: 0 0 auto;
+  min-width: max-content;
 }
 .board-switch-out,
 .board-switch-in{
@@ -286,6 +331,8 @@ body {
   height: 12px;
   z-index: 11;
   background: transparent;
+  pointer-events: auto;
+  -webkit-app-region: no-drag;
 }
 .brand{ font-weight: 700; letter-spacing: 0.3px; display: inline-flex; align-items: center; gap: 8px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.55)); min-width: 0; max-width: calc(100vw - 88px); } 
 .brand{ font-size: 120%; }
@@ -316,29 +363,60 @@ button, .btn{
  .btn-danger{ background: #B00020; border-color: rgba(255,255,255,0.25); color: #fff; } 
  .btn-danger:hover{ filter: brightness(1.1); } 
  /* Board */ 
- main{ padding: 16px 16px 0; padding-top: 18px; } 
- .board{ 
+ main{ padding: 16px 0 0; padding-top: 18px; } 
+.board-scroll-region{
+ width: 100%;
+ max-width: 100%;
+ overflow-x: auto;
+ overflow-y: hidden;
+ padding-left: var(--board-edge-gap);
+ padding-right: var(--board-edge-gap);
+ padding-bottom: 12px;
+ scrollbar-width: none;
+ -ms-overflow-style: none;
+}
+.board-scroll-region::-webkit-scrollbar{
+ height: 0;
+}
+.board{ 
  display: flex; 
  align-items: flex-start; 
  gap: 16px; 
- overflow-x: auto; 
- padding-bottom: 0; 
- width: 100%;
+ width: max-content;
+ min-width: 100%;
+ padding-right: calc(var(--board-edge-gap) + 16px);
  } 
 
  @media (min-width: 900px){
  .board{
- overflow-x: visible;
  width: max-content;
  min-width: 100%;
  }
  }
  
 /* Extra spacer at board footer to ensure space larger than column shadow */
-.board-bottom-spacer{ width:100%; height:0; }
+.board-bottom-spacer{ width:100%; height:28px; }
 
-/* Fixed transparent overlay right above the viewport scrollbar (30px height) */
-.board-scroll-overlay{ position: fixed; left: 0; right: 0; bottom: 0; height: 30px; background: transparent; pointer-events: none; z-index: 6; }
+.board-fixed-scroll{
+ position: fixed;
+ left: 0;
+ right: 0;
+ bottom: 0;
+ height: 22px;
+ overflow-x: auto;
+ overflow-y: hidden;
+ z-index: 7;
+ background: color-mix(in srgb, var(--bg) 88%, transparent);
+ border-top-left-radius: 10px;
+ border-top-right-radius: 10px;
+ scrollbar-gutter: stable;
+}
+.board-fixed-scroll.hidden{
+ display: none;
+}
+.board-fixed-scroll-inner{
+ height: 1px;
+}
  
  .column{ 
   min-width: 352px;
@@ -1200,11 +1278,7 @@ min-height: 120px;
 
 /* ===== Topbar Hamburger Menu ===== */
 .hamburger{
-  margin-left: auto;
   display: inline-flex;
-  position: fixed;
-  top: 0;
-  right: 16px;
   background: var(--panel-2);
   border: 1px solid rgba(255,255,255,0.15);
   color: var(--text);
@@ -1251,7 +1325,7 @@ min-height: 120px;
 @media (max-width: 640px){
   .topbar{ padding: 10px 12px; }
   .brand{ max-width: calc(100vw - 76px); font-size: 110%; }
-  .hamburger{ right: 12px; }
+  :root{ --board-edge-gap: 12px; }
   .mobile-menu{
     right: 12px;
     max-width: calc(100vw - 24px);
@@ -1274,7 +1348,14 @@ min-height: 120px;
 <body> 
  <header class="topbar"> 
  <a class="brand brand-link" href="https://kanbanapp.io" target="_blank" rel="noopener noreferrer"><img class="brand-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJLYW5iYW5BcHAgZmF2aWNvbiI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMxMjEzMWQiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjNjY1MGU2Ii8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cmVjdCB4PSIyIiB5PSIyIiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHJ4PSIxNCIgZmlsbD0idXJsKCNiZykiLz4KICA8cmVjdCB4PSIxNCIgeT0iMTYiIHdpZHRoPSIxMCIgaGVpZ2h0PSIzMiIgcng9IjMiIGZpbGw9IiNkOGQ4ZmYiIGZpbGwtb3BhY2l0eT0iLjkwIi8+CiAgPHJlY3QgeD0iMjciIHk9IjE2IiB3aWR0aD0iMTAiIGhlaWdodD0iMzIiIHJ4PSIzIiBmaWxsPSIjYmRhNmZmIiBmaWxsLW9wYWNpdHk9Ii45MiIvPgogIDxyZWN0IHg9IjQwIiB5PSIxNiIgd2lkdGg9IjEwIiBoZWlnaHQ9IjMyIiByeD0iMyIgZmlsbD0iIzdhNjdmMCIgZmlsbC1vcGFjaXR5PSIuOTUiLz4KPC9zdmc+Cg==" alt="" aria-hidden="true">KanbanApp.io</a> 
- <button id="hamburgerBtn" class="hamburger" aria-controls="mobileMenu" aria-expanded="false" aria-label="Abrir menu">☰</button>
+ <div class="topbar-actions">
+  <button id="hamburgerBtn" class="hamburger" aria-controls="mobileMenu" aria-expanded="false" aria-label="Abrir menu">☰</button>
+  <div id="window-controls">
+   <button id="btn-minimize" type="button">—</button>
+   <button id="btn-maximize" type="button" title="Maximizar">□</button>
+   <button id="btn-close" type="button" title="Fechar">✕</button>
+  </div>
+ </div>
  </header> 
 <div id="topbarHoverTrigger" class="topbar-hover-trigger" aria-hidden="true"></div>
 <div id="hoverMenu" class="hover-menu" aria-hidden="true">
@@ -1315,10 +1396,13 @@ min-height: 120px;
   </div>
 </div>
  <main> 
+ <div class="board-scroll-region">
  <div id="board" class="board" aria-live="polite"></div> 
+ </div>
 <div class="board-bottom-spacer" aria-hidden="true"></div>
-<!-- Transparent overlay immediately above the viewport scrollbar (visual only) -->
-<div class="board-scroll-overlay" aria-hidden="true"></div>
+<div id="boardFixedScroll" class="board-fixed-scroll hidden" aria-hidden="true">
+  <div id="boardFixedScrollInner" class="board-fixed-scroll-inner"></div>
+</div>
  </main> 
  <!-- Templates --> 
  <template id="tpl-column"> 
@@ -1603,6 +1687,25 @@ SOFTWARE.
 </div>
 
  <script> 
+ document.addEventListener("DOMContentLoaded", () => {
+
+  const body = document.body;
+  const controls = document.getElementById("window-controls");
+  const topbar = document.querySelector(".topbar");
+
+  // verifica se está rodando no Electron
+  if (window.electronAPI && controls) {
+    body?.classList.add("is-electron");
+    topbar?.classList.add("is-electron");
+    controls.style.display = "flex";
+    return;
+  }
+
+  body?.classList.remove("is-electron");
+  topbar?.classList.remove("is-electron");
+  if (controls) controls.style.display = "none";
+
+});
  /* Polyfills essenciais (Edge Legacy) */ 
  (function polyfills(){ 
  if (!Element.prototype.matches) { 
@@ -1644,6 +1747,9 @@ function isCoarsePointer(){
  }catch(_){
   return false;
  }
+}
+function isElectronShell(){
+ return !!window.electronAPI;
 }
 function isTouchLikePointerEvent(e){
  return !!(e && (e.pointerType === 'touch' || e.pointerType === 'pen' || isCoarsePointer()));
@@ -3910,27 +4016,19 @@ function syncTopbarSpacer(){
     const hoverMenu = document.getElementById('hoverMenu');
     const hoverTrigger = document.getElementById('topbarHoverTrigger');
     if (!tb || !sp) return;
+    const viewportW = window.innerWidth || document.documentElement.clientWidth || 0;
     const boardEl = document.getElementById('board');
     const mainEl = document.querySelector('main');
-    const viewportW = window.innerWidth || document.documentElement.clientWidth || 0;
-    const mainPad = mainEl ? ((parseFloat(getComputedStyle(mainEl).paddingLeft) || 0) + (parseFloat(getComputedStyle(mainEl).paddingRight) || 0)) : 0;
-    const targetWidth = isCoarsePointer()
-      ? viewportW
-      : Math.max(viewportW, Math.ceil((boardEl ? boardEl.scrollWidth : 0) + mainPad));
+    const targetWidth = viewportW;
     tb.style.width = targetWidth + 'px';
     const h = Math.ceil(tb.getBoundingClientRect().height);
     if (hoverMenu){
       hoverMenu.style.top = h + 'px';
     }
     if (hoverTrigger){
-      hoverTrigger.style.width = targetWidth + 'px';
+      hoverTrigger.style.width = Math.floor(targetWidth * 0.75) + 'px';
       hoverTrigger.style.height = Math.max(10, Math.ceil(h / 4)) + 'px';
       hoverTrigger.style.top = Math.max(0, h - Math.max(10, Math.ceil(h / 4))) + 'px';
-    }
-    const hamburgerEl = document.getElementById('hamburgerBtn');
-    if (hamburgerEl){
-      const hbH = Math.ceil(hamburgerEl.getBoundingClientRect().height || 36);
-      hamburgerEl.style.top = Math.max(0, Math.floor((h - hbH) / 2)) + 'px';
     }
     sp.style.height = h + 'px';
     // place spacer just beneath topbar so it does not appear above it
@@ -3938,7 +4036,12 @@ function syncTopbarSpacer(){
     // ensure spacer uses the current board bg color variable
     const rootStyles = getComputedStyle(document.documentElement);
     const bg = rootStyles.getPropertyValue('--bg') || '';
+    const edgeGap = parseFloat(rootStyles.getPropertyValue('--board-edge-gap')) || 16;
+    const submenuPeek = parseFloat(rootStyles.getPropertyValue('--submenu-collapsed-peek')) || 7;
     if (bg) sp.style.background = bg.trim();
+    if (mainEl){
+      mainEl.style.paddingTop = (h + submenuPeek + edgeGap) + 'px';
+    }
     if (boardEl) {
       const rect = boardEl.getBoundingClientRect();
       const viewportH = window.innerHeight || document.documentElement.clientHeight;
@@ -3957,6 +4060,43 @@ if (boardElForObs) boardObs.observe(boardElForObs);
 // initial sync (defer a frame to ensure layout computed)
 requestAnimationFrame(syncTopbarSpacer);
  })(); 
+(function(){
+  const boardScrollRegion = document.querySelector('.board-scroll-region');
+  const fixedScroll = document.getElementById('boardFixedScroll');
+  const fixedScrollInner = document.getElementById('boardFixedScrollInner');
+  const boardEl = document.getElementById('board');
+  if (!boardScrollRegion || !fixedScroll || !fixedScrollInner || !boardEl) return;
+
+  let syncing = false;
+
+  function syncFixedBoardScrollbar(){
+    const scrollWidth = Math.ceil(boardEl.scrollWidth || 0);
+    const clientWidth = Math.ceil(boardScrollRegion.clientWidth || 0);
+    fixedScrollInner.style.width = scrollWidth + 'px';
+    fixedScroll.classList.toggle('hidden', scrollWidth <= clientWidth + 1);
+    if (!syncing) fixedScroll.scrollLeft = boardScrollRegion.scrollLeft;
+  }
+
+  boardScrollRegion.addEventListener('scroll', function(){
+    if (syncing) return;
+    syncing = true;
+    fixedScroll.scrollLeft = boardScrollRegion.scrollLeft;
+    syncing = false;
+  }, { passive: true });
+
+  fixedScroll.addEventListener('scroll', function(){
+    if (syncing) return;
+    syncing = true;
+    boardScrollRegion.scrollLeft = fixedScroll.scrollLeft;
+    syncing = false;
+  }, { passive: true });
+
+  window.addEventListener('resize', syncFixedBoardScrollbar);
+  const boardWidthObs = new ResizeObserver(syncFixedBoardScrollbar);
+  boardWidthObs.observe(boardEl);
+  boardWidthObs.observe(boardScrollRegion);
+  requestAnimationFrame(syncFixedBoardScrollbar);
+})();
 // ===== Hover menu below topbar =====
 (function(){
   const topbar = document.querySelector('.topbar');
@@ -3974,6 +4114,8 @@ requestAnimationFrame(syncTopbarSpacer);
   let pointerWatchActive = false;
   let activeEditBoardName = null;
   let hoveredBoardDuringCardDrag = null;
+  let hoverMenuAutoScrollRaf = 0;
+  let hoverMenuAutoScrollVelocity = 0;
 
   function isBoardTransferDragActive(){
     return !!($('.dragging-col') || $('.card.dragging'));
@@ -3992,6 +4134,7 @@ requestAnimationFrame(syncTopbarSpacer);
     hoverMenu.classList.toggle('open', !!open);
     hoverMenu.setAttribute('aria-hidden', String(!open));
     pointerWatchActive = !!open;
+    if (!open) stopHoverMenuAutoScroll();
   }
 
   function scheduleClose(){
@@ -4005,6 +4148,66 @@ requestAnimationFrame(syncTopbarSpacer);
       clearTimeout(cardBoardHoverSwitchTimer);
       cardBoardHoverSwitchTimer = null;
     }
+  }
+
+  function stopHoverMenuAutoScroll(){
+    hoverMenuAutoScrollVelocity = 0;
+    if (hoverMenuAutoScrollRaf){
+      cancelAnimationFrame(hoverMenuAutoScrollRaf);
+      hoverMenuAutoScrollRaf = 0;
+    }
+  }
+
+  function stepHoverMenuAutoScroll(){
+    if (!hoverMenuAutoScrollVelocity || !isBoardTransferDragActive()){
+      hoverMenuAutoScrollRaf = 0;
+      return;
+    }
+    const maxScrollLeft = Math.max(0, hoverMenuContent.scrollWidth - hoverMenuContent.clientWidth);
+    if (!maxScrollLeft){
+      stopHoverMenuAutoScroll();
+      return;
+    }
+    const nextScrollLeft = Math.max(0, Math.min(maxScrollLeft, hoverMenuContent.scrollLeft + hoverMenuAutoScrollVelocity));
+    hoverMenuContent.scrollLeft = nextScrollLeft;
+    if ((hoverMenuAutoScrollVelocity < 0 && nextScrollLeft <= 0) || (hoverMenuAutoScrollVelocity > 0 && nextScrollLeft >= maxScrollLeft)){
+      stopHoverMenuAutoScroll();
+      return;
+    }
+    hoverMenuAutoScrollRaf = requestAnimationFrame(stepHoverMenuAutoScroll);
+  }
+
+  function updateHoverMenuAutoScroll(clientX, clientY){
+    if (!hoverMenu.classList.contains('open') || !isBoardTransferDragActive()){
+      stopHoverMenuAutoScroll();
+      return;
+    }
+    const maxScrollLeft = Math.max(0, hoverMenuContent.scrollWidth - hoverMenuContent.clientWidth);
+    if (!maxScrollLeft){
+      stopHoverMenuAutoScroll();
+      return;
+    }
+    const rect = hoverMenuContent.getBoundingClientRect();
+    const verticalMargin = 18;
+    if (clientY < (rect.top - verticalMargin) || clientY > (rect.bottom + verticalMargin)){
+      stopHoverMenuAutoScroll();
+      return;
+    }
+    const edgeSize = Math.max(56, Math.min(104, rect.width * 0.18));
+    let velocity = 0;
+    if (clientX < (rect.left + edgeSize)){
+      const ratio = Math.min(1, ((rect.left + edgeSize) - clientX) / edgeSize);
+      velocity = -Math.ceil(2 + (8 * ratio));
+    } else if (clientX > (rect.right - edgeSize)){
+      const ratio = Math.min(1, (clientX - (rect.right - edgeSize)) / edgeSize);
+      velocity = Math.ceil(2 + (8 * ratio));
+    }
+    if (!velocity){
+      stopHoverMenuAutoScroll();
+      return;
+    }
+    hoverMenuAutoScrollVelocity = velocity;
+    if (!hoverMenuAutoScrollRaf) hoverMenuAutoScrollRaf = requestAnimationFrame(stepHoverMenuAutoScroll);
   }
 
   function getUniqueBoardName(baseName, excludeName){
@@ -4149,6 +4352,21 @@ requestAnimationFrame(syncTopbarSpacer);
     activateBoardFromMenu(normalized, { animate: true });
   }
 
+  function getTopbarOpenBoundary(){
+    const rect = topbar.getBoundingClientRect();
+    return rect.left + (rect.width * 0.75);
+  }
+
+  function isInTopbarOpenZone(x, y, extraBottom){
+    const topbarRect = topbar.getBoundingClientRect();
+    return (
+      x >= topbarRect.left &&
+      x <= getTopbarOpenBoundary() &&
+      y >= topbarRect.top &&
+      y <= (topbarRect.bottom + (extraBottom || 0))
+    );
+  }
+
   function isInTongueZone(x, y){
     const menuRect = hoverMenu.getBoundingClientRect();
     const tongueWidth = 57;
@@ -4161,13 +4379,8 @@ requestAnimationFrame(syncTopbarSpacer);
   }
 
   function shouldOpenHoverMenuForDrag(clientX, clientY){
-    const topbarRect = topbar.getBoundingClientRect();
     const menuRect = hoverMenu.getBoundingClientRect();
-    const nearTopbar =
-      clientX >= topbarRect.left &&
-      clientX <= topbarRect.right &&
-      clientY >= topbarRect.top &&
-      clientY <= (topbarRect.bottom + 12);
+    const nearTopbar = isInTopbarOpenZone(clientX, clientY, 12);
     const nearMenu =
       clientX >= menuRect.left &&
       clientX <= menuRect.right &&
@@ -4177,6 +4390,11 @@ requestAnimationFrame(syncTopbarSpacer);
   }
 
   hoverTrigger.addEventListener('mouseenter', function(){ setHoverMenuOpen(true); });
+  topbar.addEventListener('mousemove', function(e){
+    if (hoverMenu.classList.contains('open')) return;
+    if (!isInTopbarOpenZone(e.clientX, e.clientY, 12)) return;
+    setHoverMenuOpen(true);
+  });
   topbar.addEventListener('mouseenter', function(){
     if (hoverMenu.classList.contains('open')) setHoverMenuOpen(true);
   });
@@ -4189,6 +4407,7 @@ requestAnimationFrame(syncTopbarSpacer);
   });
   topbar.addEventListener('dragover', function(e){
     if (!isBoardTransferDragActive()) return;
+    if (!isInTopbarOpenZone(e.clientX, e.clientY, 12)) return;
     e.preventDefault();
     setHoverMenuOpen(true);
   });
@@ -4199,6 +4418,7 @@ requestAnimationFrame(syncTopbarSpacer);
     if (!isBoardTransferDragActive()) return;
     e.preventDefault();
     setHoverMenuOpen(true);
+    updateHoverMenuAutoScroll(e.clientX, e.clientY);
   });
   hoverMenuAddBtn.addEventListener('click', async function(){
     const newBoardName = getUniqueBoardName(DEFAULT_NEW_BOARD_NAME);
@@ -4277,6 +4497,7 @@ requestAnimationFrame(syncTopbarSpacer);
     const draggingCol = $('.dragging-col');
     const draggingCard = $('.card.dragging');
     if (!draggingCol && !draggingCard) return;
+    updateHoverMenuAutoScroll(e.clientX, e.clientY);
     if (!item){
       clearBoardHoverSwitchTimer();
       clearDragTargets();
@@ -4293,6 +4514,7 @@ requestAnimationFrame(syncTopbarSpacer);
     }
   });
   hoverMenuContent.addEventListener('dragleave', function(e){
+    stopHoverMenuAutoScroll();
     if (e.target === hoverMenuContent) clearDragTargets();
   });
   hoverMenuContent.addEventListener('drop', async function(e){
@@ -4301,6 +4523,7 @@ requestAnimationFrame(syncTopbarSpacer);
     const draggingCard = $('.card.dragging');
     clearBoardHoverSwitchTimer();
     clearDragTargets();
+    stopHoverMenuAutoScroll();
     if (!item) return;
     if (draggingCol){
       e.preventDefault();
@@ -4320,6 +4543,7 @@ requestAnimationFrame(syncTopbarSpacer);
     clearBoardHoverSwitchTimer();
     clearDragTargets();
     hoveredBoardDuringCardDrag = null;
+    stopHoverMenuAutoScroll();
   }, true);
 
   document.addEventListener('mousemove', function(e){
@@ -4359,7 +4583,10 @@ requestAnimationFrame(syncTopbarSpacer);
     if (shouldOpenHoverMenuForDrag(e.clientX, e.clientY)){
       e.preventDefault();
       setHoverMenuOpen(true);
+      updateHoverMenuAutoScroll(e.clientX, e.clientY);
+      return;
     }
+    stopHoverMenuAutoScroll();
   }, true);
 
   renderHoverMenuItems();
@@ -4416,20 +4643,9 @@ requestAnimationFrame(syncTopbarSpacer);
     if (mobileMenu.classList.contains('open')) positionMenu();
   });
 
-  setOpen(false);
+ setOpen(false);
 })();
  </script> 
+ <script src="./renderer.js"></script>
 </body> 
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
