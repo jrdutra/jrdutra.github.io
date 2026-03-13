@@ -736,6 +736,10 @@ min-height: 120px;
 /* Checklist: hide inner checkmark and use darker purple background when checked */
 .checklist-item input[type="checkbox"]::after { display: none; }
 .checklist-item input[type="checkbox"]:checked { background-color: var(--item-accent-color, var(--progress-color, var(--purple))); border-color: rgba(255,255,255,0.12); }
+.card.completed .checklist-item input[type="checkbox"]:checked,
+.card.completed input.item-check:checked{
+ background-color: var(--item-accent-color, var(--progress-color, var(--purple-dark)));
+}
  .checklist-header{ 
  display: flex; 
  align-items: center; 
@@ -1816,6 +1820,15 @@ function setChecklistItemDueDate(itemNode, dueDate){
  }
  updateChecklistItemNoteButtonState(itemNode);
 }
+function clearCardAndChecklistDueDates(cardNode){
+ if(!cardNode) return;
+ const dueEl = $('.card-due', cardNode);
+ if (dueEl) dueEl.value = '';
+ $$('.checklist-item', cardNode).forEach(function(itemNode){
+ setChecklistItemDueDate(itemNode, '');
+ });
+ applyDueColorToCard(cardNode);
+}
 function syncCardDescriptionSizeState(cardNode){
  const ta = $('.card-desc', cardNode);
  if(!ta) return;
@@ -1978,6 +1991,7 @@ function syncCardDescriptionSizeState(cardNode){
  const descView = $('.desc-view', card); 
  const dueStr = dueEl ? dueEl.value : ''; 
  if(!dueStr){ 
+ try { card.style.removeProperty('--progress-color'); } catch(_) {}
  card.style.boxShadow = ''; 
  if(descView){ descView.style.borderLeft = ''; } 
  // manter linha colapsada coerente 
@@ -1986,6 +2000,7 @@ function syncCardDescriptionSizeState(cardNode){
  } 
  const dueDt = parseDateOnly(dueStr); 
  if(!dueDt){ 
+ try { card.style.removeProperty('--progress-color'); } catch(_) {}
  card.style.boxShadow = ''; 
  if(descView){ descView.style.borderLeft = ''; } 
  renderCollapsedMeta(card); 
@@ -2406,6 +2421,7 @@ function createColumn(id, title, boardName){
  chk.checked = haveUncompleted; 
  c.classList.toggle('completed', chk.checked); 
  if (haveUncompleted) { 
+ clearCardAndChecklistDueDates(c);
  $('.cards', node).appendChild(c); 
  } 
  applyDueColorToCard(c); 
@@ -2664,14 +2680,15 @@ function createCard(id){
   });
  // Concluir card: move para o fim se marcado 
  const done = $('.card-done', node); 
- done.addEventListener('change', function(e){ 
- e.stopPropagation(); 
- node.classList.toggle('completed', done.checked); 
- const col = node.closest('.column'); 
- if (done.checked) { 
- const wrap = col ? $('.cards', col) : node.parentElement; 
- if (wrap) wrap.appendChild(node); 
- } 
+done.addEventListener('change', function(e){ 
+e.stopPropagation(); 
+node.classList.toggle('completed', done.checked); 
+const col = node.closest('.column'); 
+if (done.checked) { 
+ clearCardAndChecklistDueDates(node);
+const wrap = col ? $('.cards', col) : node.parentElement; 
+if (wrap) wrap.appendChild(node); 
+} 
  if (col) applyColumnFilter(col); 
  applyDueColorToCard(node); 
  // por especificação, marcar concluído NÃO altera updatedAt 
@@ -3560,6 +3577,8 @@ function adjustPriorityDays(delta){
  $$('.column').forEach(function(columnNode){
  const columnTitle = (($('.column-title', columnNode)?.value) || '').trim() || 'Sem coluna';
  $$('.card', columnNode).forEach(function(cardNode){
+ const isCardCompleted = !!($('.card-done', cardNode)?.checked);
+ if (isCardCompleted) return;
  const cardTitle = (($('.card-title', cardNode)?.value) || '').trim() || 'Sem título';
  const cardDue = ($('.card-due', cardNode)?.value || '').trim();
  const cardDueDate = parseDateOnly(cardDue);
@@ -3575,6 +3594,8 @@ function adjustPriorityDays(delta){
  });
  }
  $$('.checklist-item', cardNode).forEach(function(itemNode){
+ const isItemChecked = !!($('.item-check', itemNode)?.checked);
+ if (isItemChecked) return;
  const itemDue = getChecklistItemDueDate(itemNode).trim();
  const itemDueDate = parseDateOnly(itemDue);
  if (!itemDueDate) return;
