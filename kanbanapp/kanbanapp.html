@@ -4807,8 +4807,7 @@ function closeChecklistItemModal(){
 }
 const importedCardHighlightState = {
  cards: new Set(),
- armed: false,
- armTimer: null
+ pendingBoardInteraction: false
 };
 function pruneImportedCardHighlights(){
  Array.from(importedCardHighlightState.cards).forEach(function(card){
@@ -4817,24 +4816,11 @@ function pruneImportedCardHighlights(){
 }
 function armImportedCardHighlightClear(){
  pruneImportedCardHighlights();
- if (importedCardHighlightState.armTimer){
- clearTimeout(importedCardHighlightState.armTimer);
- importedCardHighlightState.armTimer = null;
- }
- importedCardHighlightState.armed = false;
- importedCardHighlightState.armTimer = setTimeout(function(){
-  importedCardHighlightState.armTimer = null;
-  pruneImportedCardHighlights();
-  importedCardHighlightState.armed = importedCardHighlightState.cards.size > 0;
- }, 0);
+ importedCardHighlightState.pendingBoardInteraction = importedCardHighlightState.cards.size > 0;
 }
 function clearImportedCardHighlights(immediate){
  pruneImportedCardHighlights();
- if (importedCardHighlightState.armTimer){
-  clearTimeout(importedCardHighlightState.armTimer);
-  importedCardHighlightState.armTimer = null;
- }
- importedCardHighlightState.armed = false;
+ importedCardHighlightState.pendingBoardInteraction = false;
  const cards = Array.from(importedCardHighlightState.cards);
  importedCardHighlightState.cards.clear();
  cards.forEach(function(card){
@@ -4863,13 +4849,13 @@ function markCardAsRecentlyImported(cardNode){
  });
  armImportedCardHighlightClear();
 }
-function handleImportedCardHighlightInteraction(){
- if (!importedCardHighlightState.armed) return;
+function handleImportedCardHighlightBoardInteraction(){
+ if (!importedCardHighlightState.pendingBoardInteraction) return;
  clearImportedCardHighlights(false);
 }
-['pointerdown', 'keydown', 'input', 'change', 'dragstart', 'wheel'].forEach(function(eventName){
- document.addEventListener(eventName, handleImportedCardHighlightInteraction, true);
-});
+const boardScrollRegion = document.querySelector('.board-scroll-region');
+if (board) board.addEventListener('click', handleImportedCardHighlightBoardInteraction, true);
+if (boardScrollRegion) boardScrollRegion.addEventListener('click', handleImportedCardHighlightBoardInteraction, true);
 const cardImportUI = {
  overlay: null,
  combobox: null,
@@ -5075,6 +5061,9 @@ function importPendingCardToSelectedColumn(){
  markCardAsRecentlyImported(cardNode);
  if (typeof window.__scheduleBoardAutosave === 'function') window.__scheduleBoardAutosave();
  closeCardImportModal();
+ requestAnimationFrame(function(){
+  if (cardNode && cardNode.isConnected) openCardModal(cardNode);
+ });
 }
 function safeDecodeURIComponent(value){
  try{
@@ -6099,6 +6088,7 @@ function openCardModal(card, options){
   card.dataset.lockExpanded = '1';
   setCollapsed(card, false);
   card.classList.add('card-in-modal');
+  card.style.display = '';
   // move para o modal
   modal.content.appendChild(card);
   modal.currentCard = card;
@@ -6129,6 +6119,7 @@ function closeCardModal(immediate){
   const shouldCloseInstant = immediate === true;
   const finishClose = function(){
     const shouldReopenPriorityReport = !!modal.returnToPriorityReport;
+    let cardColumn = null;
     if (modal._titleInput && modal._titleHandler){
       modal._titleInput.removeEventListener('input', modal._titleHandler);
       modal._titleInput.removeEventListener('change', modal._titleHandler);
@@ -6137,11 +6128,13 @@ function closeCardModal(immediate){
     }
     if (modal.currentCard && modal.columnGhost && modal.columnGhost.parentNode){
       modal.columnGhost.parentNode.insertBefore(modal.currentCard, modal.columnGhost);
+      cardColumn = modal.currentCard.closest('.column');
       modal.columnGhost.remove();
     }
     if (modal.currentCard) modal.currentCard.classList.remove('card-in-modal');
     if (modal.currentCard && modal.currentCard.dataset) delete modal.currentCard.dataset.lockExpanded;
     if (modal.currentCard) setCollapsed(modal.currentCard, true);
+    if (cardColumn) applyColumnFilter(cardColumn);
     modal.currentCard = null;
     modal.columnGhost = null;
     modal.returnToPriorityReport = false;
