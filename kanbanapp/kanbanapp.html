@@ -566,6 +566,10 @@ min-height: 120px;
  background: var(--card); 
  border: 1px solid var(--border); 
  border-radius: 10px; 
+ position: relative;
+ isolation: isolate;
+ overflow: visible;
+ z-index: 0;
  /* Faixa roxa com sombra interna */ 
  box-shadow: var(--shadow), inset 3px 0 0 var(--purple); 
  padding: 10px; 
@@ -574,6 +578,31 @@ min-height: 120px;
  gap: 10px; 
  transition: gap .52s cubic-bezier(.2,.9,.2,1);
  } 
+ .card::before{
+ content: '';
+ position: absolute;
+ left: -12px;
+ right: -12px;
+ top: 40%;
+ bottom: -18px;
+ border-radius: 18px;
+ background:
+ radial-gradient(ellipse at center bottom, rgba(122,103,240,0.56) 0%, rgba(102,80,230,0.28) 42%, rgba(102,80,230,0.12) 60%, rgba(102,80,230,0) 82%);
+ opacity: 0;
+ transform: translateY(20px) scale(.94);
+ filter: blur(18px);
+ pointer-events: none;
+ z-index: -1;
+ transition: opacity .72s ease, transform .86s cubic-bezier(.22,1,.36,1);
+ }
+ .card.recently-imported::before{
+ opacity: .96;
+ transform: translateY(0) scale(1);
+ }
+ .card.import-highlight-clearing::before{
+ opacity: 0;
+ transform: translateY(12px) scale(.97);
+ }
  .card:hover{ background: var(--card-hover); } 
  .card.dragging{
  opacity: 0.45;
@@ -608,6 +637,20 @@ min-height: 120px;
  font-size: 12px; 
  color: var(--muted); 
  } 
+ .card-header-actions .export-card{
+ display: none;
+ }
+ .card.card-in-modal .card-header-actions .export-card{
+ display: inline-flex;
+ }
+ .card.card-in-modal .card-header-actions .open-card-modal{
+ display: none;
+ }
+ .export-card svg{
+ width: 14px;
+ height: 14px;
+ display: block;
+ }
  
  /* Checkbox escuro e arredondado para cards e checklist */
  .card-header input[type="checkbox"],
@@ -1010,6 +1053,108 @@ min-height: 120px;
  width: 100%;
  justify-content: center;
  }
+ .card-import-modal{
+ width: min(460px, 92vw);
+ overflow: visible;
+ }
+ .card-import-modal .modal-body{
+ overflow: visible;
+ }
+ .card-import-fields{
+ display: flex;
+ flex-direction: column;
+ gap: 8px;
+ }
+ .card-import-combobox{
+ position: relative;
+ }
+ .card-import-combobox-toggle{
+ width: 100%;
+ min-height: 50px;
+ background: linear-gradient(180deg, #3b3b3f 0%, #2a2a2e 100%);
+ color: #f4f1ff;
+ border: 1px solid rgba(255,255,255,0.08);
+ border-radius: 18px;
+ padding: 12px 14px;
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ gap: 12px;
+ box-shadow: 0 14px 26px rgba(0,0,0,0.24);
+ transition: transform .28s cubic-bezier(.22,1,.36,1), box-shadow .28s cubic-bezier(.22,1,.36,1), border-color .24s ease, background .24s ease;
+ }
+ .card-import-combobox-toggle:hover,
+ .card-import-combobox.open .card-import-combobox-toggle{
+ transform: translateY(-2px);
+ box-shadow: 0 22px 34px rgba(0,0,0,0.34);
+ border-color: rgba(122,103,240,0.58);
+ }
+ .card-import-combobox-toggle:disabled{
+ cursor: not-allowed;
+ opacity: .7;
+ transform: none;
+ box-shadow: 0 10px 20px rgba(0,0,0,0.18);
+ }
+ .card-import-combobox-value{
+ min-width: 0;
+ overflow: hidden;
+ text-overflow: ellipsis;
+ white-space: nowrap;
+ text-align: left;
+ font-weight: 600;
+ letter-spacing: .2px;
+ }
+ .card-import-combobox-icon{
+ flex: 0 0 auto;
+ font-size: 14px;
+ color: var(--menu-purple-light);
+ transition: transform .24s ease;
+ }
+ .card-import-combobox.open .card-import-combobox-icon{
+ transform: rotate(180deg);
+ }
+ .card-import-combobox-menu{
+ position: absolute;
+ top: calc(100% + 10px);
+ left: 0;
+ right: 0;
+ display: flex;
+ flex-direction: column;
+ gap: 8px;
+ padding: 10px;
+ max-height: 260px;
+ overflow-y: auto;
+ background: linear-gradient(180deg, #3b3b3f 0%, #2a2a2e 100%);
+ border: 1px solid rgba(255,255,255,0.08);
+ border-radius: 18px;
+ box-shadow: 0 26px 48px rgba(0,0,0,0.4);
+ z-index: 20;
+ }
+ .card-import-combobox-option{
+ width: 100%;
+ min-height: 44px;
+ padding: 10px 12px;
+ border-radius: 12px;
+ border: 1px solid transparent;
+ background: rgba(255,255,255,0.03);
+ color: #f4f1ff;
+ text-align: left;
+ font-weight: 600;
+ letter-spacing: .15px;
+ box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+ transition: transform .2s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
+ }
+ .card-import-combobox-option:hover,
+ .card-import-combobox-option:focus-visible,
+ .card-import-combobox-option.active{
+ background: linear-gradient(180deg, rgba(122,103,240,0.34) 0%, rgba(76,60,173,0.56) 100%);
+ border-color: rgba(212,168,255,0.55);
+ box-shadow: 0 14px 24px rgba(65,32,142,0.28);
+ transform: translateY(-1px);
+ }
+ .card-import-select{
+ width: 100%;
+ }
  /* ===== Campo Data de Vencimento ===== */ 
  .card-due{ 
  background: var(--panel-2); 
@@ -1029,7 +1174,7 @@ min-height: 120px;
  .card-collapsed-meta{ 
  grid-column: 1 / -1; 
  display: grid;
- grid-template-columns: minmax(0, 1fr) auto;
+ grid-template-columns: minmax(0, 1fr) auto auto;
  column-gap: 8px;
  align-items: center;
  font-size: 11px; 
@@ -1459,9 +1604,11 @@ body[data-ui-language="ar"] .language-option{
 <!-- Mobile menu container (hidden by default) -->
 <div id="mobileMenu" class="mobile-menu checklist-transfer-modal" aria-hidden="true">
   <div class="checklist-transfer-actions">
-    <button id="btnLoad" class="btn" data-i18n="menuLoadJson">Carregar JSON</button>
+    <button id="btnLoad" class="btn" data-i18n="menuImportBoard">Importar Board</button>
     <input type="file" id="fileJson" accept="application/json" hidden>
-    <button id="btnSave" class="btn" data-i18n="menuSaveJson">Salvar JSON</button>
+    <button id="btnImportCard" class="btn" data-i18n="menuImportCard">Importar Card</button>
+    <input type="file" id="fileCardJson" accept="application/json" hidden>
+    <button id="btnSave" class="btn" data-i18n="menuSaveBoard">Salvar Board</button>
     <button id="btnAddColumn" class="btn" data-i18n="menuAddColumn">+ Coluna</button>
     <button id="btnSettings" class="btn" data-i18n="menuSettings">Configurações</button>
     <button id="btnPriorityReport" class="btn" data-i18n="menuPriorityReport">Relatório de prioridades</button>
@@ -1522,6 +1669,7 @@ body[data-ui-language="ar"] .language-option{
  <input type="text" class="card-title" placeholder="Título do card" data-i18n-placeholder="cardTitlePlaceholder" /> 
  <div class="card-header-actions"> 
  <label><input type="checkbox" class="card-done"> <span data-i18n="cardDone">Feito</span></label> 
+ <button class="btn-small btn-ghost export-card" title="Exportar card" aria-label="Exportar card" data-i18n-title="cardExport" data-i18n-aria-label="cardExport"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14 4h5v5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 14L19 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M19 14v4.2a1.8 1.8 0 0 1-1.8 1.8H5.8A1.8 1.8 0 0 1 4 18.2V6.8A1.8 1.8 0 0 1 5.8 5H10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
  <button class="btn-small btn-ghost open-card-modal" title="Abrir em modal" data-i18n-title="cardOpenModal">⤢</button>
  <button class="btn-small btn-ghost delete-card" title="Excluir card" data-i18n-title="cardDelete">🗑</button> 
  </div> 
@@ -1533,6 +1681,7 @@ body[data-ui-language="ar"] .language-option{
  <!-- NOVO: linha curta (apenas quando colapsado) --> 
  <div class="card-collapsed-meta hidden">
  <span class="card-collapsed-meta-text"></span>
+ <button class="btn-small btn-ghost export-card" title="Exportar card" aria-label="Exportar card" data-i18n-title="cardExport" data-i18n-aria-label="cardExport"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14 4h5v5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 14L19 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M19 14v4.2a1.8 1.8 0 0 1-1.8 1.8H5.8A1.8 1.8 0 0 1 4 18.2V6.8A1.8 1.8 0 0 1 5.8 5H10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
  <button class="btn-small btn-ghost open-card-modal" title="Abrir em modal" data-i18n-title="cardOpenModal">⤢</button>
  </div> 
  <!-- NOVO: barra de progresso (sempre visível) --> 
@@ -1758,6 +1907,32 @@ SOFTWARE.
     </div>
     <div class="modal-footer">
       <button id="btnChecklistItemSave" class="btn btn-primary" data-i18n="save">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div id="cardImportOverlay" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="cardImportTitle">
+  <div class="modal card-import-modal">
+    <div class="modal-header">
+      <h2 id="cardImportTitle" data-i18n="cardImportTitle">Importar card</h2>
+      <button class="btn btn-small modal-close" aria-label="Fechar" data-i18n-aria-label="close">✖</button>
+    </div>
+    <div class="modal-body">
+      <div class="card-import-fields">
+        <label for="cardImportColumnSelect" class="field-label" data-i18n="cardImportColumnLabel">Selecione a coluna de destino</label>
+        <div id="cardImportCombobox" class="card-import-combobox">
+          <button id="cardImportColumnTrigger" class="card-import-combobox-toggle" type="button" aria-haspopup="listbox" aria-expanded="false" aria-controls="cardImportColumnList" aria-label="Selecione a coluna de destino" data-i18n-aria-label="cardImportColumnLabel">
+            <span id="cardImportColumnValue" class="card-import-combobox-value"></span>
+            <span class="card-import-combobox-icon" aria-hidden="true">▾</span>
+          </button>
+          <div id="cardImportColumnList" class="card-import-combobox-menu hidden" role="listbox" aria-label="Selecione a coluna de destino" data-i18n-aria-label="cardImportColumnLabel"></div>
+          <select id="cardImportColumnSelect" class="card-import-select hidden" aria-label="Selecione a coluna de destino" data-i18n-aria-label="cardImportColumnLabel"></select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button id="btnCardImportCancel" class="btn" data-i18n="cancel">Cancelar</button>
+      <button id="btnCardImportConfirm" class="btn btn-primary" data-i18n="cardImportConfirm">Importar</button>
     </div>
   </div>
 </div>
@@ -2046,6 +2221,9 @@ LANGUAGE_LIBRARY.en = {
  close: 'Close',
  loadingTitle: 'Loading boards',
  loadingText: 'Preparing columns and cards for the active board.',
+ menuImportBoard: 'Import Board',
+ menuImportCard: 'Import Card',
+ menuSaveBoard: 'Save Board',
  menuLoadJson: 'Load JSON',
  menuSaveJson: 'Save JSON',
  menuAddColumn: '+ Column',
@@ -2073,6 +2251,7 @@ LANGUAGE_LIBRARY.en = {
  cardTitlePlaceholder: 'Card title',
  cardDone: 'Done',
  cardOpenModal: 'Open in modal',
+ cardExport: 'Export card',
  cardDelete: 'Delete card',
  cardChecklistProgress: 'Checklist progress',
  cardDueDate: 'Due date:',
@@ -2113,6 +2292,9 @@ LANGUAGE_LIBRARY.en = {
  checklistItemDetails: 'Details:',
  checklistItemDetailsRenderedAria: 'Rendered details with links',
  checklistItemDetailsPlaceholder: 'Enter the details (links supported)',
+ cardImportTitle: 'Import card',
+ cardImportColumnLabel: 'Choose the destination column',
+ cardImportConfirm: 'Import',
  checklistTransferTitle: 'Item transfer',
  namesUntitledBoard: 'Untitled Board',
  namesNewBoard: 'New Board',
@@ -2125,8 +2307,11 @@ LANGUAGE_LIBRARY.en = {
  dueInDays: 'Due in {count} day(s)',
  overdueDays: 'Overdue by {count} day(s)',
  invalidJsonAlert: 'Invalid JSON: object does not contain "columns".',
+ invalidCardJsonAlert: 'Invalid card JSON. Check the file.',
  saveFailedAlert: 'Save failed. Check the console for details.',
  loadFailedAlert: 'Failed to load JSON. Check the file.',
+ cardImportFailedAlert: 'Failed to import the card. Check the file.',
+ cardImportNoColumnsAlert: 'Create a column before importing a card.',
  deleteColumnConfirm: 'Delete the column "{title}"?\nAll cards inside it will be removed.',
  deleteBoardConfirm: 'Delete the board "{title}"?\nAll columns and cards in this board will be removed.',
  deleteCardConfirm: 'Delete this card?',
@@ -2157,6 +2342,9 @@ LANGUAGE_LIBRARY['pt-BR'] = {
  close: 'Fechar',
  loadingTitle: 'Carregando boards',
  loadingText: 'Preparando colunas e cards do quadro ativo.',
+ menuImportBoard: 'Importar Board',
+ menuImportCard: 'Importar Card',
+ menuSaveBoard: 'Salvar Board',
  menuLoadJson: 'Carregar JSON',
  menuSaveJson: 'Salvar JSON',
  menuAddColumn: '+ Coluna',
@@ -2184,6 +2372,7 @@ LANGUAGE_LIBRARY['pt-BR'] = {
  cardTitlePlaceholder: 'Título do card',
  cardDone: 'Feito',
  cardOpenModal: 'Abrir em modal',
+ cardExport: 'Exportar card',
  cardDelete: 'Excluir card',
  cardChecklistProgress: 'Progresso do checklist',
  cardDueDate: 'Data de vencimento:',
@@ -2224,6 +2413,9 @@ LANGUAGE_LIBRARY['pt-BR'] = {
  checklistItemDetails: 'Detalhes:',
  checklistItemDetailsRenderedAria: 'Detalhes renderizados com links',
  checklistItemDetailsPlaceholder: 'Digite os detalhes (suporta links)',
+ cardImportTitle: 'Importar card',
+ cardImportColumnLabel: 'Selecione a coluna de destino',
+ cardImportConfirm: 'Importar',
  checklistTransferTitle: 'Transferência de item',
  namesUntitledBoard: 'Quadro Sem Título',
  namesNewBoard: 'Novo Quadro',
@@ -2236,8 +2428,11 @@ LANGUAGE_LIBRARY['pt-BR'] = {
  dueInDays: 'Vence em {count} dia(s)',
  overdueDays: 'Vencido há {count} dia(s)',
  invalidJsonAlert: 'JSON inválido: objeto não contém "columns".',
+ invalidCardJsonAlert: 'JSON de card inválido. Verifique o arquivo.',
  saveFailedAlert: 'Falha ao salvar. Veja o console para detalhes.',
  loadFailedAlert: 'Falha ao carregar JSON. Verifique o arquivo.',
+ cardImportFailedAlert: 'Falha ao importar o card. Verifique o arquivo.',
+ cardImportNoColumnsAlert: 'Crie uma coluna antes de importar um card.',
  deleteColumnConfirm: 'Excluir a coluna "{title}"?\nTodos os cards dentro dela serão removidos.',
  deleteBoardConfirm: 'Excluir o quadro "{title}"?\nTodas as colunas e cards deste quadro serão removidos.',
  deleteCardConfirm: 'Excluir este card?',
@@ -3422,6 +3617,121 @@ async function switchActiveBoard(nextBoardName, options){
  board.classList.remove('board-switch-in');
 }
  // ===== SERIALIZAÇÃO ===== 
+function serializeChecklistItemNode(itemNode){
+ const editor = $('.item-editor', itemNode);
+ const itemData = {
+ checked: !!($('.item-check', itemNode) && $('.item-check', itemNode).checked),
+ label: editor ? editor.value : ''
+ };
+ const noteContent = getChecklistItemContent(itemNode);
+ const dueDate = getChecklistItemDueDate(itemNode);
+ if (noteContent.trim()) itemData.details = noteContent;
+ if (dueDate) itemData.dueDate = dueDate;
+ return itemData;
+}
+function serializeCardNode(cardNode){
+ return {
+ id: cardNode.dataset.id,
+ title: $('.card-title', cardNode).value,
+ description: $('.card-desc', cardNode).value,
+ completed: !!($('.card-done', cardNode) && $('.card-done', cardNode).checked),
+ checklist: $$('.checklist-item', cardNode).map(serializeChecklistItemNode),
+ createdAt: cardNode.dataset.created || nowISO(),
+ updatedAt: cardNode.dataset.updated || cardNode.dataset.created || nowISO(),
+ dueDate: ($('.card-due', cardNode).value || '')
+ };
+}
+function sanitizeImportedChecklistItem(data){
+ const item = (data && typeof data === 'object' && !Array.isArray(data)) ? data : {};
+ const normalized = {
+ checked: !!item.checked,
+ label: typeof item.label === 'string' ? item.label : ''
+ };
+ const details = typeof item.details === 'string' ? item.details : (typeof item.content === 'string' ? item.content : '');
+ const dueDate = typeof item.dueDate === 'string' ? item.dueDate : '';
+ if (details.trim()) normalized.details = details;
+ if (dueDate) normalized.dueDate = dueDate;
+ return normalized;
+}
+function sanitizeImportedCardData(data){
+ if (!data || typeof data !== 'object' || Array.isArray(data) || Array.isArray(data.columns)) return null;
+ const knownFields = ['id', 'title', 'description', 'completed', 'checklist', 'createdAt', 'updatedAt', 'dueDate'];
+ const hasKnownField = knownFields.some(function(key){
+  return Object.prototype.hasOwnProperty.call(data, key);
+ });
+ if (!hasKnownField) return null;
+ const createdAt = (typeof data.createdAt === 'string' && data.createdAt.trim()) ? data.createdAt : nowISO();
+ const updatedAt = (typeof data.updatedAt === 'string' && data.updatedAt.trim()) ? data.updatedAt : createdAt;
+ return {
+  id: (typeof data.id === 'string' && data.id.trim()) ? data.id.trim() : uid('card'),
+  title: typeof data.title === 'string' ? data.title : '',
+  description: typeof data.description === 'string' ? data.description : '',
+  completed: !!data.completed,
+  checklist: Array.isArray(data.checklist) ? data.checklist.map(sanitizeImportedChecklistItem) : [],
+  createdAt: createdAt,
+  updatedAt: updatedAt,
+  dueDate: typeof data.dueDate === 'string' ? data.dueDate : ''
+ };
+}
+function getOrderedChecklistData(checklist){
+ return (Array.isArray(checklist) ? checklist : [])
+ .map(function(it, idx){ return { it: sanitizeImportedChecklistItem(it), idx: idx }; })
+ .sort(function(a, b){
+  const av = a.it && a.it.checked ? 1 : 0;
+  const bv = b.it && b.it.checked ? 1 : 0;
+  return av - bv || a.idx - b.idx;
+ })
+ .map(function(entry){ return entry.it; });
+}
+function populateCardNodeFromData(cardNode, cardData){
+ const data = sanitizeImportedCardData(cardData);
+ if (!cardNode || !data) return null;
+ cardNode.dataset.id = data.id;
+ $('.card-title', cardNode).value = data.title || '';
+ const ta = $('.card-desc', cardNode);
+ const view = $('.desc-view', cardNode);
+ ta.value = data.description || '';
+ syncCardDescriptionSizeState(cardNode);
+ view.innerHTML = linkify(data.description || '');
+ const done = $('.card-done', cardNode);
+ done.checked = !!data.completed;
+ cardNode.classList.toggle('completed', done.checked);
+ cardNode.dataset.created = data.createdAt || nowISO();
+ cardNode.dataset.updated = data.updatedAt || cardNode.dataset.created || nowISO();
+ renderCardTimestamps(cardNode);
+ const due = $('.card-due', cardNode);
+ if (due) due.value = (data.dueDate || '');
+ const itemsWrap = $('.items', cardNode);
+ if (itemsWrap){
+  itemsWrap.innerHTML = '';
+  getOrderedChecklistData(data.checklist).forEach(function(it){
+   const inode = createChecklistItem(
+    it.label || '',
+    !!it.checked,
+    (typeof it.details === 'string' ? it.details : ''),
+    (typeof it.dueDate === 'string' ? it.dueDate : '')
+   );
+   itemsWrap.appendChild(inode);
+  });
+ }
+ updateItemsCount(cardNode);
+ updateChecklistProgress(cardNode);
+ applyDueColorToCard(cardNode);
+ renderCollapsedMeta(cardNode);
+ return data;
+}
+function resolveImportedCardId(requestedId){
+ const normalized = (typeof requestedId === 'string' ? requestedId.trim() : '');
+ if (!normalized) return uid('card');
+ const exists = $$('.card').some(function(card){ return card.dataset.id === normalized; });
+ return exists ? uid('card') : normalized;
+}
+function exportCardAsJson(cardNode){
+ if (!cardNode) return;
+ const data = serializeCardNode(cardNode);
+ const file = `card-${new Date().toISOString().replace(/[T:.Z]/g,'-')}.json`;
+ download(file, JSON.stringify(data, null, 2));
+}
 function serializeBoard(){ 
  const data = { 
  meta: { version: 13, exportedAt: new Date().toISOString() }, 
@@ -3439,29 +3749,7 @@ function serializeBoard(){
  cards: [] 
  }; 
  $$('.card', col).forEach(function(card){ 
- const checklist = []; 
- $$('.checklist-item', card).forEach(function(it){ 
- const editor = $('.item-editor', it); 
- const itemData = { 
- checked: $('.item-check', it).checked, 
- label: editor ? editor.value : '' 
- };
- const noteContent = getChecklistItemContent(it);
- const dueDate = getChecklistItemDueDate(it);
- if (noteContent.trim()) itemData.details = noteContent;
- if (dueDate) itemData.dueDate = dueDate;
- checklist.push(itemData); 
- }); 
- colData.cards.push({ 
- id: card.dataset.id, 
- title: $('.card-title', card).value, 
- description: $('.card-desc', card).value, 
- completed: $('.card-done', card).checked, 
- checklist: checklist, 
- createdAt: card.dataset.created || nowISO(), 
- updatedAt: card.dataset.updated || card.dataset.created || nowISO(), 
- dueDate: ($('.card-due', card).value || '') 
- }); 
+ colData.cards.push(serializeCardNode(card)); 
  }); 
  data.columns.push(colData); 
  }); 
@@ -3802,11 +4090,11 @@ function createColumn(id, title, boardName){
 function makeCardCollapsible(cardNode){ 
  setCollapsed(cardNode, true); 
  cardNode.addEventListener('click', function(e){ 
- if (e && e.target && e.target.closest && e.target.closest('.open-card-modal')) return;
+ if (e && e.target && e.target.closest && e.target.closest('.open-card-modal, .export-card')) return;
  setCollapsed(cardNode, false); 
  }); 
  cardNode.addEventListener('focusin', function(e){ 
- if (e && e.target && e.target.closest && e.target.closest('.open-card-modal')) return;
+ if (e && e.target && e.target.closest && e.target.closest('.open-card-modal, .export-card')) return;
  setCollapsed(cardNode, false); 
  }); 
 } 
@@ -4001,6 +4289,12 @@ if (wrap) wrap.appendChild(node);
  if (col) applyColumnFilter(col); 
  } 
  }); 
+ $$('.export-card', node).forEach(function(btn){
+ btn.addEventListener('click', function(e){
+ e.stopPropagation();
+ exportCardAsJson(node);
+ });
+ });
  // Abrir card em modal sem expandir o card ao clicar no botao
  $$('.open-card-modal', node).forEach(function(btn){
  btn.addEventListener('click', function(e){
@@ -4416,6 +4710,277 @@ function closeChecklistItemModal(){
  if (col) applyColumnFilter(col);
  ui.currentItem = null;
  ui.overlay.classList.add('hidden');
+}
+const importedCardHighlightState = {
+ cards: new Set(),
+ armed: false,
+ armTimer: null
+};
+function pruneImportedCardHighlights(){
+ Array.from(importedCardHighlightState.cards).forEach(function(card){
+ if (!card || !card.isConnected) importedCardHighlightState.cards.delete(card);
+ });
+}
+function armImportedCardHighlightClear(){
+ pruneImportedCardHighlights();
+ if (importedCardHighlightState.armTimer){
+ clearTimeout(importedCardHighlightState.armTimer);
+ importedCardHighlightState.armTimer = null;
+ }
+ importedCardHighlightState.armed = false;
+ importedCardHighlightState.armTimer = setTimeout(function(){
+  importedCardHighlightState.armTimer = null;
+  pruneImportedCardHighlights();
+  importedCardHighlightState.armed = importedCardHighlightState.cards.size > 0;
+ }, 0);
+}
+function clearImportedCardHighlights(immediate){
+ pruneImportedCardHighlights();
+ if (importedCardHighlightState.armTimer){
+  clearTimeout(importedCardHighlightState.armTimer);
+  importedCardHighlightState.armTimer = null;
+ }
+ importedCardHighlightState.armed = false;
+ const cards = Array.from(importedCardHighlightState.cards);
+ importedCardHighlightState.cards.clear();
+ cards.forEach(function(card){
+  if (!card || !card.classList) return;
+  if (immediate){
+   card.classList.remove('recently-imported', 'import-highlight-clearing');
+   return;
+  }
+  card.classList.add('import-highlight-clearing');
+  card.classList.remove('recently-imported');
+  setTimeout(function(){
+   if (card && card.classList) card.classList.remove('import-highlight-clearing');
+  }, 900);
+ });
+}
+function markCardAsRecentlyImported(cardNode){
+ if (!cardNode || !cardNode.classList) return;
+ importedCardHighlightState.cards.add(cardNode);
+ cardNode.classList.remove('recently-imported', 'import-highlight-clearing');
+ requestAnimationFrame(function(){
+  requestAnimationFrame(function(){
+   if (cardNode && cardNode.isConnected && cardNode.classList){
+    cardNode.classList.add('recently-imported');
+   }
+  });
+ });
+ armImportedCardHighlightClear();
+}
+function handleImportedCardHighlightInteraction(){
+ if (!importedCardHighlightState.armed) return;
+ clearImportedCardHighlights(false);
+}
+['pointerdown', 'keydown', 'input', 'change', 'dragstart', 'wheel'].forEach(function(eventName){
+ document.addEventListener(eventName, handleImportedCardHighlightInteraction, true);
+});
+const cardImportUI = {
+ overlay: null,
+ combobox: null,
+ select: null,
+ trigger: null,
+ valueNode: null,
+ menu: null,
+ btnConfirm: null,
+ btnCancel: null,
+ closeBtn: null,
+ pendingCardData: null
+};
+function ensureCardImportRefs(){
+ if (cardImportUI.overlay) return cardImportUI;
+ const ui = cardImportUI;
+ ui.overlay = document.getElementById('cardImportOverlay');
+ ui.combobox = document.getElementById('cardImportCombobox');
+ ui.select = document.getElementById('cardImportColumnSelect');
+ ui.trigger = document.getElementById('cardImportColumnTrigger');
+ ui.valueNode = document.getElementById('cardImportColumnValue');
+ ui.menu = document.getElementById('cardImportColumnList');
+ ui.btnConfirm = document.getElementById('btnCardImportConfirm');
+ ui.btnCancel = document.getElementById('btnCardImportCancel');
+ ui.closeBtn = ui.overlay ? ui.overlay.querySelector('.modal-close') : null;
+ if (!ui.overlay) return ui;
+ if (ui.trigger) {
+ ui.trigger.addEventListener('click', function(e){
+ e.stopPropagation();
+ toggleCardImportCombobox();
+ });
+ ui.trigger.addEventListener('keydown', function(e){
+ const key = e.key || e.code || '';
+ if (key === 'ArrowDown' || key === 'Down' || key === 'Enter' || key === ' ' || key === 'Spacebar'){
+ e.preventDefault();
+ openCardImportCombobox();
+ }
+ });
+ }
+ if (ui.menu) {
+ ui.menu.addEventListener('click', function(e){
+ const option = e.target && e.target.closest ? e.target.closest('.card-import-combobox-option') : null;
+ if (!option) return;
+ setCardImportColumnSelection(option.dataset.value || '');
+ closeCardImportCombobox();
+ });
+ }
+ if (ui.btnConfirm) ui.btnConfirm.addEventListener('click', importPendingCardToSelectedColumn);
+ if (ui.btnCancel) ui.btnCancel.addEventListener('click', function(){ closeCardImportModal(); });
+ if (ui.closeBtn) ui.closeBtn.addEventListener('click', function(){ closeCardImportModal(); });
+ ui.overlay.addEventListener('click', function(e){
+ if (ui.combobox && !ui.combobox.contains(e.target)) closeCardImportCombobox();
+ if (e.target === ui.overlay) closeCardImportModal();
+ });
+ ui.overlay.addEventListener('keydown', function(e){
+ const key = e.key || e.code || '';
+ if (key === 'Escape' || key === 'Esc') {
+ if (ui.combobox && ui.combobox.classList.contains('open')){
+ closeCardImportCombobox();
+ return;
+ }
+ closeCardImportModal();
+ }
+ });
+ return ui;
+}
+function getActiveBoardColumnsForImport(){
+ const activeBoard = ensureActiveBoardName();
+ return activeBoard ? getColumnsForBoardName(activeBoard) : [];
+}
+function getCardImportOptionButtons(){
+ const ui = ensureCardImportRefs();
+ return ui.menu ? $$('.card-import-combobox-option', ui.menu) : [];
+}
+function syncCardImportTriggerLabel(){
+ const ui = ensureCardImportRefs();
+ if (!ui || !ui.select || !ui.valueNode) return '';
+ const selectedOption = ui.select.options[ui.select.selectedIndex] || ui.select.options[0] || null;
+ const label = selectedOption ? selectedOption.textContent : getNoColumnLabel();
+ ui.valueNode.textContent = label || getNoColumnLabel();
+ if (ui.trigger) ui.trigger.setAttribute('title', label || getNoColumnLabel());
+ return selectedOption ? selectedOption.value : '';
+}
+function setCardImportColumnSelection(value){
+ const ui = ensureCardImportRefs();
+ if (!ui || !ui.select) return '';
+ const options = Array.from(ui.select.options);
+ const fallbackValue = options[0] ? options[0].value : '';
+ const nextValue = options.some(function(option){ return option.value === value; }) ? value : fallbackValue;
+ ui.select.value = nextValue;
+ const selectedValue = syncCardImportTriggerLabel();
+ getCardImportOptionButtons().forEach(function(button){
+  const isActive = button.dataset.value === selectedValue;
+  button.classList.toggle('active', isActive);
+  button.setAttribute('aria-selected', String(isActive));
+ });
+ return selectedValue;
+}
+function openCardImportCombobox(){
+ const ui = ensureCardImportRefs();
+ if (!ui || !ui.combobox || !ui.menu || !ui.trigger || ui.trigger.disabled) return;
+ ui.combobox.classList.add('open');
+ ui.menu.classList.remove('hidden');
+ ui.trigger.setAttribute('aria-expanded', 'true');
+}
+function closeCardImportCombobox(){
+ const ui = ensureCardImportRefs();
+ if (!ui || !ui.combobox || !ui.menu || !ui.trigger) return;
+ ui.combobox.classList.remove('open');
+ ui.menu.classList.add('hidden');
+ ui.trigger.setAttribute('aria-expanded', 'false');
+}
+function toggleCardImportCombobox(){
+ const ui = ensureCardImportRefs();
+ if (!ui || !ui.combobox) return;
+ if (ui.combobox.classList.contains('open')) closeCardImportCombobox();
+ else openCardImportCombobox();
+}
+function renderCardImportColumnOptions(){
+ const ui = ensureCardImportRefs();
+ if (!ui.select) return 0;
+ const columns = getActiveBoardColumnsForImport();
+ const previousValue = ui.select.value;
+ ui.select.innerHTML = '';
+ if (ui.menu) ui.menu.innerHTML = '';
+ if (!columns.length){
+ const option = document.createElement('option');
+ option.value = '';
+ option.textContent = getNoColumnLabel();
+ ui.select.appendChild(option);
+ ui.select.disabled = true;
+ if (ui.trigger) ui.trigger.disabled = true;
+ if (ui.btnConfirm) ui.btnConfirm.disabled = true;
+ syncCardImportTriggerLabel();
+ closeCardImportCombobox();
+ return 0;
+ }
+ columns.forEach(function(col){
+ const option = document.createElement('option');
+ const optionValue = col.dataset.id || '';
+ const optionLabel = (($('.column-title', col)?.value) || '').trim() || getNoTitleLabel();
+ option.value = optionValue;
+ option.textContent = optionLabel;
+ ui.select.appendChild(option);
+ if (ui.menu){
+ const button = document.createElement('button');
+ button.type = 'button';
+ button.className = 'card-import-combobox-option';
+ button.setAttribute('role', 'option');
+ button.setAttribute('aria-selected', 'false');
+ button.dataset.value = optionValue;
+ button.textContent = optionLabel;
+ ui.menu.appendChild(button);
+ }
+ });
+ ui.select.disabled = false;
+ if (ui.trigger) ui.trigger.disabled = false;
+ if (ui.btnConfirm) ui.btnConfirm.disabled = false;
+ setCardImportColumnSelection(previousValue);
+ return columns.length;
+}
+function openCardImportModal(cardData){
+ const ui = ensureCardImportRefs();
+ const sanitized = sanitizeImportedCardData(cardData);
+ if (!ui || !ui.overlay || !sanitized){
+ alert(t('invalidCardJsonAlert'));
+ return;
+ }
+ ui.pendingCardData = sanitized;
+ renderCardImportColumnOptions();
+ applyTranslations(ui.overlay);
+ closeCardImportCombobox();
+ ui.overlay.classList.remove('hidden');
+ try { ((ui.trigger && !ui.trigger.disabled) ? ui.trigger : (ui.btnCancel || ui.overlay)).focus(); } catch(_) {}
+}
+function closeCardImportModal(options){
+ const ui = ensureCardImportRefs();
+ if (!ui || !ui.overlay) return;
+ const opts = Object.assign({ clearPending: true }, options || {});
+ if (opts.clearPending) ui.pendingCardData = null;
+ closeCardImportCombobox();
+ ui.overlay.classList.add('hidden');
+}
+function importPendingCardToSelectedColumn(){
+ const ui = ensureCardImportRefs();
+ if (!ui || !ui.pendingCardData) return;
+ const columns = getActiveBoardColumnsForImport();
+ const selectedId = ui.select ? ui.select.value : '';
+ const targetColumn = columns.find(function(col){ return col.dataset.id === selectedId; }) || columns[0];
+ if (!targetColumn){
+ alert(t('cardImportNoColumnsAlert'));
+ return;
+ }
+ const importedData = Object.assign({}, ui.pendingCardData, {
+ id: resolveImportedCardId(ui.pendingCardData.id)
+ });
+ const cardNode = createCard(importedData.id);
+ populateCardNodeFromData(cardNode, importedData);
+ const cardsWrap = $('.cards', targetColumn);
+ if (cardsWrap && cardsWrap.firstElementChild) cardsWrap.insertBefore(cardNode, cardsWrap.firstElementChild);
+ else if (cardsWrap) cardsWrap.appendChild(cardNode);
+ setCollapsed(cardNode, true);
+ applyColumnFilter(targetColumn);
+ markCardAsRecentlyImported(cardNode);
+ if (typeof window.__scheduleBoardAutosave === 'function') window.__scheduleBoardAutosave();
+ closeCardImportModal();
 }
 function applyChecklistFilter(cardNode){
  if (!cardNode) return;
@@ -5055,6 +5620,7 @@ function renderPriorityReport(){
  if (settingsUI.overlay) applyTranslations(settingsUI.overlay);
  if (priorityReportUI.overlay) applyTranslations(priorityReportUI.overlay);
  if (languageUI.overlay) applyTranslations(languageUI.overlay);
+ if (cardImportUI.overlay) applyTranslations(cardImportUI.overlay);
  $$('.card').forEach(function(card){
   renderCardTimestamps(card);
   renderCollapsedMeta(card);
@@ -5070,6 +5636,9 @@ function renderPriorityReport(){
  }
  if (priorityReportUI.overlay && !priorityReportUI.overlay.classList.contains('hidden')){
   renderPriorityReport();
+ }
+ if (cardImportUI.overlay && !cardImportUI.overlay.classList.contains('hidden')){
+  renderCardImportColumnOptions();
  }
  if (typeof renderHoverMenuItems === 'function'){
   try { renderHoverMenuItems(); } catch(_) {}
@@ -5173,6 +5742,7 @@ function openCardModal(card, options){
   // expande o card
   card.dataset.lockExpanded = '1';
   setCollapsed(card, false);
+  card.classList.add('card-in-modal');
   // move para o modal
   modal.content.appendChild(card);
   modal.currentCard = card;
@@ -5213,6 +5783,7 @@ function closeCardModal(immediate){
       modal.columnGhost.parentNode.insertBefore(modal.currentCard, modal.columnGhost);
       modal.columnGhost.remove();
     }
+    if (modal.currentCard) modal.currentCard.classList.remove('card-in-modal');
     if (modal.currentCard && modal.currentCard.dataset) delete modal.currentCard.dataset.lockExpanded;
     if (modal.currentCard) setCollapsed(modal.currentCard, true);
     modal.currentCard = null;
@@ -5263,6 +5834,7 @@ document.addEventListener('click', function(e){
  }); 
  ensureLicenseRefs();
  ensurePriorityReportRefs();
+ ensureCardImportRefs();
  document.getElementById('btnSave').addEventListener('click', function(){ 
  try{ 
  const data = serializeBoard(); 
@@ -5274,7 +5846,9 @@ document.addEventListener('click', function(e){
  } 
  }); 
  const fileInput = document.getElementById('fileJson'); 
+ const fileCardInput = document.getElementById('fileCardJson'); 
  document.getElementById('btnLoad').addEventListener('click', function(){ fileInput.click(); }); 
+ document.getElementById('btnImportCard').addEventListener('click', function(){ if (fileCardInput) fileCardInput.click(); });
  fileInput.addEventListener('change', async function(e){ 
  const file = e.target.files && e.target.files[0]; 
  if(!file) return; 
@@ -5289,6 +5863,22 @@ document.addEventListener('click', function(e){
  fileInput.value = ''; 
  } 
  }); 
+ if (fileCardInput){
+ fileCardInput.addEventListener('change', async function(e){
+ const file = e.target.files && e.target.files[0];
+ if (!file) return;
+ try{
+ const txt = await file.text();
+ const data = JSON.parse(txt);
+ openCardImportModal(data);
+ }catch(err){
+ console.error('Erro ao ler/importar JSON do card:', err);
+ alert(t('cardImportFailedAlert'));
+ }finally{
+ fileCardInput.value = '';
+ }
+ });
+ }
  // Clique fora de qualquer card → minimiza todos; clique em um card → expande somente aquele 
 document.addEventListener('click', function(e){ 
 const clickedCard = e.target.closest && e.target.closest('.card'); 
