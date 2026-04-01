@@ -4809,6 +4809,10 @@ const importedCardHighlightState = {
  cards: new Set(),
  pendingBoardInteraction: false
 };
+const importedCardPreviewState = {
+ host: null,
+ card: null
+};
 function pruneImportedCardHighlights(){
  Array.from(importedCardHighlightState.cards).forEach(function(card){
  if (!card || !card.isConnected) importedCardHighlightState.cards.delete(card);
@@ -4856,6 +4860,46 @@ function handleImportedCardHighlightBoardInteraction(){
 const boardScrollRegion = document.querySelector('.board-scroll-region');
 if (board) board.addEventListener('click', handleImportedCardHighlightBoardInteraction, true);
 if (boardScrollRegion) boardScrollRegion.addEventListener('click', handleImportedCardHighlightBoardInteraction, true);
+function ensureImportedCardPreviewHost(){
+ if (importedCardPreviewState.host && importedCardPreviewState.host.isConnected) return importedCardPreviewState.host;
+ const host = document.createElement('div');
+ host.id = 'importedCardPreviewHost';
+ host.className = 'hidden';
+ host.setAttribute('aria-hidden', 'true');
+ document.body.appendChild(host);
+ importedCardPreviewState.host = host;
+ return host;
+}
+function clearImportedCardPreview(){
+ const card = importedCardPreviewState.card;
+ if (card && card.parentNode) card.remove();
+ importedCardPreviewState.card = null;
+}
+function handleImportedCardPreviewClosed(cardNode){
+ const serialized = cardNode ? sanitizeImportedCardData(serializeCardNode(cardNode)) : null;
+ clearImportedCardPreview();
+ if (!serialized){
+  alert(t('invalidCardJsonAlert'));
+  return;
+ }
+ openCardImportModal(serialized);
+}
+function openImportedCardPreview(cardData){
+ const sanitized = sanitizeImportedCardData(cardData);
+ if (!sanitized){
+  alert(t('invalidCardJsonAlert'));
+  return;
+ }
+ clearImportedCardPreview();
+ const host = ensureImportedCardPreviewHost();
+ const previewCard = createCard(sanitized.id || uid('card'));
+ populateCardNodeFromData(previewCard, sanitized);
+ host.appendChild(previewCard);
+ importedCardPreviewState.card = previewCard;
+ openCardModal(previewCard, {
+  afterClose: handleImportedCardPreviewClosed
+ });
+}
 const cardImportUI = {
  overlay: null,
  combobox: null,
@@ -5061,9 +5105,6 @@ function importPendingCardToSelectedColumn(){
  markCardAsRecentlyImported(cardNode);
  if (typeof window.__scheduleBoardAutosave === 'function') window.__scheduleBoardAutosave();
  closeCardImportModal();
- requestAnimationFrame(function(){
-  if (cardNode && cardNode.isConnected) openCardModal(cardNode);
- });
 }
 function safeDecodeURIComponent(value){
  try{
@@ -6062,7 +6103,7 @@ function ensureCardModalRefs(){
   window.__cardModal = {
     overlay, content, closeBtn, currentCard: null, columnGhost: null,
     _titleInput: null, _titleHandler: null, isClosing: false, closeTimer: null,
-    returnToPriorityReport: false
+    returnToPriorityReport: false, afterClose: null
   };
   if (overlay){
     if (closeBtn) closeBtn.addEventListener('click', closeCardModal);
@@ -6079,6 +6120,7 @@ function openCardModal(card, options){
   modal.isClosing = false;
   if (modal.currentCard) closeCardModal(true);
   modal.returnToPriorityReport = !!opts.returnToPriorityReport;
+  modal.afterClose = typeof opts.afterClose === 'function' ? opts.afterClose : null;
   // card fantasma para manter contexto visual da posição original
   modal.columnGhost = card.cloneNode(true);
   modal.columnGhost.classList.add('card-modal-ghost');
@@ -6119,6 +6161,8 @@ function closeCardModal(immediate){
   const shouldCloseInstant = immediate === true;
   const finishClose = function(){
     const shouldReopenPriorityReport = !!modal.returnToPriorityReport;
+    const afterClose = modal.afterClose;
+    const closedCard = modal.currentCard;
     let cardColumn = null;
     if (modal._titleInput && modal._titleHandler){
       modal._titleInput.removeEventListener('input', modal._titleHandler);
@@ -6138,14 +6182,17 @@ function closeCardModal(immediate){
     modal.currentCard = null;
     modal.columnGhost = null;
     modal.returnToPriorityReport = false;
+    modal.afterClose = null;
     modal.overlay.classList.remove('opening', 'open', 'closing');
     modal.overlay.classList.add('hidden');
     modal.isClosing = false;
     if (modal.closeTimer){ clearTimeout(modal.closeTimer); modal.closeTimer = null; }
     if (shouldReopenPriorityReport) openPriorityReportModal();
+    if (typeof afterClose === 'function') afterClose(closedCard);
   };
   if (!modal.currentCard) {
     modal.returnToPriorityReport = false;
+    modal.afterClose = null;
     modal.overlay.classList.remove('opening', 'open', 'closing');
     modal.overlay.classList.add('hidden');
     return;
@@ -6221,7 +6268,7 @@ const file = `kanban-${new Date().toISOString().replace(/[T:.Z]/g,'-')}.json`;
  try{
  const txt = await file.text();
  const data = JSON.parse(txt);
- openCardImportModal(data);
+ openImportedCardPreview(data);
  }catch(err){
  console.error('Erro ao ler/importar JSON do card:', err);
  alert(t('cardImportFailedAlert'));
@@ -6294,7 +6341,7 @@ document.addEventListener('dragover', function(e){
  const restored = await restoreFromAutosave();
  if(!restored){ await loadBoardSequential(getDefaultBoardData()); }
  const sharedCardData = consumeSharedCardFromLocation();
- if (sharedCardData) openCardImportModal(sharedCardData);
+ if (sharedCardData) openImportedCardPreview(sharedCardData);
  })(); 
 // Sync spacer height to match the topbar height so it sits immediately below the menu
 function syncTopbarSpacer(){
