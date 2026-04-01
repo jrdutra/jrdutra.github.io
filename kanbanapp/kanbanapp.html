@@ -1152,8 +1152,46 @@ min-height: 120px;
  box-shadow: 0 14px 24px rgba(65,32,142,0.28);
  transform: translateY(-1px);
  }
- .card-import-select{
+.card-import-select{
  width: 100%;
+ }
+ .card-share-modal{
+ width: min(380px, 92vw);
+ }
+ .card-share-modal .modal-body,
+ .card-share-link-modal .modal-body{
+ display: flex;
+ flex-direction: column;
+ gap: 10px;
+ }
+ .card-share-copy{
+ margin: 0;
+ color: var(--muted);
+ font-size: 13px;
+ line-height: 1.5;
+ }
+ .card-share-actions{
+ padding: 0;
+ }
+ .card-share-link-modal{
+ width: min(560px, 92vw);
+ }
+ .card-share-link-field{
+ width: 100%;
+ min-height: 96px;
+ resize: vertical;
+ background: var(--panel-2);
+ color: var(--text);
+ border: 1px solid var(--border);
+ border-radius: 10px;
+ padding: 10px 12px;
+ font-family: Consolas, "Courier New", monospace;
+ font-size: 12px;
+ line-height: 1.45;
+ }
+ #cardShareOverlay.modal-overlay,
+ #cardShareLinkOverlay.modal-overlay{
+ z-index: 130;
  }
  /* ===== Campo Data de Vencimento ===== */ 
  .card-due{ 
@@ -1669,7 +1707,7 @@ body[data-ui-language="ar"] .language-option{
  <input type="text" class="card-title" placeholder="Título do card" data-i18n-placeholder="cardTitlePlaceholder" /> 
  <div class="card-header-actions"> 
  <label><input type="checkbox" class="card-done"> <span data-i18n="cardDone">Feito</span></label> 
- <button class="btn-small btn-ghost export-card" title="Exportar card" aria-label="Exportar card" data-i18n-title="cardExport" data-i18n-aria-label="cardExport"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14 4h5v5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 14L19 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M19 14v4.2a1.8 1.8 0 0 1-1.8 1.8H5.8A1.8 1.8 0 0 1 4 18.2V6.8A1.8 1.8 0 0 1 5.8 5H10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+ <button class="btn-small btn-ghost export-card" title="Compartilhar card" aria-label="Compartilhar card" data-i18n-title="cardExport" data-i18n-aria-label="cardExport"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14 4h5v5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 14L19 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M19 14v4.2a1.8 1.8 0 0 1-1.8 1.8H5.8A1.8 1.8 0 0 1 4 18.2V6.8A1.8 1.8 0 0 1 5.8 5H10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
  <button class="btn-small btn-ghost open-card-modal" title="Abrir em modal" data-i18n-title="cardOpenModal">⤢</button>
  <button class="btn-small btn-ghost delete-card" title="Excluir card" data-i18n-title="cardDelete">🗑</button> 
  </div> 
@@ -1681,7 +1719,7 @@ body[data-ui-language="ar"] .language-option{
  <!-- NOVO: linha curta (apenas quando colapsado) --> 
  <div class="card-collapsed-meta hidden">
  <span class="card-collapsed-meta-text"></span>
- <button class="btn-small btn-ghost export-card" title="Exportar card" aria-label="Exportar card" data-i18n-title="cardExport" data-i18n-aria-label="cardExport"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14 4h5v5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 14L19 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M19 14v4.2a1.8 1.8 0 0 1-1.8 1.8H5.8A1.8 1.8 0 0 1 4 18.2V6.8A1.8 1.8 0 0 1 5.8 5H10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+ <button class="btn-small btn-ghost export-card" title="Compartilhar card" aria-label="Compartilhar card" data-i18n-title="cardExport" data-i18n-aria-label="cardExport"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14 4h5v5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 14L19 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M19 14v4.2a1.8 1.8 0 0 1-1.8 1.8H5.8A1.8 1.8 0 0 1 4 18.2V6.8A1.8 1.8 0 0 1 5.8 5H10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
  <button class="btn-small btn-ghost open-card-modal" title="Abrir em modal" data-i18n-title="cardOpenModal">⤢</button>
  </div> 
  <!-- NOVO: barra de progresso (sempre visível) --> 
@@ -1937,6 +1975,41 @@ SOFTWARE.
   </div>
 </div>
 
+<div id="cardShareOverlay" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="cardShareTitle">
+  <div class="modal card-share-modal">
+    <div class="modal-header">
+      <h2 id="cardShareTitle" data-i18n="cardShareTitle">Compartilhar card</h2>
+      <button class="btn btn-small modal-close" aria-label="Fechar" data-i18n-aria-label="close">✖</button>
+    </div>
+    <div class="modal-body">
+      <p class="card-share-copy" data-i18n="cardShareSubtitle">Escolha como deseja compartilhar este card.</p>
+      <div class="checklist-transfer-actions card-share-actions">
+        <button id="btnCardShareJson" class="btn btn-primary" data-i18n="cardShareSaveJson">Salvar como JSON</button>
+        <button id="btnCardShareLink" class="btn btn-primary" data-i18n="cardShareGenerateLink">Gerar link de compartilhamento</button>
+        <button id="btnCardShareCancel" class="btn" data-i18n="cancel">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="cardShareLinkOverlay" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="cardShareLinkTitle">
+  <div class="modal card-share-link-modal">
+    <div class="modal-header">
+      <h2 id="cardShareLinkTitle" data-i18n="cardShareLinkTitle">Link de compartilhamento</h2>
+      <button class="btn btn-small modal-close" aria-label="Fechar" data-i18n-aria-label="close">✖</button>
+    </div>
+    <div class="modal-body">
+      <p class="card-share-copy" data-i18n="cardShareLinkSubtitle">Copie o link abaixo para compartilhar este card.</p>
+      <label for="cardShareLinkValue" class="field-label" data-i18n="cardShareLinkLabel">Link de compartilhamento</label>
+      <textarea id="cardShareLinkValue" class="card-share-link-field" rows="4" readonly spellcheck="false" aria-label="Link de compartilhamento" data-i18n-aria-label="cardShareLinkLabel"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button id="btnCardShareLinkClose" class="btn" data-i18n="close">Fechar</button>
+      <button id="btnCardShareLinkCopy" class="btn btn-primary" data-i18n="copy">Copiar</button>
+    </div>
+  </div>
+</div>
+
 <!-- Modal de transferência de item de checklist entre cards -->
 <div id="checklistTransferOverlay" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="checklistTransferTitle">
   <div class="modal checklist-transfer-modal">
@@ -1997,6 +2070,7 @@ const UNTITLED_BOARD_NAME = 'Quadro Sem Título';
 const DEFAULT_NEW_BOARD_NAME = 'Novo Quadro';
 const DEFAULT_LANGUAGE = 'en';
 const LANGUAGE_CACHE_KEY = 'kanbanApp.uiLanguage.v1';
+const CARD_SHARE_LINK_BASE_URL = 'https://kanbanapp.io/kanbanapp.html';
 let isBoardHydrating = false;
 let activeBoardName = UNTITLED_BOARD_NAME;
 let boardSwitchToken = 0;
@@ -2251,7 +2325,7 @@ LANGUAGE_LIBRARY.en = {
  cardTitlePlaceholder: 'Card title',
  cardDone: 'Done',
  cardOpenModal: 'Open in modal',
- cardExport: 'Export card',
+ cardExport: 'Share card',
  cardDelete: 'Delete card',
  cardChecklistProgress: 'Checklist progress',
  cardDueDate: 'Due date:',
@@ -2295,6 +2369,14 @@ LANGUAGE_LIBRARY.en = {
  cardImportTitle: 'Import card',
  cardImportColumnLabel: 'Choose the destination column',
  cardImportConfirm: 'Import',
+ cardShareTitle: 'Share card',
+ cardShareSubtitle: 'Choose how you want to share this card.',
+ cardShareSaveJson: 'Save as JSON',
+ cardShareGenerateLink: 'Generate share link',
+ cardShareLinkTitle: 'Share link',
+ cardShareLinkSubtitle: 'Copy the link below to share this card.',
+ cardShareLinkLabel: 'Share link',
+ cardShareLinkCopied: 'Copied!',
  checklistTransferTitle: 'Item transfer',
  namesUntitledBoard: 'Untitled Board',
  namesNewBoard: 'New Board',
@@ -2312,6 +2394,8 @@ LANGUAGE_LIBRARY.en = {
  loadFailedAlert: 'Failed to load JSON. Check the file.',
  cardImportFailedAlert: 'Failed to import the card. Check the file.',
  cardImportNoColumnsAlert: 'Create a column before importing a card.',
+ cardShareLinkInvalidAlert: 'The shared card link is invalid.',
+ cardShareLinkCopyFailedAlert: 'Failed to copy the shared card link.',
  deleteColumnConfirm: 'Delete the column "{title}"?\nAll cards inside it will be removed.',
  deleteBoardConfirm: 'Delete the board "{title}"?\nAll columns and cards in this board will be removed.',
  deleteCardConfirm: 'Delete this card?',
@@ -2372,7 +2456,7 @@ LANGUAGE_LIBRARY['pt-BR'] = {
  cardTitlePlaceholder: 'Título do card',
  cardDone: 'Feito',
  cardOpenModal: 'Abrir em modal',
- cardExport: 'Exportar card',
+ cardExport: 'Compartilhar card',
  cardDelete: 'Excluir card',
  cardChecklistProgress: 'Progresso do checklist',
  cardDueDate: 'Data de vencimento:',
@@ -2416,6 +2500,14 @@ LANGUAGE_LIBRARY['pt-BR'] = {
  cardImportTitle: 'Importar card',
  cardImportColumnLabel: 'Selecione a coluna de destino',
  cardImportConfirm: 'Importar',
+ cardShareTitle: 'Compartilhar card',
+ cardShareSubtitle: 'Escolha como deseja compartilhar este card.',
+ cardShareSaveJson: 'Salvar como JSON',
+ cardShareGenerateLink: 'Gerar link de compartilhamento',
+ cardShareLinkTitle: 'Link de compartilhamento',
+ cardShareLinkSubtitle: 'Copie o link abaixo para compartilhar este card.',
+ cardShareLinkLabel: 'Link de compartilhamento',
+ cardShareLinkCopied: 'Copiado!',
  checklistTransferTitle: 'Transferência de item',
  namesUntitledBoard: 'Quadro Sem Título',
  namesNewBoard: 'Novo Quadro',
@@ -2433,6 +2525,8 @@ LANGUAGE_LIBRARY['pt-BR'] = {
  loadFailedAlert: 'Falha ao carregar JSON. Verifique o arquivo.',
  cardImportFailedAlert: 'Falha ao importar o card. Verifique o arquivo.',
  cardImportNoColumnsAlert: 'Crie uma coluna antes de importar um card.',
+ cardShareLinkInvalidAlert: 'O link compartilhado do card é inválido.',
+ cardShareLinkCopyFailedAlert: 'Falha ao copiar o link compartilhado do card.',
  deleteColumnConfirm: 'Excluir a coluna "{title}"?\nTodos os cards dentro dela serão removidos.',
  deleteBoardConfirm: 'Excluir o quadro "{title}"?\nTodas as colunas e cards deste quadro serão removidos.',
  deleteCardConfirm: 'Excluir este card?',
@@ -4289,10 +4383,10 @@ if (wrap) wrap.appendChild(node);
  if (col) applyColumnFilter(col); 
  } 
  }); 
- $$('.export-card', node).forEach(function(btn){
+$$('.export-card', node).forEach(function(btn){
  btn.addEventListener('click', function(e){
  e.stopPropagation();
- exportCardAsJson(node);
+ openCardShareModal(node);
  });
  });
  // Abrir card em modal sem expandir o card ao clicar no botao
@@ -4982,6 +5076,263 @@ function importPendingCardToSelectedColumn(){
  if (typeof window.__scheduleBoardAutosave === 'function') window.__scheduleBoardAutosave();
  closeCardImportModal();
 }
+function safeDecodeURIComponent(value){
+ try{
+  return decodeURIComponent(String(value == null ? '' : value));
+ }catch(_){
+  return String(value == null ? '' : value);
+ }
+}
+function getQueryParamRawValue(name){
+ const key = String(name == null ? '' : name);
+ const search = String((window.location && window.location.search) || '');
+ if (!search || search.charAt(0) !== '?') return '';
+ const parts = search.slice(1).split('&');
+ for (let i = 0; i < parts.length; i += 1){
+  const part = parts[i];
+  if (!part) continue;
+  const eqIndex = part.indexOf('=');
+  const rawKey = eqIndex >= 0 ? part.slice(0, eqIndex) : part;
+  if (safeDecodeURIComponent(rawKey) !== key) continue;
+  return eqIndex >= 0 ? part.slice(eqIndex + 1) : '';
+ }
+ return '';
+}
+function removeQueryParamFromLocation(name){
+ const key = String(name == null ? '' : name);
+ if (!window.history || typeof window.history.replaceState !== 'function') return;
+ const search = String((window.location && window.location.search) || '');
+ if (!search || search.charAt(0) !== '?') return;
+ const kept = search.slice(1).split('&').filter(function(part){
+  if (!part) return false;
+  const eqIndex = part.indexOf('=');
+  const rawKey = eqIndex >= 0 ? part.slice(0, eqIndex) : part;
+  return safeDecodeURIComponent(rawKey) !== key;
+ });
+ const nextUrl = String((window.location && window.location.pathname) || '') + (kept.length ? ('?' + kept.join('&')) : '') + String((window.location && window.location.hash) || '');
+ try{
+  window.history.replaceState(null, '', nextUrl || '/');
+ }catch(_){}
+}
+function encodeBase64Unicode(value){
+ const text = String(value == null ? '' : value);
+ if (window.TextEncoder){
+  const bytes = new TextEncoder().encode(text);
+  let binary = '';
+  for (let i = 0; i < bytes.length; i += 1){
+   binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+ }
+ return btoa(unescape(encodeURIComponent(text)));
+}
+function decodeBase64Unicode(value){
+ const binary = atob(String(value == null ? '' : value));
+ if (window.TextDecoder){
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i += 1){
+   bytes[i] = binary.charCodeAt(i);
+  }
+  return new TextDecoder().decode(bytes);
+ }
+ return decodeURIComponent(escape(binary));
+}
+function buildSharedCardLink(cardNode){
+ if (!cardNode) return '';
+ const cardJson = JSON.stringify(serializeCardNode(cardNode));
+ const encoded = encodeBase64Unicode(cardJson);
+ return CARD_SHARE_LINK_BASE_URL + '?card=' + encoded;
+}
+function selectTextFieldContent(field){
+ if (!field) return;
+ try{
+  field.focus();
+  if (typeof field.select === 'function') field.select();
+  if (typeof field.setSelectionRange === 'function') field.setSelectionRange(0, field.value.length);
+ }catch(_){}
+}
+function copyTextUsingExecCommand(text, field){
+ if (field){
+  selectTextFieldContent(field);
+  try{
+   if (document.execCommand && document.execCommand('copy')) return true;
+  }catch(_){}
+ }
+ const helper = document.createElement('textarea');
+ helper.value = text;
+ helper.setAttribute('readonly', 'readonly');
+ helper.style.position = 'fixed';
+ helper.style.top = '-1000px';
+ helper.style.left = '-1000px';
+ document.body.appendChild(helper);
+ selectTextFieldContent(helper);
+ let copied = false;
+ try{
+  copied = !!(document.execCommand && document.execCommand('copy'));
+ }catch(_){
+  copied = false;
+ }
+ helper.remove();
+ return copied;
+}
+async function copyTextToClipboard(text, field){
+ if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function'){
+  try{
+   await navigator.clipboard.writeText(text);
+   return true;
+  }catch(_){}
+ }
+ return copyTextUsingExecCommand(text, field);
+}
+const cardShareUI = {
+ overlay: null,
+ btnJson: null,
+ btnLink: null,
+ btnCancel: null,
+ closeBtn: null,
+ currentCard: null
+};
+function ensureCardShareRefs(){
+ if (cardShareUI.overlay) return cardShareUI;
+ const ui = cardShareUI;
+ ui.overlay = document.getElementById('cardShareOverlay');
+ ui.btnJson = document.getElementById('btnCardShareJson');
+ ui.btnLink = document.getElementById('btnCardShareLink');
+ ui.btnCancel = document.getElementById('btnCardShareCancel');
+ ui.closeBtn = ui.overlay ? ui.overlay.querySelector('.modal-close') : null;
+ if (!ui.overlay) return ui;
+ if (ui.btnJson) ui.btnJson.addEventListener('click', function(){
+  const card = ui.currentCard;
+  closeCardShareModal();
+  if (card) exportCardAsJson(card);
+ });
+ if (ui.btnLink) ui.btnLink.addEventListener('click', function(){
+  const card = ui.currentCard;
+  const shareLink = card ? buildSharedCardLink(card) : '';
+  closeCardShareModal();
+  if (shareLink) openCardShareLinkModal(shareLink);
+ });
+ if (ui.btnCancel) ui.btnCancel.addEventListener('click', closeCardShareModal);
+ if (ui.closeBtn) ui.closeBtn.addEventListener('click', closeCardShareModal);
+ ui.overlay.addEventListener('click', function(e){
+  if (e.target === ui.overlay) closeCardShareModal();
+ });
+ ui.overlay.addEventListener('keydown', function(e){
+  const key = e.key || e.code || '';
+  if (key === 'Escape' || key === 'Esc') closeCardShareModal();
+ });
+ return ui;
+}
+function openCardShareModal(cardNode){
+ const ui = ensureCardShareRefs();
+ if (!ui || !ui.overlay || !cardNode) return;
+ ui.currentCard = cardNode;
+ applyTranslations(ui.overlay);
+ ui.overlay.classList.remove('hidden');
+ try { (ui.btnJson || ui.btnLink || ui.btnCancel || ui.overlay).focus(); } catch(_) {}
+}
+function closeCardShareModal(){
+ const ui = ensureCardShareRefs();
+ if (!ui || !ui.overlay) return;
+ ui.currentCard = null;
+ ui.overlay.classList.add('hidden');
+}
+const cardShareLinkUI = {
+ overlay: null,
+ field: null,
+ btnCopy: null,
+ btnClose: null,
+ closeBtn: null,
+ currentLink: '',
+ copied: false,
+ copyTimer: null
+};
+function syncCardShareLinkCopyButton(){
+ const ui = ensureCardShareLinkRefs();
+ if (!ui || !ui.btnCopy) return;
+ ui.btnCopy.textContent = ui.copied ? t('cardShareLinkCopied') : t('copy');
+}
+function resetCardShareLinkCopyState(){
+ const ui = ensureCardShareLinkRefs();
+ if (!ui) return;
+ ui.copied = false;
+ if (ui.copyTimer){
+  clearTimeout(ui.copyTimer);
+  ui.copyTimer = null;
+ }
+ syncCardShareLinkCopyButton();
+}
+function ensureCardShareLinkRefs(){
+ if (cardShareLinkUI.overlay) return cardShareLinkUI;
+ const ui = cardShareLinkUI;
+ ui.overlay = document.getElementById('cardShareLinkOverlay');
+ ui.field = document.getElementById('cardShareLinkValue');
+ ui.btnCopy = document.getElementById('btnCardShareLinkCopy');
+ ui.btnClose = document.getElementById('btnCardShareLinkClose');
+ ui.closeBtn = ui.overlay ? ui.overlay.querySelector('.modal-close') : null;
+ if (!ui.overlay) return ui;
+ if (ui.btnCopy) ui.btnCopy.addEventListener('click', async function(){
+  const didCopy = await copyTextToClipboard(ui.currentLink || (ui.field ? ui.field.value : ''), ui.field);
+  if (!didCopy){
+   alert(t('cardShareLinkCopyFailedAlert'));
+   return;
+  }
+  ui.copied = true;
+  syncCardShareLinkCopyButton();
+  if (ui.copyTimer) clearTimeout(ui.copyTimer);
+  ui.copyTimer = setTimeout(function(){
+   ui.copyTimer = null;
+   ui.copied = false;
+   syncCardShareLinkCopyButton();
+  }, 1800);
+ });
+ if (ui.btnClose) ui.btnClose.addEventListener('click', closeCardShareLinkModal);
+ if (ui.closeBtn) ui.closeBtn.addEventListener('click', closeCardShareLinkModal);
+ ui.overlay.addEventListener('click', function(e){
+  if (e.target === ui.overlay) closeCardShareLinkModal();
+ });
+ ui.overlay.addEventListener('keydown', function(e){
+  const key = e.key || e.code || '';
+  if (key === 'Escape' || key === 'Esc') closeCardShareLinkModal();
+ });
+ syncCardShareLinkCopyButton();
+ return ui;
+}
+function openCardShareLinkModal(link){
+ const ui = ensureCardShareLinkRefs();
+ if (!ui || !ui.overlay || !ui.field) return;
+ ui.currentLink = String(link == null ? '' : link);
+ ui.field.value = ui.currentLink;
+ resetCardShareLinkCopyState();
+ applyTranslations(ui.overlay);
+ ui.overlay.classList.remove('hidden');
+ selectTextFieldContent(ui.field);
+}
+function closeCardShareLinkModal(){
+ const ui = ensureCardShareLinkRefs();
+ if (!ui || !ui.overlay) return;
+ resetCardShareLinkCopyState();
+ ui.currentLink = '';
+ ui.overlay.classList.add('hidden');
+}
+function consumeSharedCardFromLocation(){
+ const rawValue = getQueryParamRawValue('card');
+ if (!rawValue) return null;
+ removeQueryParamFromLocation('card');
+ try{
+  const base64Value = safeDecodeURIComponent(rawValue).trim();
+  if (!base64Value) return null;
+  const jsonText = decodeBase64Unicode(base64Value);
+  const parsed = JSON.parse(jsonText);
+  const sanitized = sanitizeImportedCardData(parsed);
+  if (!sanitized) throw new Error('Shared card payload is invalid.');
+  return sanitized;
+ }catch(err){
+  console.error('Erro ao processar link compartilhado do card:', err);
+  alert(t('cardShareLinkInvalidAlert'));
+  return null;
+ }
+}
 function applyChecklistFilter(cardNode){
  if (!cardNode) return;
  const input = $('.filter-checklist', cardNode);
@@ -5616,11 +5967,13 @@ function renderPriorityReport(){
  });
  }
  }
- function refreshLocalizedDynamicUI(){
+function refreshLocalizedDynamicUI(){
  if (settingsUI.overlay) applyTranslations(settingsUI.overlay);
  if (priorityReportUI.overlay) applyTranslations(priorityReportUI.overlay);
  if (languageUI.overlay) applyTranslations(languageUI.overlay);
  if (cardImportUI.overlay) applyTranslations(cardImportUI.overlay);
+ if (cardShareUI.overlay) applyTranslations(cardShareUI.overlay);
+ if (cardShareLinkUI.overlay) applyTranslations(cardShareLinkUI.overlay);
  $$('.card').forEach(function(card){
   renderCardTimestamps(card);
   renderCollapsedMeta(card);
@@ -5640,10 +5993,13 @@ function renderPriorityReport(){
  if (cardImportUI.overlay && !cardImportUI.overlay.classList.contains('hidden')){
   renderCardImportColumnOptions();
  }
+ if (cardShareLinkUI.overlay && !cardShareLinkUI.overlay.classList.contains('hidden')){
+  syncCardShareLinkCopyButton();
+ }
  if (typeof renderHoverMenuItems === 'function'){
   try { renderHoverMenuItems(); } catch(_) {}
  }
- }
+}
  window.__refreshLocalizedDynamicUI = refreshLocalizedDynamicUI;
  function renderSettingsRows(rules) { 
  ensureSettingsRefs(); 
@@ -5832,13 +6188,15 @@ document.addEventListener('click', function(e){
  document.getElementById('btnSettings').addEventListener('click', function(){ 
  openSettingsModal(); 
  }); 
- ensureLicenseRefs();
- ensurePriorityReportRefs();
- ensureCardImportRefs();
- document.getElementById('btnSave').addEventListener('click', function(){ 
- try{ 
- const data = serializeBoard(); 
- const file = `kanban-${new Date().toISOString().replace(/[T:.Z]/g,'-')}.json`; 
+ensureLicenseRefs();
+ensurePriorityReportRefs();
+ensureCardImportRefs();
+ensureCardShareRefs();
+ensureCardShareLinkRefs();
+document.getElementById('btnSave').addEventListener('click', function(){ 
+try{ 
+const data = serializeBoard(); 
+const file = `kanban-${new Date().toISOString().replace(/[T:.Z]/g,'-')}.json`; 
  download(file, JSON.stringify(data, null, 2)); 
  }catch(err){ 
  console.error('Erro ao salvar JSON:', err); 
@@ -5939,7 +6297,12 @@ document.addEventListener('dragover', function(e){
  mo.observe(board, { childList: true, subtree: true }); 
  } 
  // Try to restore on first load 
- (async function(){ const restored = await restoreFromAutosave(); if(!restored){ await loadBoardSequential(getDefaultBoardData()); } })(); 
+ (async function(){
+ const restored = await restoreFromAutosave();
+ if(!restored){ await loadBoardSequential(getDefaultBoardData()); }
+ const sharedCardData = consumeSharedCardFromLocation();
+ if (sharedCardData) openCardImportModal(sharedCardData);
+ })(); 
 // Sync spacer height to match the topbar height so it sits immediately below the menu
 function syncTopbarSpacer(){
   try{
