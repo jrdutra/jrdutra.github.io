@@ -919,6 +919,58 @@ min-height: 120px;
  }
  .settings-section .section-title { margin: 6px 0 4px; font-size: 14px; } 
  .settings-section .section-help { margin: 0 0 10px; color: var(--muted); font-size: 12px; } 
+ .language-modal{
+ width: min(560px, 92vw);
+ }
+ .language-modal .modal-body{
+ display: flex;
+ flex-direction: column;
+ gap: 14px;
+ }
+ .language-modal-copy{
+ margin: 0;
+ color: var(--muted);
+ font-size: 13px;
+ line-height: 1.5;
+ }
+ .language-options{
+ display: grid;
+ grid-template-columns: repeat(2, minmax(0, 1fr));
+ gap: 10px;
+ }
+ .language-option{
+ width: 100%;
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ gap: 12px;
+ padding: 12px 14px;
+ text-align: left;
+ background: var(--panel-2);
+ border: 1px solid var(--border);
+ border-radius: 10px;
+ color: var(--text);
+ transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease, background-color .18s ease;
+ }
+ .language-option:hover{
+ border-color: var(--menu-border-soft);
+ transform: translateY(-1px);
+ }
+ .language-option.active{
+ border-color: var(--purple);
+ box-shadow: inset 0 0 0 1px rgba(102, 80, 230, 0.35);
+ background: rgba(102, 80, 230, 0.12);
+ }
+ .language-option-label{
+ font-weight: 600;
+ }
+ .language-option-code{
+ flex: 0 0 auto;
+ color: var(--muted);
+ font-size: 11px;
+ letter-spacing: 0.08em;
+ text-transform: uppercase;
+ }
  .rules-list { display: flex; flex-direction: column; gap: 10px; } 
  .rule-row { 
  display: grid; 
@@ -1117,6 +1169,24 @@ min-height: 120px;
   margin: 0;
   color: var(--muted);
   font-size: 14px;
+}
+body[data-ui-language="ar"] .board-loading-title,
+body[data-ui-language="ar"] .board-loading-text,
+body[data-ui-language="ar"] #mobileMenu .btn,
+body[data-ui-language="ar"] #settingsOverlay [data-i18n],
+body[data-ui-language="ar"] #settingsOverlay [data-i18n-html],
+body[data-ui-language="ar"] #priorityReportOverlay [data-i18n],
+body[data-ui-language="ar"] #checklistTransferOverlay [data-i18n],
+body[data-ui-language="ar"] #checklistItemOverlay [data-i18n],
+body[data-ui-language="ar"] #checklistItemOverlay [data-i18n-placeholder],
+body[data-ui-language="ar"] #checklistItemOverlay [data-i18n-aria-label],
+body[data-ui-language="ar"] .language-modal [data-i18n],
+body[data-ui-language="ar"] .language-modal [data-i18n-html],
+body[data-ui-language="ar"] .language-modal-copy,
+body[data-ui-language="ar"] .language-option{
+  direction: rtl;
+  unicode-bidi: plaintext;
+  text-align: right;
 }
 .board-loading-bars{
   display: flex;
@@ -1341,6 +1411,9 @@ min-height: 120px;
     max-width: calc(100vw - 32px);
     padding: 20px 18px;
   }
+  .language-options{
+    grid-template-columns: 1fr;
+  }
 }
 
 </style> 
@@ -1349,11 +1422,11 @@ min-height: 120px;
  <header class="topbar"> 
  <a class="brand brand-link" href="https://kanbanapp.io" target="_blank" rel="noopener noreferrer"><img class="brand-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJLYW5iYW5BcHAgZmF2aWNvbiI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMxMjEzMWQiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjNjY1MGU2Ii8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cmVjdCB4PSIyIiB5PSIyIiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHJ4PSIxNCIgZmlsbD0idXJsKCNiZykiLz4KICA8cmVjdCB4PSIxNCIgeT0iMTYiIHdpZHRoPSIxMCIgaGVpZ2h0PSIzMiIgcng9IjMiIGZpbGw9IiNkOGQ4ZmYiIGZpbGwtb3BhY2l0eT0iLjkwIi8+CiAgPHJlY3QgeD0iMjciIHk9IjE2IiB3aWR0aD0iMTAiIGhlaWdodD0iMzIiIHJ4PSIzIiBmaWxsPSIjYmRhNmZmIiBmaWxsLW9wYWNpdHk9Ii45MiIvPgogIDxyZWN0IHg9IjQwIiB5PSIxNiIgd2lkdGg9IjEwIiBoZWlnaHQ9IjMyIiByeD0iMyIgZmlsbD0iIzdhNjdmMCIgZmlsbC1vcGFjaXR5PSIuOTUiLz4KPC9zdmc+Cg==" alt="" aria-hidden="true">KanbanApp.io</a> 
  <div class="topbar-actions">
-  <button id="hamburgerBtn" class="hamburger" aria-controls="mobileMenu" aria-expanded="false" aria-label="Abrir menu">☰</button>
+  <button id="hamburgerBtn" class="hamburger" aria-controls="mobileMenu" aria-expanded="false" aria-label="Abrir menu" data-i18n-aria-label="menuOpen">☰</button>
   <div id="window-controls">
    <button id="btn-minimize" type="button">—</button>
-   <button id="btn-maximize" type="button" title="Maximizar">□</button>
-   <button id="btn-close" type="button" title="Fechar">✕</button>
+   <button id="btn-maximize" type="button" title="Maximizar" data-i18n-title="windowMaximize">□</button>
+   <button id="btn-close" type="button" title="Fechar" data-i18n-title="windowClose">✕</button>
   </div>
  </div>
  </header> 
@@ -1361,12 +1434,12 @@ min-height: 120px;
 <div id="hoverMenu" class="hover-menu" aria-hidden="true">
   <div id="hoverMenuContent" class="hover-menu-content">
     <div id="hoverMenuItems" class="hover-menu-items"></div>
-    <button id="hoverMenuAddBtn" type="button" class="hover-menu-item hover-menu-add" aria-label="Adicionar item">+</button>
+    <button id="hoverMenuAddBtn" type="button" class="hover-menu-item hover-menu-add" aria-label="Adicionar item" data-i18n-aria-label="hoverAddItem">+</button>
   </div>
 </div>
 <div id="hoverMenuEditor" class="hover-menu-editor" aria-hidden="true">
   <input id="hoverMenuEditorInput" class="hover-menu-edit-input" type="text" maxlength="120">
-  <button id="hoverMenuEditorSave" type="button" class="btn hover-menu-edit-save">Salvar</button>
+  <button id="hoverMenuEditorSave" type="button" class="btn hover-menu-edit-save" data-i18n="save">Salvar</button>
 </div>
 <div id="boardLoadingOverlay" class="board-loading-overlay" aria-hidden="true">
   <div class="board-loading-panel">
@@ -1377,8 +1450,8 @@ min-height: 120px;
       <span></span>
       <span></span>
     </div>
-    <p class="board-loading-title">Carregando boards</p>
-    <p class="board-loading-text">Preparando colunas e cards do quadro ativo.</p>
+    <p class="board-loading-title" data-i18n="loadingTitle">Carregando boards</p>
+    <p class="board-loading-text" data-i18n="loadingText">Preparando colunas e cards do quadro ativo.</p>
   </div>
 </div>
 <!-- Opaque spacer, same height as topbar, same color as board background -->
@@ -1386,13 +1459,14 @@ min-height: 120px;
 <!-- Mobile menu container (hidden by default) -->
 <div id="mobileMenu" class="mobile-menu checklist-transfer-modal" aria-hidden="true">
   <div class="checklist-transfer-actions">
-    <button id="btnLoad" class="btn">Carregar JSON</button>
+    <button id="btnLoad" class="btn" data-i18n="menuLoadJson">Carregar JSON</button>
     <input type="file" id="fileJson" accept="application/json" hidden>
-    <button id="btnSave" class="btn">Salvar JSON</button>
-    <button id="btnAddColumn" class="btn">+ Coluna</button>
-    <button id="btnSettings" class="btn">Configurações</button>
-    <button id="btnPriorityReport" class="btn">Relatório de prioridades</button>
-    <button id="btnLicense" class="btn">Licença</button>
+    <button id="btnSave" class="btn" data-i18n="menuSaveJson">Salvar JSON</button>
+    <button id="btnAddColumn" class="btn" data-i18n="menuAddColumn">+ Coluna</button>
+    <button id="btnSettings" class="btn" data-i18n="menuSettings">Configurações</button>
+    <button id="btnPriorityReport" class="btn" data-i18n="menuPriorityReport">Relatório de prioridades</button>
+    <button id="btnLanguage" class="btn" data-i18n="menuLanguage">Idioma</button>
+    <button id="btnLicense" class="btn" data-i18n="menuLicense">Licença</button>
   </div>
 </div>
  <main> 
@@ -1409,17 +1483,17 @@ min-height: 120px;
  <div class="column" data-id=""> 
  <div class="column-header"> 
  <div class="column-title-row">
- <input type="text" class="column-title" placeholder="Título da coluna" />
- <span class="column-drag-handle" title="Arrastar coluna" aria-label="Arrastar coluna">⋮⋮</span>
+ <input type="text" class="column-title" placeholder="Título da coluna" data-i18n-placeholder="columnTitlePlaceholder" />
+ <span class="column-drag-handle" title="Arrastar coluna" aria-label="Arrastar coluna" data-i18n-title="columnDragHandle" data-i18n-aria-label="columnDragHandle">⋮⋮</span>
  </div>
  <div class="column-actions"> 
- <button class="btn-small add-card">+ Card</button> 
- <button class="btn-small select-all" title="Selecionar todos os cards">Selecionar</button> 
- <button class="btn-small conclude-all" title="Marcar todos os cards como concluídos">Concluir</button> 
+ <button class="btn-small add-card" data-i18n="columnAddCard">+ Card</button> 
+ <button class="btn-small select-all" title="Selecionar todos os cards" data-i18n="columnSelectAll" data-i18n-title="columnSelectAllTitle">Selecionar</button> 
+ <button class="btn-small conclude-all" title="Marcar todos os cards como concluídos" data-i18n="columnConcludeAll" data-i18n-title="columnConcludeAllTitle">Concluir</button> 
  <!-- NOVOS botões na coluna --> 
- <button class="btn-small sort-date" title="Ordenar por data (alternar crescente/decrescente)">Ordenar por data</button> 
- <button class="btn-small group-completed" title="Não concluídos primeiro, concluídos no final">Agrupar concluídos</button> 
- <button class="btn-small btn-danger delete-column" title="Excluir esta coluna">Excluir</button> 
+ <button class="btn-small sort-date" title="Ordenar por data (alternar crescente/decrescente)" data-i18n="columnSortDate" data-i18n-title="columnSortDateTitle">Ordenar por data</button> 
+ <button class="btn-small group-completed" title="Não concluídos primeiro, concluídos no final" data-i18n="columnGroupCompleted" data-i18n-title="columnGroupCompletedTitle">Agrupar concluídos</button> 
+ <button class="btn-small btn-danger delete-column" title="Excluir esta coluna" data-i18n="columnDelete" data-i18n-title="columnDeleteTitle">Excluir</button> 
  </div> 
  <!-- Filtro por coluna --> 
  <div class="column-filter"> 
@@ -1428,11 +1502,13 @@ min-height: 120px;
  type="text" 
  class="filter-cards" 
  placeholder="Filtrar cards (título ou descrição)" 
- aria-label="Filtrar cards por título ou descrição" /> 
- <button class="btn-small btn-clear clear-filter" title="Limpar filtro">Limpar</button> 
+ aria-label="Filtrar cards por título ou descrição"
+ data-i18n-placeholder="columnFilterPlaceholder"
+ data-i18n-aria-label="columnFilterAria" /> 
+ <button class="btn-small btn-clear clear-filter" title="Limpar filtro" data-i18n="clear" data-i18n-title="columnFilterClearTitle">Limpar</button> 
  </div> 
  <div class="filter-meta"> 
- <span>Resultados</span> 
+ <span data-i18n="columnResults">Resultados</span> 
  <span class="filter-count">0/0</span> 
  </div> 
  </div> 
@@ -1443,11 +1519,11 @@ min-height: 120px;
  <template id="tpl-card"> 
  <div class="card" draggable="true" data-id=""> 
  <div class="card-header"> 
- <input type="text" class="card-title" placeholder="Título do card" /> 
+ <input type="text" class="card-title" placeholder="Título do card" data-i18n-placeholder="cardTitlePlaceholder" /> 
  <div class="card-header-actions"> 
- <label><input type="checkbox" class="card-done"> Feito</label> 
- <button class="btn-small btn-ghost open-card-modal" title="Abrir em modal">⤢</button>
- <button class="btn-small btn-ghost delete-card" title="Excluir card">🗑</button> 
+ <label><input type="checkbox" class="card-done"> <span data-i18n="cardDone">Feito</span></label> 
+ <button class="btn-small btn-ghost open-card-modal" title="Abrir em modal" data-i18n-title="cardOpenModal">⤢</button>
+ <button class="btn-small btn-ghost delete-card" title="Excluir card" data-i18n-title="cardDelete">🗑</button> 
  </div> 
  <!-- timestamps completos (apenas quando expandido) --> 
  <div class="card-meta"> 
@@ -1457,11 +1533,11 @@ min-height: 120px;
  <!-- NOVO: linha curta (apenas quando colapsado) --> 
  <div class="card-collapsed-meta hidden">
  <span class="card-collapsed-meta-text"></span>
- <button class="btn-small btn-ghost open-card-modal" title="Abrir em modal">⤢</button>
+ <button class="btn-small btn-ghost open-card-modal" title="Abrir em modal" data-i18n-title="cardOpenModal">⤢</button>
  </div> 
  <!-- NOVO: barra de progresso (sempre visível) --> 
  <div class="progress-wrap" aria-hidden="false"> 
- <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Progresso do checklist"> 
+ <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Progresso do checklist" data-i18n-aria-label="cardChecklistProgress"> 
  <div class="progress-bar" style="width:0%"></div> 
  </div> 
  <div class="progress-text">0%</div> 
@@ -1469,20 +1545,20 @@ min-height: 120px;
  </div> 
  <div class="card-body"> 
  <div class="due-wrap"> 
- <div class="field-label">Data de vencimento:</div> 
- <input type="date" class="card-due" aria-label="Selecionar data de vencimento" /> 
+ <div class="field-label" data-i18n="cardDueDate">Data de vencimento:</div> 
+ <input type="date" class="card-due" aria-label="Selecionar data de vencimento" data-i18n-aria-label="cardDueDateAria" /> 
  </div> 
  <div class="desc-wrap"> 
- <div class="field-label">Descrição:</div> 
- <div class="render desc-view" aria-label="Descrição renderizada com links"></div> 
- <textarea class="card-desc hidden" placeholder="Digite a descrição (suporta links)"></textarea> 
+ <div class="field-label" data-i18n="cardDescription">Descrição:</div> 
+ <div class="render desc-view" aria-label="Descrição renderizada com links" data-i18n-aria-label="cardDescriptionRenderedAria"></div> 
+ <textarea class="card-desc hidden" placeholder="Digite a descrição (suporta links)" data-i18n-placeholder="cardDescriptionPlaceholder"></textarea> 
  </div> 
  <div class="checklist"> 
  <div class="checklist-header"> 
- <span>Checklist <span class="badge items-count">0</span></span> 
- <button class="btn-small add-item">+ Item</button> 
+ <span><span data-i18n="cardChecklist">Checklist</span> <span class="badge items-count">0</span></span> 
+ <button class="btn-small add-item" data-i18n="cardAddItem">+ Item</button> 
  </div> 
- <input type="text" class="filter-checklist" placeholder="Filtrar itens do checklist (titulo ou detalhes)" aria-label="Filtrar itens do checklist por titulo ou detalhes"> 
+ <input type="text" class="filter-checklist" placeholder="Filtrar itens do checklist (titulo ou detalhes)" aria-label="Filtrar itens do checklist por titulo ou detalhes" data-i18n-placeholder="cardFilterChecklistPlaceholder" data-i18n-aria-label="cardFilterChecklistAria"> 
  <div class="items"></div> 
  </div> 
  </div> 
@@ -1490,38 +1566,38 @@ min-height: 120px;
  </template> 
  <template id="tpl-checklist-item"> 
  <div class="checklist-item"> 
- <span class="item-drag-handle" title="Arrastar item" aria-label="Arrastar item" draggable="false">⋮⋮</span>
- <input type="checkbox" class="item-check" aria-label="Marcar item"> 
- <div class="item-view" aria-label="Rótulo (clique para editar)"></div> 
+ <span class="item-drag-handle" title="Arrastar item" aria-label="Arrastar item" draggable="false" data-i18n-title="itemDragHandle" data-i18n-aria-label="itemDragHandle">⋮⋮</span>
+ <input type="checkbox" class="item-check" aria-label="Marcar item" data-i18n-aria-label="itemMark"> 
+ <div class="item-view" aria-label="Rótulo (clique para editar)" data-i18n-aria-label="itemLabelAria"></div> 
  <div class="item-actions"> 
- <button class="btn-small btn-ghost open-item-note" title="Adicionar detalhes do item" aria-label="Adicionar detalhes do item"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 3.5h7.5L19 8v12.5H7z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14.5 3.5V8H19" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M10 12h6M10 15.5h6M10 19h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button> 
- <button class="btn-small btn-ghost delete-item" title="Remover item">✖</button> 
+ <button class="btn-small btn-ghost open-item-note" title="Adicionar detalhes do item" aria-label="Adicionar detalhes do item" data-i18n-title="itemAddDetails" data-i18n-aria-label="itemAddDetails"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 3.5h7.5L19 8v12.5H7z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14.5 3.5V8H19" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M10 12h6M10 15.5h6M10 19h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button> 
+ <button class="btn-small btn-ghost delete-item" title="Remover item" data-i18n-title="remove">✖</button> 
  </div> 
- <textarea class="item-editor hidden" placeholder="Texto do item (URLs ficam clicáveis na visualização)"></textarea> 
+ <textarea class="item-editor hidden" placeholder="Texto do item (URLs ficam clicáveis na visualização)" data-i18n-placeholder="itemEditorPlaceholder"></textarea> 
  </div> 
  </template> 
  <!-- Modal de Configurações --> 
  <div id="settingsOverlay" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="settingsTitle"> 
  <div class="modal"> 
  <div class="modal-header"> 
- <h2 id="settingsTitle">Configurações</h2> 
- <button class="btn btn-small modal-close" aria-label="Fechar">✖</button> 
+ <h2 id="settingsTitle" data-i18n="settingsTitle">Configurações</h2> 
+ <button class="btn btn-small modal-close" aria-label="Fechar" data-i18n-aria-label="close">✖</button> 
  </div> 
  <div class="modal-body"> 
  <section class="settings-section"> 
- <h3 class="section-title">Regras de cor por idade do card</h3> 
- <p class="section-help"> 
+ <h3 class="section-title" data-i18n="settingsSectionTitle">Regras de cor por idade do card</h3> 
+ <p class="section-help" data-i18n-html="settingsSectionHelp"> 
  Defina linhas com <strong>dias</strong> e uma <strong>cor</strong>. Ex.: 7 dias → amarelo. 
  </p> 
  <div id="rulesList" class="rules-list" aria-live="polite"></div> 
  <div class="rules-actions"> 
- <button id="btnAddRule" class="btn btn-small">+ Adicionar linha</button> 
+ <button id="btnAddRule" class="btn btn-small" data-i18n="settingsAddRule">+ Adicionar linha</button> 
  </div> 
  </section> 
  </div> 
  <div class="modal-footer"> 
- <button id="btnSaveSettings" class="btn btn-primary">Salvar</button> 
- <button id="btnCancelSettings" class="btn">Cancelar</button> 
+ <button id="btnSaveSettings" class="btn btn-primary" data-i18n="save">Salvar</button> 
+ <button id="btnCancelSettings" class="btn" data-i18n="cancel">Cancelar</button> 
  </div> 
  </div> 
  </div> 
@@ -1529,7 +1605,7 @@ min-height: 120px;
  <div class="modal">
  <div class="modal-header">
  <h2 id="licenseTitle">MIT License</h2>
- <button class="btn btn-small modal-close" aria-label="Fechar">✖</button>
+ <button class="btn btn-small modal-close" aria-label="Fechar" data-i18n-aria-label="close">✖</button>
  </div>
  <div class="modal-body">
  <pre class="license-text">MIT License
@@ -1563,29 +1639,41 @@ SOFTWARE.
  <div id="priorityReportOverlay" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="priorityReportTitle">
  <div class="modal modal-card">
  <div class="modal-header">
- <h2 id="priorityReportTitle">Relatório de prioridades</h2>
- <button class="btn btn-small modal-close" aria-label="Fechar">✖</button>
+ <h2 id="priorityReportTitle" data-i18n="priorityTitle">Relatório de prioridades</h2>
+ <button class="btn btn-small modal-close" aria-label="Fechar" data-i18n-aria-label="close">✖</button>
  </div>
  <div class="modal-body">
  <section class="priority-report-filters">
  <div class="field">
- <label for="priorityMaxDays">Dias para vencer (cards com N dias ou menos)</label>
+ <label for="priorityMaxDays" data-i18n="priorityFilterLabel">Dias para vencer (cards com N dias ou menos)</label>
  <div class="priority-filter-controls">
- <input type="number" id="priorityMaxDays" min="0" step="1" placeholder="Ex.: 7" />
- <button id="btnPriorityDaysInc" type="button" class="btn-small btn-ghost priority-filter-btn" aria-label="Aumentar dias">+</button>
- <button id="btnPriorityDaysDec" type="button" class="btn-small btn-ghost priority-filter-btn" aria-label="Diminuir dias">-</button>
- <button id="btnPriorityDaysClear" type="button" class="btn-small btn-ghost priority-filter-btn clear" aria-label="Limpar filtro de dias">Limpar</button>
+ <input type="number" id="priorityMaxDays" min="0" step="1" placeholder="Ex.: 7" data-i18n-placeholder="priorityFilterPlaceholder" />
+ <button id="btnPriorityDaysInc" type="button" class="btn-small btn-ghost priority-filter-btn" aria-label="Aumentar dias" data-i18n-aria-label="priorityIncreaseDays">+</button>
+ <button id="btnPriorityDaysDec" type="button" class="btn-small btn-ghost priority-filter-btn" aria-label="Diminuir dias" data-i18n-aria-label="priorityDecreaseDays">-</button>
+ <button id="btnPriorityDaysClear" type="button" class="btn-small btn-ghost priority-filter-btn clear" aria-label="Limpar filtro de dias" data-i18n="clear" data-i18n-aria-label="priorityClearDays">Limpar</button>
  </div>
  </div>
  </section>
  <section class="priority-report-section">
- <h3>Itens por prioridade:</h3>
+ <h3 data-i18n="priorityItemsSection">Itens por prioridade:</h3>
  <div id="priorityItemsList" class="priority-report-list"></div>
  </section>
  <section class="priority-report-section">
- <h3>Cards por prioridade:</h3>
+ <h3 data-i18n="priorityCardsSection">Cards por prioridade:</h3>
  <div id="priorityCardsList" class="priority-report-list"></div>
  </section>
+ </div>
+ </div>
+ </div>
+ <div id="languageOverlay" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="languageTitle">
+ <div class="modal language-modal">
+ <div class="modal-header">
+ <h2 id="languageTitle" data-i18n="languageTitle">Choose app language</h2>
+ <button id="btnLanguageClose" class="btn btn-small modal-close" aria-label="Close" data-i18n-aria-label="close" type="button">✖</button>
+ </div>
+ <div class="modal-body">
+ <p class="language-modal-copy" data-i18n="languageSubtitle">Board content will remain unchanged. Only the app labels will be translated.</p>
+ <div id="languageOptions" class="language-options" aria-live="polite"></div>
  </div>
  </div>
  </div>
@@ -1593,48 +1681,48 @@ SOFTWARE.
  <template id="tpl-rule-row"> 
 <div class="rule-row"> 
  <div class="rule-field"> 
- <label class="field-label">Dias</label> 
- <input type="number" class="rule-days" min="0" step="1" inputmode="numeric" placeholder="Ex.: 7"> 
+ <label class="field-label" data-i18n="settingsRuleDays">Dias</label> 
+ <input type="number" class="rule-days" min="0" step="1" inputmode="numeric" placeholder="Ex.: 7" data-i18n-placeholder="settingsRuleDaysPlaceholder"> 
  </div> 
  <div class="rule-field"> 
- <label class="field-label">Cor</label> 
+ <label class="field-label" data-i18n="settingsRuleColor">Cor</label> 
  <!-- Color picker (preferencial) --> 
  <input type="color" class="rule-color"> 
  <!-- Fallback: combobox de cores (tons pedidos) --> 
  <select class="rule-color-select"> 
  <!-- Amarelo --> 
- <option value="#fffde7">Amarelo 50 — #fffde7</option> 
- <option value="#fff59d">Amarelo 300 — #fff59d</option> 
- <option value="#ffeb3b">Amarelo 500 — #ffeb3b</option> 
- <option value="#fbc02d">Amarelo 700 — #fbc02d</option> 
+ <option value="#fffde7" data-color-family="yellow" data-color-tone="50">Amarelo 50 — #fffde7</option> 
+ <option value="#fff59d" data-color-family="yellow" data-color-tone="300">Amarelo 300 — #fff59d</option> 
+ <option value="#ffeb3b" data-color-family="yellow" data-color-tone="500">Amarelo 500 — #ffeb3b</option> 
+ <option value="#fbc02d" data-color-family="yellow" data-color-tone="700">Amarelo 700 — #fbc02d</option> 
  <!-- Vermelho --> 
- <option value="#ffebee">Vermelho 50 — #ffebee</option> 
- <option value="#ffcdd2">Vermelho 200 — #ffcdd2</option> 
- <option value="#ef5350">Vermelho 400 — #ef5350</option> 
- <option value="#b71c1c">Vermelho 900 — #b71c1c</option> 
+ <option value="#ffebee" data-color-family="red" data-color-tone="50">Vermelho 50 — #ffebee</option> 
+ <option value="#ffcdd2" data-color-family="red" data-color-tone="200">Vermelho 200 — #ffcdd2</option> 
+ <option value="#ef5350" data-color-family="red" data-color-tone="400">Vermelho 400 — #ef5350</option> 
+ <option value="#b71c1c" data-color-family="red" data-color-tone="900">Vermelho 900 — #b71c1c</option> 
  <!-- Azul --> 
- <option value="#e3f2fd">Azul 50 — #e3f2fd</option> 
- <option value="#90caf9">Azul 200 — #90caf9</option> 
- <option value="#2196f3">Azul 500 — #2196f3</option> 
- <option value="#0d47a1">Azul 900 — #0d47a1</option> 
+ <option value="#e3f2fd" data-color-family="blue" data-color-tone="50">Azul 50 — #e3f2fd</option> 
+ <option value="#90caf9" data-color-family="blue" data-color-tone="200">Azul 200 — #90caf9</option> 
+ <option value="#2196f3" data-color-family="blue" data-color-tone="500">Azul 500 — #2196f3</option> 
+ <option value="#0d47a1" data-color-family="blue" data-color-tone="900">Azul 900 — #0d47a1</option> 
  <!-- Roxo --> 
- <option value="#f3e5f5">Roxo 50 — #f3e5f5</option> 
- <option value="#ce93d8">Roxo 200 — #ce93d8</option> 
- <option value="#9c27b0">Roxo 500 — #9c27b0</option> 
- <option value="#4a148c">Roxo 900 — #4a148c</option> 
+ <option value="#f3e5f5" data-color-family="purple" data-color-tone="50">Roxo 50 — #f3e5f5</option> 
+ <option value="#ce93d8" data-color-family="purple" data-color-tone="200">Roxo 200 — #ce93d8</option> 
+ <option value="#9c27b0" data-color-family="purple" data-color-tone="500">Roxo 500 — #9c27b0</option> 
+ <option value="#4a148c" data-color-family="purple" data-color-tone="900">Roxo 900 — #4a148c</option> 
  <!-- Cinza --> 
- <option value="#fafafa">Cinza 50 — #fafafa</option> 
- <option value="#e0e0e0">Cinza 300 — #e0e0e0</option> 
- <option value="#9e9e9e">Cinza 500 — #9e9e9e</option> 
- <option value="#616161">Cinza 700 — #616161</option> 
- <option value="#212121">Cinza 900 — #212121</option> 
+ <option value="#fafafa" data-color-family="gray" data-color-tone="50">Cinza 50 — #fafafa</option> 
+ <option value="#e0e0e0" data-color-family="gray" data-color-tone="300">Cinza 300 — #e0e0e0</option> 
+ <option value="#9e9e9e" data-color-family="gray" data-color-tone="500">Cinza 500 — #9e9e9e</option> 
+ <option value="#616161" data-color-family="gray" data-color-tone="700">Cinza 700 — #616161</option> 
+ <option value="#212121" data-color-family="gray" data-color-tone="900">Cinza 900 — #212121</option> 
  <!-- Branco/Preto --> 
- <option value="#ffffff">Branco — #ffffff</option> 
- <option value="#000000">Preto — #000000</option> 
+ <option value="#ffffff" data-color-family="white">Branco — #ffffff</option> 
+ <option value="#000000" data-color-family="black">Preto — #000000</option> 
  </select> 
  </div> 
  <div class="rule-actions"> 
- <button class="btn btn-small btn-danger rule-remove" title="Remover linha">Remover</button> 
+ <button class="btn btn-small btn-danger rule-remove" title="Remover linha" data-i18n="remove" data-i18n-title="settingsRuleRemove">Remover</button> 
  </div> 
  </div> 
  </template> 
@@ -1644,7 +1732,7 @@ SOFTWARE.
   <div class="modal modal-card">
     <div class="modal-header">
       <h2 id="cardModalTitle">Card</h2>
-      <button class="btn btn-small modal-close" aria-label="Fechar">✖</button>
+      <button class="btn btn-small modal-close" aria-label="Fechar" data-i18n-aria-label="close">✖</button>
     </div>
     <div class="modal-body">
       <div id="cardModalContent"></div>
@@ -1657,19 +1745,19 @@ SOFTWARE.
   <div class="modal modal-card">
     <div class="modal-header">
       <h2 id="checklistItemModalTitle">Detalhes do item do checklist</h2>
-      <button class="btn btn-small modal-close" aria-label="Fechar">✖</button>
+      <button class="btn btn-small modal-close" aria-label="Fechar" data-i18n-aria-label="close">✖</button>
     </div>
     <div class="modal-body">
       <div class="due-wrap">
-        <div class="field-label">Data de vencimaneto:</div>
-        <input type="date" id="checklistItemDueDate" class="card-due" aria-label="Selecionar data de vencimaneto do item do checklist" />
+        <div class="field-label" data-i18n="checklistItemDueDate">Data de vencimaneto:</div>
+        <input type="date" id="checklistItemDueDate" class="card-due" aria-label="Selecionar data de vencimaneto do item do checklist" data-i18n-aria-label="checklistItemDueDateAria" />
       </div>
-      <div class="field-label">Detalhes:</div>
-      <div id="checklistItemContentView" class="render" aria-label="Detalhes renderizados com links"></div>
-      <textarea id="checklistItemContentEditor" class="item-note-editor hidden" placeholder="Digite os detalhes (suporta links)"></textarea>
+      <div class="field-label" data-i18n="checklistItemDetails">Detalhes:</div>
+      <div id="checklistItemContentView" class="render" aria-label="Detalhes renderizados com links" data-i18n-aria-label="checklistItemDetailsRenderedAria"></div>
+      <textarea id="checklistItemContentEditor" class="item-note-editor hidden" placeholder="Digite os detalhes (suporta links)" data-i18n-placeholder="checklistItemDetailsPlaceholder"></textarea>
     </div>
     <div class="modal-footer">
-      <button id="btnChecklistItemSave" class="btn btn-primary">Salvar</button>
+      <button id="btnChecklistItemSave" class="btn btn-primary" data-i18n="save">Salvar</button>
     </div>
   </div>
 </div>
@@ -1677,11 +1765,11 @@ SOFTWARE.
 <!-- Modal de transferência de item de checklist entre cards -->
 <div id="checklistTransferOverlay" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="checklistTransferTitle">
   <div class="modal checklist-transfer-modal">
-    <h2 id="checklistTransferTitle" class="hidden">Transferência de item</h2>
+    <h2 id="checklistTransferTitle" class="hidden" data-i18n="checklistTransferTitle">Transferência de item</h2>
     <div class="checklist-transfer-actions">
-      <button id="btnChecklistMoveHere" class="btn btn-primary">Mover</button>
-      <button id="btnChecklistCopyHere" class="btn btn-primary">Copiar</button>
-      <button id="btnChecklistCancel" class="btn">Cancelar</button>
+      <button id="btnChecklistMoveHere" class="btn btn-primary" data-i18n="move">Mover</button>
+      <button id="btnChecklistCopyHere" class="btn btn-primary" data-i18n="copy">Copiar</button>
+      <button id="btnChecklistCancel" class="btn" data-i18n="cancel">Cancelar</button>
     </div>
   </div>
 </div>
@@ -1732,9 +1820,1219 @@ const nextFrame = () => new Promise(r => requestAnimationFrame(() => r()));
 const wait = (ms) => new Promise(r => setTimeout(r, ms));
 const UNTITLED_BOARD_NAME = 'Quadro Sem Título';
 const DEFAULT_NEW_BOARD_NAME = 'Novo Quadro';
+const DEFAULT_LANGUAGE = 'en';
+const LANGUAGE_CACHE_KEY = 'kanbanApp.uiLanguage.v1';
 let isBoardHydrating = false;
 let activeBoardName = UNTITLED_BOARD_NAME;
 let boardSwitchToken = 0;
+let boardMeta = {
+ ageColorRules: [],
+ language: null
+};
+let currentLanguage = DEFAULT_LANGUAGE;
+const LANGUAGE_CONFIG = {
+ en: { label: 'English', locale: 'en-US', htmlLang: 'en', shortCode: 'EN' },
+ 'pt-BR': { label: 'Português (Brasil)', locale: 'pt-BR', htmlLang: 'pt-BR', shortCode: 'PT' },
+ 'zh-CN': { label: '中文（简体）', locale: 'zh-CN', htmlLang: 'zh-CN', shortCode: 'ZH' },
+ es: { label: 'Español', locale: 'es-ES', htmlLang: 'es', shortCode: 'ES' },
+ ar: { label: 'العربية', locale: 'ar-SA', htmlLang: 'ar', shortCode: 'AR' },
+ hi: { label: 'हिन्दी', locale: 'hi-IN', htmlLang: 'hi', shortCode: 'HI' },
+ id: { label: 'Bahasa Indonesia', locale: 'id-ID', htmlLang: 'id', shortCode: 'ID' },
+ fr: { label: 'Français', locale: 'fr-FR', htmlLang: 'fr', shortCode: 'FR' },
+ de: { label: 'Deutsch', locale: 'de-DE', htmlLang: 'de', shortCode: 'DE' }
+};
+const LANGUAGE_LIBRARY = {};
+const LANGUAGE_CODES = Object.keys(LANGUAGE_CONFIG);
+const languageUI = {
+ overlay: null,
+ btnOpen: null,
+ btnClose: null,
+ list: null,
+ initialized: false,
+ required: false
+};
+function sanitizeLanguageCode(code){
+ const value = String(code == null ? '' : code).trim();
+ return LANGUAGE_CONFIG[value] ? value : '';
+}
+function getCachedLanguage(){
+ try{
+  return sanitizeLanguageCode(localStorage.getItem(LANGUAGE_CACHE_KEY));
+ }catch(_){
+  return '';
+ }
+}
+function setCachedLanguage(code){
+ try{
+  localStorage.setItem(LANGUAGE_CACHE_KEY, code);
+ }catch(_){}
+}
+function t(key, params){
+ let text = (LANGUAGE_LIBRARY[currentLanguage] && LANGUAGE_LIBRARY[currentLanguage][key]) || (LANGUAGE_LIBRARY[DEFAULT_LANGUAGE] && LANGUAGE_LIBRARY[DEFAULT_LANGUAGE][key]) || key;
+ if (!params || typeof text !== 'string') return text;
+ Object.keys(params).forEach(function(paramKey){
+  const token = new RegExp('\\{' + paramKey + '\\}', 'g');
+  text = text.replace(token, String(params[paramKey]));
+ });
+ return text;
+}
+function getCurrentLocale(){
+ const cfg = LANGUAGE_CONFIG[currentLanguage] || LANGUAGE_CONFIG[DEFAULT_LANGUAGE];
+ return cfg.locale;
+}
+function getColorLabel(family){
+ const map = {
+  yellow: 'colorYellow',
+  red: 'colorRed',
+  blue: 'colorBlue',
+  purple: 'colorPurple',
+  gray: 'colorGray',
+  white: 'colorWhite',
+  black: 'colorBlack'
+ };
+ return t(map[family] || family);
+}
+function getUntitledBoardLabel(){ return t('namesUntitledBoard'); }
+function getDefaultNewBoardName(){ return t('namesNewBoard'); }
+function getDefaultNewColumnName(){ return t('namesNewColumn'); }
+function getNoTitleLabel(){ return t('namesNoTitle'); }
+function getNoColumnLabel(){ return t('namesNoColumn'); }
+function getUntitledItemLabel(){ return t('namesUntitledItem'); }
+function getBoardDisplayName(name){
+ const normalized = normalizeBoardName(name, UNTITLED_BOARD_NAME);
+ return normalized === UNTITLED_BOARD_NAME ? getUntitledBoardLabel() : normalized;
+}
+function applyTranslations(root){
+ if (!root || !root.querySelectorAll) return;
+ $$('[data-i18n]', root).forEach(function(node){
+  node.textContent = t(node.getAttribute('data-i18n'));
+ });
+ $$('[data-i18n-html]', root).forEach(function(node){
+  node.innerHTML = t(node.getAttribute('data-i18n-html'));
+ });
+ $$('[data-i18n-placeholder]', root).forEach(function(node){
+  node.setAttribute('placeholder', t(node.getAttribute('data-i18n-placeholder')));
+ });
+ $$('[data-i18n-title]', root).forEach(function(node){
+  node.setAttribute('title', t(node.getAttribute('data-i18n-title')));
+ });
+ $$('[data-i18n-aria-label]', root).forEach(function(node){
+  node.setAttribute('aria-label', t(node.getAttribute('data-i18n-aria-label')));
+ });
+ applyColorOptionTranslations(root);
+}
+function applyColorOptionTranslations(root){
+ if (!root || !root.querySelectorAll) return;
+ $$('option[data-color-family]', root).forEach(function(option){
+  const family = option.dataset.colorFamily || '';
+  const tone = option.dataset.colorTone || '';
+  option.textContent = tone ? `${getColorLabel(family)} ${tone} — ${option.value}` : `${getColorLabel(family)} — ${option.value}`;
+ });
+}
+function getTranslationScopes(){
+ const scopes = [document];
+ ['tpl-column', 'tpl-card', 'tpl-checklist-item', 'tpl-rule-row'].forEach(function(id){
+  const tpl = document.getElementById(id);
+  if (tpl && tpl.content) scopes.push(tpl.content);
+ });
+ return scopes;
+}
+function ensureLanguageRefs(){
+ if (languageUI.initialized) return languageUI;
+ languageUI.overlay = document.getElementById('languageOverlay');
+ languageUI.btnOpen = document.getElementById('btnLanguage');
+ languageUI.btnClose = document.getElementById('btnLanguageClose');
+ languageUI.list = document.getElementById('languageOptions');
+ if (languageUI.btnOpen) {
+  languageUI.btnOpen.addEventListener('click', function(){ openLanguageModal({ required: false }); });
+ }
+ if (languageUI.btnClose) {
+  languageUI.btnClose.addEventListener('click', function(){ closeLanguageModal(); });
+ }
+ if (languageUI.overlay) {
+  languageUI.overlay.addEventListener('click', function(e){
+   if (e.target === languageUI.overlay) closeLanguageModal();
+  });
+  languageUI.overlay.addEventListener('keydown', function(e){
+   const key = e.key || e.code || '';
+   if (key === 'Escape' || key === 'Esc') closeLanguageModal();
+  });
+ }
+ languageUI.initialized = true;
+ return languageUI;
+}
+function renderLanguageOptions(){
+ const ui = ensureLanguageRefs();
+ if (!ui.list) return;
+ ui.list.innerHTML = '';
+ LANGUAGE_CODES.forEach(function(code){
+  const cfg = LANGUAGE_CONFIG[code];
+  const button = document.createElement('button');
+  const label = document.createElement('span');
+  const shortCode = document.createElement('span');
+  button.type = 'button';
+  button.className = 'language-option';
+  button.dataset.languageCode = code;
+  button.classList.toggle('active', code === currentLanguage);
+  label.className = 'language-option-label';
+  label.textContent = cfg.label;
+  shortCode.className = 'language-option-code';
+  shortCode.textContent = cfg.shortCode;
+  button.appendChild(label);
+  button.appendChild(shortCode);
+  button.addEventListener('click', function(){
+   setBoardLanguage(code, { persistCache: true, syncBoardMeta: true, scheduleAutosave: true });
+   closeLanguageModal(true);
+  });
+  ui.list.appendChild(button);
+ });
+}
+function openLanguageModal(options){
+ const ui = ensureLanguageRefs();
+ const opts = options || {};
+ if (!ui.overlay) return;
+ languageUI.required = !!opts.required;
+ renderLanguageOptions();
+ ui.overlay.classList.remove('hidden');
+ const active = ui.list ? ui.list.querySelector('.language-option.active') : null;
+ try { (active || ui.btnClose || ui.overlay).focus(); } catch(_) {}
+}
+function closeLanguageModal(force){
+ const ui = ensureLanguageRefs();
+ if (!ui.overlay) return;
+ if (languageUI.required && force !== true) return;
+ ui.overlay.classList.add('hidden');
+ languageUI.required = false;
+}
+function applyCurrentLanguage(){
+ currentLanguage = sanitizeLanguageCode(currentLanguage) || DEFAULT_LANGUAGE;
+ const cfg = LANGUAGE_CONFIG[currentLanguage] || LANGUAGE_CONFIG[DEFAULT_LANGUAGE];
+ document.documentElement.lang = cfg.htmlLang;
+ document.body.dataset.uiLanguage = currentLanguage;
+ getTranslationScopes().forEach(applyTranslations);
+ renderLanguageOptions();
+ if (typeof window.__refreshLocalizedDynamicUI === 'function') window.__refreshLocalizedDynamicUI();
+}
+function setBoardLanguage(languageCode, options){
+ const opts = Object.assign({ persistCache: true, syncBoardMeta: true, scheduleAutosave: true }, options || {});
+ const next = sanitizeLanguageCode(languageCode) || DEFAULT_LANGUAGE;
+ currentLanguage = next;
+ if (opts.syncBoardMeta) boardMeta.language = next;
+ if (opts.persistCache) setCachedLanguage(next);
+ applyCurrentLanguage();
+ if (opts.scheduleAutosave && !isBoardHydrating && typeof window.__scheduleBoardAutosave === 'function'){
+  window.__scheduleBoardAutosave();
+ }
+}
+function resolveBoardLanguage(data){
+ const fromMeta = sanitizeLanguageCode(data && data.meta && data.meta.language);
+ const fromCache = getCachedLanguage();
+ return {
+  language: fromMeta || fromCache || DEFAULT_LANGUAGE,
+  shouldPrompt: !fromMeta
+ };
+}
+LANGUAGE_LIBRARY.en = {
+ menuOpen: 'Open menu',
+ windowMaximize: 'Maximize',
+ windowClose: 'Close',
+ hoverAddItem: 'Add item',
+ save: 'Save',
+ cancel: 'Cancel',
+ clear: 'Clear',
+ remove: 'Remove',
+ copy: 'Copy',
+ move: 'Move',
+ close: 'Close',
+ loadingTitle: 'Loading boards',
+ loadingText: 'Preparing columns and cards for the active board.',
+ menuLoadJson: 'Load JSON',
+ menuSaveJson: 'Save JSON',
+ menuAddColumn: '+ Column',
+ menuSettings: 'Settings',
+ menuPriorityReport: 'Priority report',
+ menuLanguage: 'Language',
+ menuLicense: 'License',
+ columnTitlePlaceholder: 'Column title',
+ columnDragHandle: 'Drag column',
+ columnAddCard: '+ Card',
+ columnSelectAll: 'Select',
+ columnSelectAllTitle: 'Select all cards',
+ columnConcludeAll: 'Complete',
+ columnConcludeAllTitle: 'Mark all cards as completed',
+ columnSortDate: 'Sort by date',
+ columnSortDateTitle: 'Sort by date (toggle ascending/descending)',
+ columnGroupCompleted: 'Group completed',
+ columnGroupCompletedTitle: 'Uncompleted first, completed at the end',
+ columnDelete: 'Delete',
+ columnDeleteTitle: 'Delete this column',
+ columnFilterPlaceholder: 'Filter cards (title or description)',
+ columnFilterAria: 'Filter cards by title or description',
+ columnFilterClearTitle: 'Clear filter',
+ columnResults: 'Results',
+ cardTitlePlaceholder: 'Card title',
+ cardDone: 'Done',
+ cardOpenModal: 'Open in modal',
+ cardDelete: 'Delete card',
+ cardChecklistProgress: 'Checklist progress',
+ cardDueDate: 'Due date:',
+ cardDueDateAria: 'Select due date',
+ cardDescription: 'Description:',
+ cardDescriptionRenderedAria: 'Rendered description with links',
+ cardDescriptionPlaceholder: 'Enter the description (links supported)',
+ cardChecklist: 'Checklist',
+ cardAddItem: '+ Item',
+ cardFilterChecklistPlaceholder: 'Filter checklist items (title or details)',
+ cardFilterChecklistAria: 'Filter checklist items by title or details',
+ itemDragHandle: 'Drag item',
+ itemMark: 'Mark item',
+ itemLabelAria: 'Label (click to edit)',
+ itemAddDetails: 'Add item details',
+ itemEditDetails: 'Edit item details',
+ itemEditorPlaceholder: 'Item text (URLs become clickable in preview)',
+ settingsTitle: 'Settings',
+ settingsSectionTitle: 'Card age color rules',
+ settingsSectionHelp: 'Define rows with <strong>days</strong> and a <strong>color</strong>. Example: 7 days → yellow.',
+ settingsAddRule: '+ Add row',
+ settingsRuleDays: 'Days',
+ settingsRuleColor: 'Color',
+ settingsRuleDaysPlaceholder: 'E.g.: 7',
+ settingsRuleRemove: 'Remove row',
+ priorityTitle: 'Priority report',
+ priorityFilterLabel: 'Days until due (cards with N days or less)',
+ priorityFilterPlaceholder: 'E.g.: 7',
+ priorityIncreaseDays: 'Increase days',
+ priorityDecreaseDays: 'Decrease days',
+ priorityClearDays: 'Clear day filter',
+ priorityItemsSection: 'Priority items:',
+ priorityCardsSection: 'Priority cards:',
+ languageTitle: 'Choose app language',
+ languageSubtitle: 'Board content will remain unchanged. Only the app labels will be translated.',
+ checklistItemDueDate: 'Due date:',
+ checklistItemDueDateAria: 'Select checklist item due date',
+ checklistItemDetails: 'Details:',
+ checklistItemDetailsRenderedAria: 'Rendered details with links',
+ checklistItemDetailsPlaceholder: 'Enter the details (links supported)',
+ checklistTransferTitle: 'Item transfer',
+ namesUntitledBoard: 'Untitled Board',
+ namesNewBoard: 'New Board',
+ namesNewColumn: 'New column',
+ namesNoTitle: 'Untitled',
+ namesNoColumn: 'No column',
+ namesUntitledItem: 'Untitled item',
+ noDueDate: 'No due date',
+ dueToday: 'Due today',
+ dueInDays: 'Due in {count} day(s)',
+ overdueDays: 'Overdue by {count} day(s)',
+ invalidJsonAlert: 'Invalid JSON: object does not contain "columns".',
+ saveFailedAlert: 'Save failed. Check the console for details.',
+ loadFailedAlert: 'Failed to load JSON. Check the file.',
+ deleteColumnConfirm: 'Delete the column "{title}"?\nAll cards inside it will be removed.',
+ deleteBoardConfirm: 'Delete the board "{title}"?\nAll columns and cards in this board will be removed.',
+ deleteCardConfirm: 'Delete this card?',
+ priorityEmptyItemsFiltered: 'No checklist items due in {count} day(s) or less.',
+ priorityEmptyItemsNoDue: 'No checklist items with a due date.',
+ priorityEmptyCardsFiltered: 'No cards due in {count} day(s) or less.',
+ priorityEmptyCardsNoDue: 'No cards with a due date.',
+ progressItemsTitle: '{checked}/{total} item(s)',
+ colorYellow: 'Yellow',
+ colorRed: 'Red',
+ colorBlue: 'Blue',
+ colorPurple: 'Purple',
+ colorGray: 'Gray',
+ colorWhite: 'White',
+ colorBlack: 'Black'
+};
+LANGUAGE_LIBRARY['pt-BR'] = {
+ menuOpen: 'Abrir menu',
+ windowMaximize: 'Maximizar',
+ windowClose: 'Fechar',
+ hoverAddItem: 'Adicionar item',
+ save: 'Salvar',
+ cancel: 'Cancelar',
+ clear: 'Limpar',
+ remove: 'Remover',
+ copy: 'Copiar',
+ move: 'Mover',
+ close: 'Fechar',
+ loadingTitle: 'Carregando boards',
+ loadingText: 'Preparando colunas e cards do quadro ativo.',
+ menuLoadJson: 'Carregar JSON',
+ menuSaveJson: 'Salvar JSON',
+ menuAddColumn: '+ Coluna',
+ menuSettings: 'Configurações',
+ menuPriorityReport: 'Relatório de prioridades',
+ menuLanguage: 'Idioma',
+ menuLicense: 'Licença',
+ columnTitlePlaceholder: 'Título da coluna',
+ columnDragHandle: 'Arrastar coluna',
+ columnAddCard: '+ Card',
+ columnSelectAll: 'Selecionar',
+ columnSelectAllTitle: 'Selecionar todos os cards',
+ columnConcludeAll: 'Concluir',
+ columnConcludeAllTitle: 'Marcar todos os cards como concluídos',
+ columnSortDate: 'Ordenar por data',
+ columnSortDateTitle: 'Ordenar por data (alternar crescente/decrescente)',
+ columnGroupCompleted: 'Agrupar concluídos',
+ columnGroupCompletedTitle: 'Não concluídos primeiro, concluídos no final',
+ columnDelete: 'Excluir',
+ columnDeleteTitle: 'Excluir esta coluna',
+ columnFilterPlaceholder: 'Filtrar cards (título ou descrição)',
+ columnFilterAria: 'Filtrar cards por título ou descrição',
+ columnFilterClearTitle: 'Limpar filtro',
+ columnResults: 'Resultados',
+ cardTitlePlaceholder: 'Título do card',
+ cardDone: 'Feito',
+ cardOpenModal: 'Abrir em modal',
+ cardDelete: 'Excluir card',
+ cardChecklistProgress: 'Progresso do checklist',
+ cardDueDate: 'Data de vencimento:',
+ cardDueDateAria: 'Selecionar data de vencimento',
+ cardDescription: 'Descrição:',
+ cardDescriptionRenderedAria: 'Descrição renderizada com links',
+ cardDescriptionPlaceholder: 'Digite a descrição (suporta links)',
+ cardChecklist: 'Checklist',
+ cardAddItem: '+ Item',
+ cardFilterChecklistPlaceholder: 'Filtrar itens do checklist (titulo ou detalhes)',
+ cardFilterChecklistAria: 'Filtrar itens do checklist por titulo ou detalhes',
+ itemDragHandle: 'Arrastar item',
+ itemMark: 'Marcar item',
+ itemLabelAria: 'Rótulo (clique para editar)',
+ itemAddDetails: 'Adicionar detalhes do item',
+ itemEditDetails: 'Editar detalhes do item',
+ itemEditorPlaceholder: 'Texto do item (URLs ficam clicáveis na visualização)',
+ settingsTitle: 'Configurações',
+ settingsSectionTitle: 'Regras de cor por idade do card',
+ settingsSectionHelp: 'Defina linhas com <strong>dias</strong> e uma <strong>cor</strong>. Ex.: 7 dias → amarelo.',
+ settingsAddRule: '+ Adicionar linha',
+ settingsRuleDays: 'Dias',
+ settingsRuleColor: 'Cor',
+ settingsRuleDaysPlaceholder: 'Ex.: 7',
+ settingsRuleRemove: 'Remover linha',
+ priorityTitle: 'Relatório de prioridades',
+ priorityFilterLabel: 'Dias para vencer (cards com N dias ou menos)',
+ priorityFilterPlaceholder: 'Ex.: 7',
+ priorityIncreaseDays: 'Aumentar dias',
+ priorityDecreaseDays: 'Diminuir dias',
+ priorityClearDays: 'Limpar filtro de dias',
+ priorityItemsSection: 'Itens por prioridade:',
+ priorityCardsSection: 'Cards por prioridade:',
+ languageTitle: 'Selecionar idioma do aplicativo',
+ languageSubtitle: 'O conteúdo do board permanece igual. Apenas os labels do aplicativo serão traduzidos.',
+ checklistItemDueDate: 'Data de vencimento:',
+ checklistItemDueDateAria: 'Selecionar data de vencimento do item do checklist',
+ checklistItemDetails: 'Detalhes:',
+ checklistItemDetailsRenderedAria: 'Detalhes renderizados com links',
+ checklistItemDetailsPlaceholder: 'Digite os detalhes (suporta links)',
+ checklistTransferTitle: 'Transferência de item',
+ namesUntitledBoard: 'Quadro Sem Título',
+ namesNewBoard: 'Novo Quadro',
+ namesNewColumn: 'Nova coluna',
+ namesNoTitle: 'Sem título',
+ namesNoColumn: 'Sem coluna',
+ namesUntitledItem: 'Item sem título',
+ noDueDate: 'Sem data de vencimento',
+ dueToday: 'Vence hoje',
+ dueInDays: 'Vence em {count} dia(s)',
+ overdueDays: 'Vencido há {count} dia(s)',
+ invalidJsonAlert: 'JSON inválido: objeto não contém "columns".',
+ saveFailedAlert: 'Falha ao salvar. Veja o console para detalhes.',
+ loadFailedAlert: 'Falha ao carregar JSON. Verifique o arquivo.',
+ deleteColumnConfirm: 'Excluir a coluna "{title}"?\nTodos os cards dentro dela serão removidos.',
+ deleteBoardConfirm: 'Excluir o quadro "{title}"?\nTodas as colunas e cards deste quadro serão removidos.',
+ deleteCardConfirm: 'Excluir este card?',
+ priorityEmptyItemsFiltered: 'Nenhum item de checklist com {count} dia(s) ou menos para vencer.',
+ priorityEmptyItemsNoDue: 'Nenhum item de checklist com data de vencimento.',
+ priorityEmptyCardsFiltered: 'Nenhum card com {count} dia(s) ou menos para vencer.',
+ priorityEmptyCardsNoDue: 'Nenhum card com data de vencimento.',
+ progressItemsTitle: '{checked}/{total} itens',
+ colorYellow: 'Amarelo',
+ colorRed: 'Vermelho',
+ colorBlue: 'Azul',
+ colorPurple: 'Roxo',
+ colorGray: 'Cinza',
+ colorWhite: 'Branco',
+ colorBlack: 'Preto'
+};
+LANGUAGE_LIBRARY['zh-CN'] = {
+ menuOpen: '打开菜单',
+ windowMaximize: '最大化',
+ windowClose: '关闭',
+ hoverAddItem: '添加项目',
+ save: '保存',
+ cancel: '取消',
+ clear: '清除',
+ remove: '移除',
+ copy: '复制',
+ move: '移动',
+ close: '关闭',
+ loadingTitle: '正在加载看板',
+ loadingText: '正在为当前看板准备列和卡片。',
+ menuLoadJson: '加载 JSON',
+ menuSaveJson: '保存 JSON',
+ menuAddColumn: '+ 列',
+ menuSettings: '设置',
+ menuPriorityReport: '优先级报告',
+ menuLanguage: '语言',
+ menuLicense: '许可证',
+ columnTitlePlaceholder: '列标题',
+ columnDragHandle: '拖动列',
+ columnAddCard: '+ 卡片',
+ columnSelectAll: '选择',
+ columnSelectAllTitle: '选择所有卡片',
+ columnConcludeAll: '完成',
+ columnConcludeAllTitle: '将所有卡片标记为已完成',
+ columnSortDate: '按日期排序',
+ columnSortDateTitle: '按日期排序（切换升序/降序）',
+ columnGroupCompleted: '已完成分组',
+ columnGroupCompletedTitle: '未完成在前，已完成在后',
+ columnDelete: '删除',
+ columnDeleteTitle: '删除此列',
+ columnFilterPlaceholder: '筛选卡片（标题或描述）',
+ columnFilterAria: '按标题或描述筛选卡片',
+ columnFilterClearTitle: '清除筛选',
+ columnResults: '结果',
+ cardTitlePlaceholder: '卡片标题',
+ cardDone: '已完成',
+ cardOpenModal: '在弹窗中打开',
+ cardDelete: '删除卡片',
+ cardChecklistProgress: '清单进度',
+ cardDueDate: '截止日期：',
+ cardDueDateAria: '选择截止日期',
+ cardDescription: '描述：',
+ cardDescriptionRenderedAria: '带链接的渲染描述',
+ cardDescriptionPlaceholder: '输入描述（支持链接）',
+ cardChecklist: '清单',
+ cardAddItem: '+ 项目',
+ cardFilterChecklistPlaceholder: '筛选清单项目（标题或详情）',
+ cardFilterChecklistAria: '按标题或详情筛选清单项目',
+ itemDragHandle: '拖动项目',
+ itemMark: '标记项目',
+ itemLabelAria: '标签（点击编辑）',
+ itemAddDetails: '添加项目详情',
+ itemEditDetails: '编辑项目详情',
+ itemEditorPlaceholder: '项目文本（预览中 URL 可点击）',
+ settingsTitle: '设置',
+ settingsSectionTitle: '卡片时长颜色规则',
+ settingsSectionHelp: '定义包含<strong>天数</strong>和<strong>颜色</strong>的行。例如：7 天 → 黄色。',
+ settingsAddRule: '+ 添加规则',
+ settingsRuleDays: '天数',
+ settingsRuleColor: '颜色',
+ settingsRuleDaysPlaceholder: '例如：7',
+ settingsRuleRemove: '移除规则',
+ priorityTitle: '优先级报告',
+ priorityFilterLabel: '距离到期天数（N 天及以内的卡片）',
+ priorityFilterPlaceholder: '例如：7',
+ priorityIncreaseDays: '增加天数',
+ priorityDecreaseDays: '减少天数',
+ priorityClearDays: '清除天数筛选',
+ priorityItemsSection: '优先级项目：',
+ priorityCardsSection: '优先级卡片：',
+ languageTitle: '选择应用语言',
+ languageSubtitle: '看板内容保持不变，只翻译应用标签。',
+ checklistItemDueDate: '截止日期：',
+ checklistItemDueDateAria: '选择清单项目截止日期',
+ checklistItemDetails: '详情：',
+ checklistItemDetailsRenderedAria: '带链接的渲染详情',
+ checklistItemDetailsPlaceholder: '输入详情（支持链接）',
+ checklistTransferTitle: '项目转移',
+ namesUntitledBoard: '未命名看板',
+ namesNewBoard: '新看板',
+ namesNewColumn: '新列',
+ namesNoTitle: '无标题',
+ namesNoColumn: '无列',
+ namesUntitledItem: '未命名项目',
+ noDueDate: '无截止日期',
+ dueToday: '今天到期',
+ dueInDays: '{count} 天后到期',
+ overdueDays: '已逾期 {count} 天',
+ invalidJsonAlert: '无效的 JSON：对象不包含“columns”。',
+ saveFailedAlert: '保存失败。请查看控制台了解详情。',
+ loadFailedAlert: '加载 JSON 失败。请检查文件。',
+ deleteColumnConfirm: '删除列“{title}”？\n其中的所有卡片都会被移除。',
+ deleteBoardConfirm: '删除看板“{title}”？\n该看板中的所有列和卡片都会被移除。',
+ deleteCardConfirm: '删除这张卡片？',
+ priorityEmptyItemsFiltered: '没有 {count} 天内到期的清单项目。',
+ priorityEmptyItemsNoDue: '没有带截止日期的清单项目。',
+ priorityEmptyCardsFiltered: '没有 {count} 天内到期的卡片。',
+ priorityEmptyCardsNoDue: '没有带截止日期的卡片。',
+ progressItemsTitle: '{checked}/{total} 项',
+ colorYellow: '黄色',
+ colorRed: '红色',
+ colorBlue: '蓝色',
+ colorPurple: '紫色',
+ colorGray: '灰色',
+ colorWhite: '白色',
+ colorBlack: '黑色'
+};
+LANGUAGE_LIBRARY.es = {
+ menuOpen: 'Abrir menú',
+ windowMaximize: 'Maximizar',
+ windowClose: 'Cerrar',
+ hoverAddItem: 'Agregar elemento',
+ save: 'Guardar',
+ cancel: 'Cancelar',
+ clear: 'Limpiar',
+ remove: 'Eliminar',
+ copy: 'Copiar',
+ move: 'Mover',
+ close: 'Cerrar',
+ loadingTitle: 'Cargando tableros',
+ loadingText: 'Preparando columnas y tarjetas del tablero activo.',
+ menuLoadJson: 'Cargar JSON',
+ menuSaveJson: 'Guardar JSON',
+ menuAddColumn: '+ Columna',
+ menuSettings: 'Configuración',
+ menuPriorityReport: 'Informe de prioridades',
+ menuLanguage: 'Idioma',
+ menuLicense: 'Licencia',
+ columnTitlePlaceholder: 'Título de la columna',
+ columnDragHandle: 'Arrastrar columna',
+ columnAddCard: '+ Tarjeta',
+ columnSelectAll: 'Seleccionar',
+ columnSelectAllTitle: 'Seleccionar todas las tarjetas',
+ columnConcludeAll: 'Completar',
+ columnConcludeAllTitle: 'Marcar todas las tarjetas como completadas',
+ columnSortDate: 'Ordenar por fecha',
+ columnSortDateTitle: 'Ordenar por fecha (alternar ascendente/descendente)',
+ columnGroupCompleted: 'Agrupar completadas',
+ columnGroupCompletedTitle: 'Primero las no completadas, al final las completadas',
+ columnDelete: 'Eliminar',
+ columnDeleteTitle: 'Eliminar esta columna',
+ columnFilterPlaceholder: 'Filtrar tarjetas (título o descripción)',
+ columnFilterAria: 'Filtrar tarjetas por título o descripción',
+ columnFilterClearTitle: 'Limpiar filtro',
+ columnResults: 'Resultados',
+ cardTitlePlaceholder: 'Título de la tarjeta',
+ cardDone: 'Hecho',
+ cardOpenModal: 'Abrir en modal',
+ cardDelete: 'Eliminar tarjeta',
+ cardChecklistProgress: 'Progreso de la lista',
+ cardDueDate: 'Fecha de vencimiento:',
+ cardDueDateAria: 'Seleccionar fecha de vencimiento',
+ cardDescription: 'Descripción:',
+ cardDescriptionRenderedAria: 'Descripción renderizada con enlaces',
+ cardDescriptionPlaceholder: 'Escribe la descripción (admite enlaces)',
+ cardChecklist: 'Checklist',
+ cardAddItem: '+ Elemento',
+ cardFilterChecklistPlaceholder: 'Filtrar elementos del checklist (título o detalles)',
+ cardFilterChecklistAria: 'Filtrar elementos del checklist por título o detalles',
+ itemDragHandle: 'Arrastrar elemento',
+ itemMark: 'Marcar elemento',
+ itemLabelAria: 'Etiqueta (haz clic para editar)',
+ itemAddDetails: 'Agregar detalles del elemento',
+ itemEditDetails: 'Editar detalles del elemento',
+ itemEditorPlaceholder: 'Texto del elemento (las URL serán clicables en la vista previa)',
+ settingsTitle: 'Configuración',
+ settingsSectionTitle: 'Reglas de color por antigüedad de la tarjeta',
+ settingsSectionHelp: 'Define filas con <strong>días</strong> y un <strong>color</strong>. Ej.: 7 días → amarillo.',
+ settingsAddRule: '+ Agregar fila',
+ settingsRuleDays: 'Días',
+ settingsRuleColor: 'Color',
+ settingsRuleDaysPlaceholder: 'Ej.: 7',
+ settingsRuleRemove: 'Eliminar fila',
+ priorityTitle: 'Informe de prioridades',
+ priorityFilterLabel: 'Días para vencer (tarjetas con N días o menos)',
+ priorityFilterPlaceholder: 'Ej.: 7',
+ priorityIncreaseDays: 'Aumentar días',
+ priorityDecreaseDays: 'Disminuir días',
+ priorityClearDays: 'Limpiar filtro de días',
+ priorityItemsSection: 'Elementos por prioridad:',
+ priorityCardsSection: 'Tarjetas por prioridad:',
+ languageTitle: 'Seleccionar idioma de la aplicación',
+ languageSubtitle: 'El contenido del tablero no cambia. Solo se traducen las etiquetas de la aplicación.',
+ checklistItemDueDate: 'Fecha de vencimiento:',
+ checklistItemDueDateAria: 'Seleccionar fecha de vencimiento del elemento del checklist',
+ checklistItemDetails: 'Detalles:',
+ checklistItemDetailsRenderedAria: 'Detalles renderizados con enlaces',
+ checklistItemDetailsPlaceholder: 'Escribe los detalles (admite enlaces)',
+ checklistTransferTitle: 'Transferencia de elemento',
+ namesUntitledBoard: 'Tablero sin título',
+ namesNewBoard: 'Nuevo tablero',
+ namesNewColumn: 'Nueva columna',
+ namesNoTitle: 'Sin título',
+ namesNoColumn: 'Sin columna',
+ namesUntitledItem: 'Elemento sin título',
+ noDueDate: 'Sin fecha de vencimiento',
+ dueToday: 'Vence hoy',
+ dueInDays: 'Vence en {count} día(s)',
+ overdueDays: 'Vencido hace {count} día(s)',
+ invalidJsonAlert: 'JSON no válido: el objeto no contiene "columns".',
+ saveFailedAlert: 'Error al guardar. Revisa la consola para ver los detalles.',
+ loadFailedAlert: 'Error al cargar el JSON. Revisa el archivo.',
+ deleteColumnConfirm: '¿Eliminar la columna "{title}"?\nSe eliminarán todas las tarjetas dentro de ella.',
+ deleteBoardConfirm: '¿Eliminar el tablero "{title}"?\nSe eliminarán todas las columnas y tarjetas de este tablero.',
+ deleteCardConfirm: '¿Eliminar esta tarjeta?',
+ priorityEmptyItemsFiltered: 'No hay elementos del checklist con {count} día(s) o menos para vencer.',
+ priorityEmptyItemsNoDue: 'No hay elementos del checklist con fecha de vencimiento.',
+ priorityEmptyCardsFiltered: 'No hay tarjetas con {count} día(s) o menos para vencer.',
+ priorityEmptyCardsNoDue: 'No hay tarjetas con fecha de vencimiento.',
+ progressItemsTitle: '{checked}/{total} elemento(s)',
+ colorYellow: 'Amarillo',
+ colorRed: 'Rojo',
+ colorBlue: 'Azul',
+ colorPurple: 'Morado',
+ colorGray: 'Gris',
+ colorWhite: 'Blanco',
+ colorBlack: 'Negro'
+};
+LANGUAGE_LIBRARY.ar = {
+ menuOpen: 'فتح القائمة',
+ windowMaximize: 'تكبير',
+ windowClose: 'إغلاق',
+ hoverAddItem: 'إضافة عنصر',
+ save: 'حفظ',
+ cancel: 'إلغاء',
+ clear: 'مسح',
+ remove: 'إزالة',
+ copy: 'نسخ',
+ move: 'نقل',
+ close: 'إغلاق',
+ loadingTitle: 'جارٍ تحميل اللوحات',
+ loadingText: 'يتم تجهيز الأعمدة والبطاقات للوحة النشطة.',
+ menuLoadJson: 'تحميل JSON',
+ menuSaveJson: 'حفظ JSON',
+ menuAddColumn: '+ عمود',
+ menuSettings: 'الإعدادات',
+ menuPriorityReport: 'تقرير الأولويات',
+ menuLanguage: 'اللغة',
+ menuLicense: 'الترخيص',
+ columnTitlePlaceholder: 'عنوان العمود',
+ columnDragHandle: 'سحب العمود',
+ columnAddCard: '+ بطاقة',
+ columnSelectAll: 'تحديد',
+ columnSelectAllTitle: 'تحديد كل البطاقات',
+ columnConcludeAll: 'إنهاء',
+ columnConcludeAllTitle: 'وضع علامة مكتمل على كل البطاقات',
+ columnSortDate: 'ترتيب حسب التاريخ',
+ columnSortDateTitle: 'ترتيب حسب التاريخ (تبديل تصاعدي/تنازلي)',
+ columnGroupCompleted: 'تجميع المكتملة',
+ columnGroupCompletedTitle: 'غير المكتملة أولاً والمكتملة في النهاية',
+ columnDelete: 'حذف',
+ columnDeleteTitle: 'حذف هذا العمود',
+ columnFilterPlaceholder: 'تصفية البطاقات (العنوان أو الوصف)',
+ columnFilterAria: 'تصفية البطاقات حسب العنوان أو الوصف',
+ columnFilterClearTitle: 'مسح التصفية',
+ columnResults: 'النتائج',
+ cardTitlePlaceholder: 'عنوان البطاقة',
+ cardDone: 'تم',
+ cardOpenModal: 'فتح في نافذة',
+ cardDelete: 'حذف البطاقة',
+ cardChecklistProgress: 'تقدم قائمة التحقق',
+ cardDueDate: 'تاريخ الاستحقاق:',
+ cardDueDateAria: 'اختيار تاريخ الاستحقاق',
+ cardDescription: 'الوصف:',
+ cardDescriptionRenderedAria: 'وصف معروض مع الروابط',
+ cardDescriptionPlaceholder: 'اكتب الوصف (الروابط مدعومة)',
+ cardChecklist: 'قائمة التحقق',
+ cardAddItem: '+ عنصر',
+ cardFilterChecklistPlaceholder: 'تصفية عناصر قائمة التحقق (العنوان أو التفاصيل)',
+ cardFilterChecklistAria: 'تصفية عناصر قائمة التحقق حسب العنوان أو التفاصيل',
+ itemDragHandle: 'سحب العنصر',
+ itemMark: 'تحديد العنصر',
+ itemLabelAria: 'التسمية (انقر للتحرير)',
+ itemAddDetails: 'إضافة تفاصيل العنصر',
+ itemEditDetails: 'تحرير تفاصيل العنصر',
+ itemEditorPlaceholder: 'نص العنصر (ستصبح الروابط قابلة للنقر في المعاينة)',
+ settingsTitle: 'الإعدادات',
+ settingsSectionTitle: 'قواعد ألوان عمر البطاقة',
+ settingsSectionHelp: 'حدّد صفوفًا تحتوي على <strong>الأيام</strong> و<strong>اللون</strong>. مثال: 7 أيام ← أصفر.',
+ settingsAddRule: '+ إضافة صف',
+ settingsRuleDays: 'الأيام',
+ settingsRuleColor: 'اللون',
+ settingsRuleDaysPlaceholder: 'مثال: 7',
+ settingsRuleRemove: 'إزالة الصف',
+ priorityTitle: 'تقرير الأولويات',
+ priorityFilterLabel: 'الأيام حتى الاستحقاق (البطاقات التي تبقى لها N يومًا أو أقل)',
+ priorityFilterPlaceholder: 'مثال: 7',
+ priorityIncreaseDays: 'زيادة الأيام',
+ priorityDecreaseDays: 'تقليل الأيام',
+ priorityClearDays: 'مسح فلتر الأيام',
+ priorityItemsSection: 'العناصر حسب الأولوية:',
+ priorityCardsSection: 'البطاقات حسب الأولوية:',
+ languageTitle: 'اختر لغة التطبيق',
+ languageSubtitle: 'سيبقى محتوى اللوحة كما هو. ستتم ترجمة تسميات التطبيق فقط.',
+ checklistItemDueDate: 'تاريخ الاستحقاق:',
+ checklistItemDueDateAria: 'اختيار تاريخ استحقاق عنصر قائمة التحقق',
+ checklistItemDetails: 'التفاصيل:',
+ checklistItemDetailsRenderedAria: 'تفاصيل معروضة مع الروابط',
+ checklistItemDetailsPlaceholder: 'اكتب التفاصيل (الروابط مدعومة)',
+ checklistTransferTitle: 'نقل العنصر',
+ namesUntitledBoard: 'لوحة بدون عنوان',
+ namesNewBoard: 'لوحة جديدة',
+ namesNewColumn: 'عمود جديد',
+ namesNoTitle: 'بدون عنوان',
+ namesNoColumn: 'بدون عمود',
+ namesUntitledItem: 'عنصر بدون عنوان',
+ noDueDate: 'لا يوجد تاريخ استحقاق',
+ dueToday: 'يستحق اليوم',
+ dueInDays: 'يستحق بعد {count} يوم',
+ overdueDays: 'متأخر منذ {count} يوم',
+ invalidJsonAlert: 'ملف JSON غير صالح: الكائن لا يحتوي على "columns".',
+ saveFailedAlert: 'فشل الحفظ. راجع وحدة التحكم للحصول على التفاصيل.',
+ loadFailedAlert: 'فشل تحميل JSON. تحقّق من الملف.',
+ deleteColumnConfirm: 'حذف العمود "{title}"؟\nستتم إزالة كل البطاقات بداخله.',
+ deleteBoardConfirm: 'حذف اللوحة "{title}"؟\nستتم إزالة كل الأعمدة والبطاقات في هذه اللوحة.',
+ deleteCardConfirm: 'حذف هذه البطاقة؟',
+ priorityEmptyItemsFiltered: 'لا توجد عناصر قائمة تحقق تستحق خلال {count} يوم أو أقل.',
+ priorityEmptyItemsNoDue: 'لا توجد عناصر قائمة تحقق لها تاريخ استحقاق.',
+ priorityEmptyCardsFiltered: 'لا توجد بطاقات تستحق خلال {count} يوم أو أقل.',
+ priorityEmptyCardsNoDue: 'لا توجد بطاقات لها تاريخ استحقاق.',
+ progressItemsTitle: '{checked}/{total} عنصر',
+ colorYellow: 'أصفر',
+ colorRed: 'أحمر',
+ colorBlue: 'أزرق',
+ colorPurple: 'بنفسجي',
+ colorGray: 'رمادي',
+ colorWhite: 'أبيض',
+ colorBlack: 'أسود'
+};
+LANGUAGE_LIBRARY.hi = {
+ menuOpen: 'मेनू खोलें',
+ windowMaximize: 'अधिकतम करें',
+ windowClose: 'बंद करें',
+ hoverAddItem: 'आइटम जोड़ें',
+ save: 'सहेजें',
+ cancel: 'रद्द करें',
+ clear: 'साफ़ करें',
+ remove: 'हटाएं',
+ copy: 'कॉपी करें',
+ move: 'स्थानांतरित करें',
+ close: 'बंद करें',
+ loadingTitle: 'बोर्ड लोड हो रहे हैं',
+ loadingText: 'सक्रिय बोर्ड के लिए कॉलम और कार्ड तैयार किए जा रहे हैं।',
+ menuLoadJson: 'JSON लोड करें',
+ menuSaveJson: 'JSON सहेजें',
+ menuAddColumn: '+ कॉलम',
+ menuSettings: 'सेटिंग्स',
+ menuPriorityReport: 'प्राथमिकता रिपोर्ट',
+ menuLanguage: 'भाषा',
+ menuLicense: 'लाइसेंस',
+ columnTitlePlaceholder: 'कॉलम शीर्षक',
+ columnDragHandle: 'कॉलम खींचें',
+ columnAddCard: '+ कार्ड',
+ columnSelectAll: 'चुनें',
+ columnSelectAllTitle: 'सभी कार्ड चुनें',
+ columnConcludeAll: 'पूर्ण करें',
+ columnConcludeAllTitle: 'सभी कार्ड को पूर्ण चिह्नित करें',
+ columnSortDate: 'तारीख के अनुसार क्रमबद्ध करें',
+ columnSortDateTitle: 'तारीख के अनुसार क्रमबद्ध करें (आरोही/अवरोही बदलें)',
+ columnGroupCompleted: 'पूर्ण हुए समूह',
+ columnGroupCompletedTitle: 'अपूर्ण पहले, पूर्ण अंत में',
+ columnDelete: 'हटाएं',
+ columnDeleteTitle: 'यह कॉलम हटाएं',
+ columnFilterPlaceholder: 'कार्ड फ़िल्टर करें (शीर्षक या विवरण)',
+ columnFilterAria: 'शीर्षक या विवरण से कार्ड फ़िल्टर करें',
+ columnFilterClearTitle: 'फ़िल्टर साफ़ करें',
+ columnResults: 'परिणाम',
+ cardTitlePlaceholder: 'कार्ड शीर्षक',
+ cardDone: 'पूरा',
+ cardOpenModal: 'मॉडल में खोलें',
+ cardDelete: 'कार्ड हटाएं',
+ cardChecklistProgress: 'चेकलिस्ट प्रगति',
+ cardDueDate: 'समय-सीमा:',
+ cardDueDateAria: 'समय-सीमा चुनें',
+ cardDescription: 'विवरण:',
+ cardDescriptionRenderedAria: 'लिंक सहित रेंडर किया गया विवरण',
+ cardDescriptionPlaceholder: 'विवरण लिखें (लिंक समर्थित हैं)',
+ cardChecklist: 'चेकलिस्ट',
+ cardAddItem: '+ आइटम',
+ cardFilterChecklistPlaceholder: 'चेकलिस्ट आइटम फ़िल्टर करें (शीर्षक या विवरण)',
+ cardFilterChecklistAria: 'शीर्षक या विवरण से चेकलिस्ट आइटम फ़िल्टर करें',
+ itemDragHandle: 'आइटम खींचें',
+ itemMark: 'आइटम चिह्नित करें',
+ itemLabelAria: 'लेबल (संपादित करने के लिए क्लिक करें)',
+ itemAddDetails: 'आइटम विवरण जोड़ें',
+ itemEditDetails: 'आइटम विवरण संपादित करें',
+ itemEditorPlaceholder: 'आइटम टेक्स्ट (पूर्वावलोकन में URL क्लिक करने योग्य होंगे)',
+ settingsTitle: 'सेटिंग्स',
+ settingsSectionTitle: 'कार्ड आयु रंग नियम',
+ settingsSectionHelp: '<strong>दिनों</strong> और <strong>रंग</strong> वाली पंक्तियाँ तय करें। उदाहरण: 7 दिन → पीला।',
+ settingsAddRule: '+ पंक्ति जोड़ें',
+ settingsRuleDays: 'दिन',
+ settingsRuleColor: 'रंग',
+ settingsRuleDaysPlaceholder: 'उदा.: 7',
+ settingsRuleRemove: 'पंक्ति हटाएं',
+ priorityTitle: 'प्राथमिकता रिपोर्ट',
+ priorityFilterLabel: 'समय-सीमा तक दिन (N दिन या उससे कम वाले कार्ड)',
+ priorityFilterPlaceholder: 'उदा.: 7',
+ priorityIncreaseDays: 'दिन बढ़ाएं',
+ priorityDecreaseDays: 'दिन घटाएं',
+ priorityClearDays: 'दिन फ़िल्टर साफ़ करें',
+ priorityItemsSection: 'प्राथमिकता के अनुसार आइटम:',
+ priorityCardsSection: 'प्राथमिकता के अनुसार कार्ड:',
+ languageTitle: 'ऐप की भाषा चुनें',
+ languageSubtitle: 'बोर्ड की सामग्री नहीं बदलेगी। केवल ऐप लेबल अनुवादित होंगे।',
+ checklistItemDueDate: 'समय-सीमा:',
+ checklistItemDueDateAria: 'चेकलिस्ट आइटम की समय-सीमा चुनें',
+ checklistItemDetails: 'विवरण:',
+ checklistItemDetailsRenderedAria: 'लिंक सहित रेंडर किया गया विवरण',
+ checklistItemDetailsPlaceholder: 'विवरण लिखें (लिंक समर्थित हैं)',
+ checklistTransferTitle: 'आइटम स्थानांतरण',
+ namesUntitledBoard: 'बिना शीर्षक का बोर्ड',
+ namesNewBoard: 'नया बोर्ड',
+ namesNewColumn: 'नया कॉलम',
+ namesNoTitle: 'बिना शीर्षक',
+ namesNoColumn: 'कोई कॉलम नहीं',
+ namesUntitledItem: 'बिना शीर्षक का आइटम',
+ noDueDate: 'कोई समय-सीमा नहीं',
+ dueToday: 'आज देय',
+ dueInDays: '{count} दिन में देय',
+ overdueDays: '{count} दिन से लंबित',
+ invalidJsonAlert: 'अमान्य JSON: ऑब्जेक्ट में "columns" नहीं है।',
+ saveFailedAlert: 'सहेजना विफल रहा। विवरण के लिए कंसोल देखें।',
+ loadFailedAlert: 'JSON लोड नहीं हो सका। फ़ाइल जांचें।',
+ deleteColumnConfirm: 'कॉलम "{title}" हटाएं?\nउसके भीतर के सभी कार्ड हटा दिए जाएंगे।',
+ deleteBoardConfirm: 'बोर्ड "{title}" हटाएं?\nइस बोर्ड के सभी कॉलम और कार्ड हटा दिए जाएंगे।',
+ deleteCardConfirm: 'क्या यह कार्ड हटाना है?',
+ priorityEmptyItemsFiltered: '{count} दिन या उससे कम में देय कोई चेकलिस्ट आइटम नहीं है।',
+ priorityEmptyItemsNoDue: 'समय-सीमा वाला कोई चेकलिस्ट आइटम नहीं है।',
+ priorityEmptyCardsFiltered: '{count} दिन या उससे कम में देय कोई कार्ड नहीं है।',
+ priorityEmptyCardsNoDue: 'समय-सीमा वाला कोई कार्ड नहीं है।',
+ progressItemsTitle: '{checked}/{total} आइटम',
+ colorYellow: 'पीला',
+ colorRed: 'लाल',
+ colorBlue: 'नीला',
+ colorPurple: 'बैंगनी',
+ colorGray: 'धूसर',
+ colorWhite: 'सफेद',
+ colorBlack: 'काला'
+};
+LANGUAGE_LIBRARY.id = {
+ menuOpen: 'Buka menu',
+ windowMaximize: 'Maksimalkan',
+ windowClose: 'Tutup',
+ hoverAddItem: 'Tambah item',
+ save: 'Simpan',
+ cancel: 'Batal',
+ clear: 'Bersihkan',
+ remove: 'Hapus',
+ copy: 'Salin',
+ move: 'Pindahkan',
+ close: 'Tutup',
+ loadingTitle: 'Memuat board',
+ loadingText: 'Menyiapkan kolom dan kartu untuk board aktif.',
+ menuLoadJson: 'Muat JSON',
+ menuSaveJson: 'Simpan JSON',
+ menuAddColumn: '+ Kolom',
+ menuSettings: 'Pengaturan',
+ menuPriorityReport: 'Laporan prioritas',
+ menuLanguage: 'Bahasa',
+ menuLicense: 'Lisensi',
+ columnTitlePlaceholder: 'Judul kolom',
+ columnDragHandle: 'Seret kolom',
+ columnAddCard: '+ Kartu',
+ columnSelectAll: 'Pilih',
+ columnSelectAllTitle: 'Pilih semua kartu',
+ columnConcludeAll: 'Selesai',
+ columnConcludeAllTitle: 'Tandai semua kartu sebagai selesai',
+ columnSortDate: 'Urutkan berdasarkan tanggal',
+ columnSortDateTitle: 'Urutkan berdasarkan tanggal (ubah naik/turun)',
+ columnGroupCompleted: 'Kelompokkan selesai',
+ columnGroupCompletedTitle: 'Belum selesai di depan, selesai di belakang',
+ columnDelete: 'Hapus',
+ columnDeleteTitle: 'Hapus kolom ini',
+ columnFilterPlaceholder: 'Filter kartu (judul atau deskripsi)',
+ columnFilterAria: 'Filter kartu berdasarkan judul atau deskripsi',
+ columnFilterClearTitle: 'Bersihkan filter',
+ columnResults: 'Hasil',
+ cardTitlePlaceholder: 'Judul kartu',
+ cardDone: 'Selesai',
+ cardOpenModal: 'Buka di modal',
+ cardDelete: 'Hapus kartu',
+ cardChecklistProgress: 'Progres checklist',
+ cardDueDate: 'Tanggal jatuh tempo:',
+ cardDueDateAria: 'Pilih tanggal jatuh tempo',
+ cardDescription: 'Deskripsi:',
+ cardDescriptionRenderedAria: 'Deskripsi dirender dengan tautan',
+ cardDescriptionPlaceholder: 'Tulis deskripsi (mendukung tautan)',
+ cardChecklist: 'Checklist',
+ cardAddItem: '+ Item',
+ cardFilterChecklistPlaceholder: 'Filter item checklist (judul atau detail)',
+ cardFilterChecklistAria: 'Filter item checklist berdasarkan judul atau detail',
+ itemDragHandle: 'Seret item',
+ itemMark: 'Tandai item',
+ itemLabelAria: 'Label (klik untuk mengedit)',
+ itemAddDetails: 'Tambah detail item',
+ itemEditDetails: 'Edit detail item',
+ itemEditorPlaceholder: 'Teks item (URL akan bisa diklik pada pratinjau)',
+ settingsTitle: 'Pengaturan',
+ settingsSectionTitle: 'Aturan warna berdasarkan usia kartu',
+ settingsSectionHelp: 'Tentukan baris dengan <strong>hari</strong> dan <strong>warna</strong>. Contoh: 7 hari → kuning.',
+ settingsAddRule: '+ Tambah baris',
+ settingsRuleDays: 'Hari',
+ settingsRuleColor: 'Warna',
+ settingsRuleDaysPlaceholder: 'Mis.: 7',
+ settingsRuleRemove: 'Hapus baris',
+ priorityTitle: 'Laporan prioritas',
+ priorityFilterLabel: 'Hari menuju jatuh tempo (kartu dengan N hari atau kurang)',
+ priorityFilterPlaceholder: 'Mis.: 7',
+ priorityIncreaseDays: 'Tambah hari',
+ priorityDecreaseDays: 'Kurangi hari',
+ priorityClearDays: 'Bersihkan filter hari',
+ priorityItemsSection: 'Item berdasarkan prioritas:',
+ priorityCardsSection: 'Kartu berdasarkan prioritas:',
+ languageTitle: 'Pilih bahasa aplikasi',
+ languageSubtitle: 'Konten board akan tetap sama. Hanya label aplikasi yang diterjemahkan.',
+ checklistItemDueDate: 'Tanggal jatuh tempo:',
+ checklistItemDueDateAria: 'Pilih tanggal jatuh tempo item checklist',
+ checklistItemDetails: 'Detail:',
+ checklistItemDetailsRenderedAria: 'Detail dirender dengan tautan',
+ checklistItemDetailsPlaceholder: 'Tulis detail (mendukung tautan)',
+ checklistTransferTitle: 'Pemindahan item',
+ namesUntitledBoard: 'Board tanpa judul',
+ namesNewBoard: 'Board baru',
+ namesNewColumn: 'Kolom baru',
+ namesNoTitle: 'Tanpa judul',
+ namesNoColumn: 'Tanpa kolom',
+ namesUntitledItem: 'Item tanpa judul',
+ noDueDate: 'Tidak ada tanggal jatuh tempo',
+ dueToday: 'Jatuh tempo hari ini',
+ dueInDays: 'Jatuh tempo dalam {count} hari',
+ overdueDays: 'Terlambat {count} hari',
+ invalidJsonAlert: 'JSON tidak valid: objek tidak berisi "columns".',
+ saveFailedAlert: 'Gagal menyimpan. Lihat konsol untuk detail.',
+ loadFailedAlert: 'Gagal memuat JSON. Periksa file.',
+ deleteColumnConfirm: 'Hapus kolom "{title}"?\nSemua kartu di dalamnya akan dihapus.',
+ deleteBoardConfirm: 'Hapus board "{title}"?\nSemua kolom dan kartu di board ini akan dihapus.',
+ deleteCardConfirm: 'Hapus kartu ini?',
+ priorityEmptyItemsFiltered: 'Tidak ada item checklist yang jatuh tempo dalam {count} hari atau kurang.',
+ priorityEmptyItemsNoDue: 'Tidak ada item checklist dengan tanggal jatuh tempo.',
+ priorityEmptyCardsFiltered: 'Tidak ada kartu yang jatuh tempo dalam {count} hari atau kurang.',
+ priorityEmptyCardsNoDue: 'Tidak ada kartu dengan tanggal jatuh tempo.',
+ progressItemsTitle: '{checked}/{total} item',
+ colorYellow: 'Kuning',
+ colorRed: 'Merah',
+ colorBlue: 'Biru',
+ colorPurple: 'Ungu',
+ colorGray: 'Abu-abu',
+ colorWhite: 'Putih',
+ colorBlack: 'Hitam'
+};
+LANGUAGE_LIBRARY.fr = {
+ menuOpen: 'Ouvrir le menu',
+ windowMaximize: 'Agrandir',
+ windowClose: 'Fermer',
+ hoverAddItem: 'Ajouter un élément',
+ save: 'Enregistrer',
+ cancel: 'Annuler',
+ clear: 'Effacer',
+ remove: 'Supprimer',
+ copy: 'Copier',
+ move: 'Déplacer',
+ close: 'Fermer',
+ loadingTitle: 'Chargement des tableaux',
+ loadingText: 'Préparation des colonnes et des cartes du tableau actif.',
+ menuLoadJson: 'Charger JSON',
+ menuSaveJson: 'Enregistrer JSON',
+ menuAddColumn: '+ Colonne',
+ menuSettings: 'Paramètres',
+ menuPriorityReport: 'Rapport de priorités',
+ menuLanguage: 'Langue',
+ menuLicense: 'Licence',
+ columnTitlePlaceholder: 'Titre de la colonne',
+ columnDragHandle: 'Déplacer la colonne',
+ columnAddCard: '+ Carte',
+ columnSelectAll: 'Sélectionner',
+ columnSelectAllTitle: 'Sélectionner toutes les cartes',
+ columnConcludeAll: 'Terminer',
+ columnConcludeAllTitle: 'Marquer toutes les cartes comme terminées',
+ columnSortDate: 'Trier par date',
+ columnSortDateTitle: 'Trier par date (basculer croissant/décroissant)',
+ columnGroupCompleted: 'Grouper les terminées',
+ columnGroupCompletedTitle: 'Non terminées d’abord, terminées à la fin',
+ columnDelete: 'Supprimer',
+ columnDeleteTitle: 'Supprimer cette colonne',
+ columnFilterPlaceholder: 'Filtrer les cartes (titre ou description)',
+ columnFilterAria: 'Filtrer les cartes par titre ou description',
+ columnFilterClearTitle: 'Effacer le filtre',
+ columnResults: 'Résultats',
+ cardTitlePlaceholder: 'Titre de la carte',
+ cardDone: 'Fait',
+ cardOpenModal: 'Ouvrir dans une fenêtre',
+ cardDelete: 'Supprimer la carte',
+ cardChecklistProgress: 'Progression de la checklist',
+ cardDueDate: 'Date d’échéance :',
+ cardDueDateAria: 'Choisir la date d’échéance',
+ cardDescription: 'Description :',
+ cardDescriptionRenderedAria: 'Description rendue avec liens',
+ cardDescriptionPlaceholder: 'Saisissez la description (liens pris en charge)',
+ cardChecklist: 'Checklist',
+ cardAddItem: '+ Élément',
+ cardFilterChecklistPlaceholder: 'Filtrer les éléments de la checklist (titre ou détails)',
+ cardFilterChecklistAria: 'Filtrer les éléments de la checklist par titre ou détails',
+ itemDragHandle: 'Déplacer l’élément',
+ itemMark: 'Marquer l’élément',
+ itemLabelAria: 'Libellé (cliquez pour modifier)',
+ itemAddDetails: 'Ajouter les détails de l’élément',
+ itemEditDetails: 'Modifier les détails de l’élément',
+ itemEditorPlaceholder: 'Texte de l’élément (les URL seront cliquables dans l’aperçu)',
+ settingsTitle: 'Paramètres',
+ settingsSectionTitle: 'Règles de couleur selon l’âge de la carte',
+ settingsSectionHelp: 'Définissez des lignes avec des <strong>jours</strong> et une <strong>couleur</strong>. Ex. : 7 jours → jaune.',
+ settingsAddRule: '+ Ajouter une ligne',
+ settingsRuleDays: 'Jours',
+ settingsRuleColor: 'Couleur',
+ settingsRuleDaysPlaceholder: 'Ex. : 7',
+ settingsRuleRemove: 'Supprimer la ligne',
+ priorityTitle: 'Rapport de priorités',
+ priorityFilterLabel: 'Jours avant l’échéance (cartes avec N jours ou moins)',
+ priorityFilterPlaceholder: 'Ex. : 7',
+ priorityIncreaseDays: 'Augmenter les jours',
+ priorityDecreaseDays: 'Réduire les jours',
+ priorityClearDays: 'Effacer le filtre de jours',
+ priorityItemsSection: 'Éléments par priorité :',
+ priorityCardsSection: 'Cartes par priorité :',
+ languageTitle: 'Choisir la langue de l’application',
+ languageSubtitle: 'Le contenu du tableau reste inchangé. Seuls les libellés de l’application sont traduits.',
+ checklistItemDueDate: 'Date d’échéance :',
+ checklistItemDueDateAria: 'Choisir la date d’échéance de l’élément de checklist',
+ checklistItemDetails: 'Détails :',
+ checklistItemDetailsRenderedAria: 'Détails rendus avec liens',
+ checklistItemDetailsPlaceholder: 'Saisissez les détails (liens pris en charge)',
+ checklistTransferTitle: 'Transfert d’élément',
+ namesUntitledBoard: 'Tableau sans titre',
+ namesNewBoard: 'Nouveau tableau',
+ namesNewColumn: 'Nouvelle colonne',
+ namesNoTitle: 'Sans titre',
+ namesNoColumn: 'Sans colonne',
+ namesUntitledItem: 'Élément sans titre',
+ noDueDate: 'Aucune date d’échéance',
+ dueToday: 'Échéance aujourd’hui',
+ dueInDays: 'Échéance dans {count} jour(s)',
+ overdueDays: 'En retard de {count} jour(s)',
+ invalidJsonAlert: 'JSON invalide : l’objet ne contient pas "columns".',
+ saveFailedAlert: 'Échec de l’enregistrement. Consultez la console pour plus de détails.',
+ loadFailedAlert: 'Échec du chargement du JSON. Vérifiez le fichier.',
+ deleteColumnConfirm: 'Supprimer la colonne "{title}" ?\nToutes les cartes qu’elle contient seront supprimées.',
+ deleteBoardConfirm: 'Supprimer le tableau "{title}" ?\nToutes les colonnes et cartes de ce tableau seront supprimées.',
+ deleteCardConfirm: 'Supprimer cette carte ?',
+ priorityEmptyItemsFiltered: 'Aucun élément de checklist avec une échéance de {count} jour(s) ou moins.',
+ priorityEmptyItemsNoDue: 'Aucun élément de checklist avec date d’échéance.',
+ priorityEmptyCardsFiltered: 'Aucune carte avec une échéance de {count} jour(s) ou moins.',
+ priorityEmptyCardsNoDue: 'Aucune carte avec date d’échéance.',
+ progressItemsTitle: '{checked}/{total} élément(s)',
+ colorYellow: 'Jaune',
+ colorRed: 'Rouge',
+ colorBlue: 'Bleu',
+ colorPurple: 'Violet',
+ colorGray: 'Gris',
+ colorWhite: 'Blanc',
+ colorBlack: 'Noir'
+};
+LANGUAGE_LIBRARY.de = {
+ menuOpen: 'Menü öffnen',
+ windowMaximize: 'Maximieren',
+ windowClose: 'Schließen',
+ hoverAddItem: 'Element hinzufügen',
+ save: 'Speichern',
+ cancel: 'Abbrechen',
+ clear: 'Leeren',
+ remove: 'Entfernen',
+ copy: 'Kopieren',
+ move: 'Verschieben',
+ close: 'Schließen',
+ loadingTitle: 'Boards werden geladen',
+ loadingText: 'Spalten und Karten für das aktive Board werden vorbereitet.',
+ menuLoadJson: 'JSON laden',
+ menuSaveJson: 'JSON speichern',
+ menuAddColumn: '+ Spalte',
+ menuSettings: 'Einstellungen',
+ menuPriorityReport: 'Prioritätenbericht',
+ menuLanguage: 'Sprache',
+ menuLicense: 'Lizenz',
+ columnTitlePlaceholder: 'Spaltentitel',
+ columnDragHandle: 'Spalte ziehen',
+ columnAddCard: '+ Karte',
+ columnSelectAll: 'Auswählen',
+ columnSelectAllTitle: 'Alle Karten auswählen',
+ columnConcludeAll: 'Abschließen',
+ columnConcludeAllTitle: 'Alle Karten als abgeschlossen markieren',
+ columnSortDate: 'Nach Datum sortieren',
+ columnSortDateTitle: 'Nach Datum sortieren (auf/absteigend umschalten)',
+ columnGroupCompleted: 'Abgeschlossene gruppieren',
+ columnGroupCompletedTitle: 'Nicht abgeschlossene zuerst, abgeschlossene am Ende',
+ columnDelete: 'Löschen',
+ columnDeleteTitle: 'Diese Spalte löschen',
+ columnFilterPlaceholder: 'Karten filtern (Titel oder Beschreibung)',
+ columnFilterAria: 'Karten nach Titel oder Beschreibung filtern',
+ columnFilterClearTitle: 'Filter leeren',
+ columnResults: 'Ergebnisse',
+ cardTitlePlaceholder: 'Kartentitel',
+ cardDone: 'Erledigt',
+ cardOpenModal: 'Im Modal öffnen',
+ cardDelete: 'Karte löschen',
+ cardChecklistProgress: 'Checklistenfortschritt',
+ cardDueDate: 'Fälligkeitsdatum:',
+ cardDueDateAria: 'Fälligkeitsdatum auswählen',
+ cardDescription: 'Beschreibung:',
+ cardDescriptionRenderedAria: 'Gerenderte Beschreibung mit Links',
+ cardDescriptionPlaceholder: 'Beschreibung eingeben (Links unterstützt)',
+ cardChecklist: 'Checkliste',
+ cardAddItem: '+ Element',
+ cardFilterChecklistPlaceholder: 'Checklisten-Elemente filtern (Titel oder Details)',
+ cardFilterChecklistAria: 'Checklisten-Elemente nach Titel oder Details filtern',
+ itemDragHandle: 'Element ziehen',
+ itemMark: 'Element markieren',
+ itemLabelAria: 'Bezeichnung (zum Bearbeiten klicken)',
+ itemAddDetails: 'Elementdetails hinzufügen',
+ itemEditDetails: 'Elementdetails bearbeiten',
+ itemEditorPlaceholder: 'Elementtext (URLs sind in der Vorschau anklickbar)',
+ settingsTitle: 'Einstellungen',
+ settingsSectionTitle: 'Farbregeln nach Kartenalter',
+ settingsSectionHelp: 'Definiere Zeilen mit <strong>Tagen</strong> und einer <strong>Farbe</strong>. Beispiel: 7 Tage → Gelb.',
+ settingsAddRule: '+ Zeile hinzufügen',
+ settingsRuleDays: 'Tage',
+ settingsRuleColor: 'Farbe',
+ settingsRuleDaysPlaceholder: 'Z. B.: 7',
+ settingsRuleRemove: 'Zeile entfernen',
+ priorityTitle: 'Prioritätenbericht',
+ priorityFilterLabel: 'Tage bis zur Fälligkeit (Karten mit N Tagen oder weniger)',
+ priorityFilterPlaceholder: 'Z. B.: 7',
+ priorityIncreaseDays: 'Tage erhöhen',
+ priorityDecreaseDays: 'Tage verringern',
+ priorityClearDays: 'Tagefilter leeren',
+ priorityItemsSection: 'Elemente nach Priorität:',
+ priorityCardsSection: 'Karten nach Priorität:',
+ languageTitle: 'App-Sprache auswählen',
+ languageSubtitle: 'Der Inhalt des Boards bleibt unverändert. Nur die App-Beschriftungen werden übersetzt.',
+ checklistItemDueDate: 'Fälligkeitsdatum:',
+ checklistItemDueDateAria: 'Fälligkeitsdatum des Checklisten-Elements auswählen',
+ checklistItemDetails: 'Details:',
+ checklistItemDetailsRenderedAria: 'Gerenderte Details mit Links',
+ checklistItemDetailsPlaceholder: 'Details eingeben (Links unterstützt)',
+ checklistTransferTitle: 'Elementübertragung',
+ namesUntitledBoard: 'Unbenanntes Board',
+ namesNewBoard: 'Neues Board',
+ namesNewColumn: 'Neue Spalte',
+ namesNoTitle: 'Ohne Titel',
+ namesNoColumn: 'Keine Spalte',
+ namesUntitledItem: 'Unbenanntes Element',
+ noDueDate: 'Kein Fälligkeitsdatum',
+ dueToday: 'Heute fällig',
+ dueInDays: 'Fällig in {count} Tag(en)',
+ overdueDays: 'Seit {count} Tag(en) überfällig',
+ invalidJsonAlert: 'Ungültiges JSON: Das Objekt enthält kein "columns".',
+ saveFailedAlert: 'Speichern fehlgeschlagen. Details in der Konsole.',
+ loadFailedAlert: 'JSON konnte nicht geladen werden. Bitte Datei prüfen.',
+ deleteColumnConfirm: 'Spalte "{title}" löschen?\nAlle Karten darin werden entfernt.',
+ deleteBoardConfirm: 'Board "{title}" löschen?\nAlle Spalten und Karten in diesem Board werden entfernt.',
+ deleteCardConfirm: 'Diese Karte löschen?',
+ priorityEmptyItemsFiltered: 'Keine Checklisten-Elemente mit {count} Tag(en) oder weniger bis zur Fälligkeit.',
+ priorityEmptyItemsNoDue: 'Keine Checklisten-Elemente mit Fälligkeitsdatum.',
+ priorityEmptyCardsFiltered: 'Keine Karten mit {count} Tag(en) oder weniger bis zur Fälligkeit.',
+ priorityEmptyCardsNoDue: 'Keine Karten mit Fälligkeitsdatum.',
+ progressItemsTitle: '{checked}/{total} Element(e)',
+ colorYellow: 'Gelb',
+ colorRed: 'Rot',
+ colorBlue: 'Blau',
+ colorPurple: 'Lila',
+ colorGray: 'Grau',
+ colorWhite: 'Weiß',
+ colorBlack: 'Schwarz'
+};
+currentLanguage = getCachedLanguage() || DEFAULT_LANGUAGE;
+applyCurrentLanguage();
 // Currently dragged checklist item (handle-driven)
 let currentDraggedChecklistItem = null;
 let checklistDragMeta = null;
@@ -1793,7 +3091,7 @@ function updateChecklistItemNoteButtonState(itemNode){
  const hasDue = !!dueColor;
  btn.classList.toggle('has-due', hasDue);
  btn.classList.toggle('has-content', !hasDue && filled);
- btn.title = filled ? 'Editar detalhes do item' : 'Adicionar detalhes do item';
+ btn.title = filled ? t('itemEditDetails') : t('itemAddDetails');
  btn.setAttribute('aria-label', btn.title);
 }
 function setChecklistItemContent(itemNode, content){
@@ -1876,25 +3174,24 @@ function syncCardDescriptionSizeState(cardNode){
  } 
  // ===== Timestamps ===== 
  const nowISO = () => new Date().toISOString(); 
- function formatDateForDisplay(iso){ 
+function formatDateForDisplay(iso){ 
  try { 
- return new Date(iso).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'medium' }); 
+ const d = new Date(iso);
+ if (isNaN(d.getTime())) return iso || '';
+ return d.toLocaleString(getCurrentLocale()); 
  } catch(e){ 
  return iso || ''; 
  } 
  } 
- // NOVO: dd/mm/aa (sem hora) 
- function formatShortDate(iso) { 
+function formatShortDate(iso) { 
  try { 
  const d = new Date(iso); 
- const dd = String(d.getDate()).padStart(2, '0'); 
- const mm = String(d.getMonth() + 1).padStart(2, '0'); 
- const yy = String(d.getFullYear()).slice(-2); 
- return `${dd}/${mm}/${yy}`; 
+ if (isNaN(d.getTime())) return '';
+ return d.toLocaleDateString(getCurrentLocale(), { day: '2-digit', month: '2-digit', year: '2-digit' }); 
  } catch { 
  return ""; 
  } 
- } 
+} 
  function renderCardTimestamps(card){ 
  const c = card.dataset.created || nowISO(); 
  const u = card.dataset.updated || c; 
@@ -1976,10 +3273,10 @@ function syncCardDescriptionSizeState(cardNode){
  } 
  // NOVO: descrição amigável (Opção B) 
  function describeRemainingDays(rem) { 
- if (rem > 0) return `${rem} dia${rem>1?'s':''} para o vencimento`; 
- if (rem === 0) return `Vence hoje`; 
+ if (rem > 0) return t('dueInDays', { count: rem });
+ if (rem === 0) return t('dueToday');
  const n = Math.abs(rem); 
- return `vencido há ${n} dia${n>1?'s':''}`; 
+ return t('overdueDays', { count: n });
  } 
  function applyDueColorToCard(card){ 
  if(!card) return; 
@@ -2024,6 +3321,7 @@ function normalizeBoardName(name, fallback){
 }
 function normalizeBoardData(data){
  if (!data || !Array.isArray(data.columns)) return data;
+ if (!data.meta || typeof data.meta !== 'object') data.meta = {};
  data.columns.forEach(function(col){
   if (!col || typeof col !== 'object') return;
   col.board = normalizeBoardName(col.board, UNTITLED_BOARD_NAME);
@@ -2126,12 +3424,13 @@ async function switchActiveBoard(nextBoardName, options){
  // ===== SERIALIZAÇÃO ===== 
 function serializeBoard(){ 
  const data = { 
- meta: { version: 12, exportedAt: new Date().toISOString() }, 
+ meta: { version: 13, exportedAt: new Date().toISOString() }, 
  columns: [] 
  }; 
  // regras de cor 
  data.meta.ageColorRules = Array.isArray(boardMeta.ageColorRules) ? boardMeta.ageColorRules : []; 
  data.meta.activeBoard = ensureActiveBoardName() || UNTITLED_BOARD_NAME;
+ data.meta.language = sanitizeLanguageCode(boardMeta.language) || sanitizeLanguageCode(currentLanguage) || DEFAULT_LANGUAGE;
  $$('.column', board).forEach(function(col){ 
  const colData = { 
  id: col.dataset.id, 
@@ -2170,9 +3469,11 @@ function serializeBoard(){
  } 
 async function loadBoardSequential(data){ 
  if(!data || !Array.isArray(data.columns)){ 
- alert('JSON inválido: objeto não contém "columns".'); 
- return; 
+ alert(t('invalidJsonAlert')); 
+  return; 
  } 
+ const languageResolution = resolveBoardLanguage(data);
+ setBoardLanguage(languageResolution.language, { persistCache: true, syncBoardMeta: false, scheduleAutosave: false });
  normalizeBoardData(data);
  setBoardLoadingState(true);
  isBoardHydrating = true;
@@ -2187,6 +3488,7 @@ async function loadBoardSequential(data){
  } catch (_) { 
  boardMeta.ageColorRules = []; 
  } 
+ boardMeta.language = languageResolution.language;
  activeBoardName = getPreferredActiveBoardName(data) || activeBoardName || UNTITLED_BOARD_NAME;
  board.innerHTML = ''; 
  for(let ci = 0; ci < data.columns.length; ci++){ 
@@ -2263,13 +3565,14 @@ async function loadBoardSequential(data){
  } finally {
  isBoardHydrating = false;
  setBoardLoadingState(false);
+ if (languageResolution.shouldPrompt) openLanguageModal({ required: true });
  }
 }
  
 function getDefaultBoardData(){
  const now = nowISO();
  return {
- meta: { version: 12, exportedAt: now, ageColorRules: Array.isArray(boardMeta.ageColorRules) ? boardMeta.ageColorRules : [], activeBoard: UNTITLED_BOARD_NAME },
+ meta: { version: 13, exportedAt: now, ageColorRules: Array.isArray(boardMeta.ageColorRules) ? boardMeta.ageColorRules : [], activeBoard: UNTITLED_BOARD_NAME },
  columns: [
  {
  id: uid('col'),
@@ -2446,8 +3749,8 @@ function createColumn(id, title, boardName){
  // Excluir coluna 
  $('.delete-column', node).addEventListener('click', function(e){ 
  e.stopPropagation(); 
- const title = (($('.column-title', node).value || '').trim()) || 'Sem título'; 
- if (confirm(`Excluir a coluna "${title}"?\nTodos os cards dentro dela serão removidos.`)) { 
+ const title = (($('.column-title', node).value || '').trim()) || getNoTitleLabel(); 
+ if (confirm(t('deleteColumnConfirm', { title: title }))) { 
  node.remove(); 
  notifyBoardsChanged();
  ensureActiveBoardName();
@@ -2515,7 +3818,7 @@ function makeCardCollapsible(cardNode){
  const shortDate = formatShortDate(latestISO); 
  const dueEl = card.querySelector('.card-due'); 
  const dueStr = dueEl ? dueEl.value : ''; 
- let right = 'Sem data de vencimento'; 
+ let right = t('noDueDate'); 
  if (dueStr) { 
  const dueDt = parseDateOnly(dueStr); 
  if (dueDt) { 
@@ -2523,7 +3826,7 @@ function makeCardCollapsible(cardNode){
  const rem = diffDays(today, dueDt); 
  right = describeRemainingDays(rem); 
  } else { 
- right = 'Sem data de vencimento'; 
+ right = t('noDueDate'); 
  } 
  } 
  const collapsedText = `${shortDate} — ${right}`;
@@ -2692,7 +3995,7 @@ if (wrap) wrap.appendChild(node);
  // Excluir card 
  $('.delete-card', node).addEventListener('click', function(e){ 
  e.stopPropagation(); 
- if(confirm('Excluir este card?')) { 
+ if(confirm(t('deleteCardConfirm'))) { 
  node.remove(); 
  const col = node.closest('.column'); 
  if (col) applyColumnFilter(col); 
@@ -3077,7 +4380,7 @@ function openChecklistItemModal(itemNode){
  if (ui.currentItem && ui.currentItem !== itemNode) closeChecklistItemModal();
  ui.currentItem = itemNode;
  const label = ($('.item-editor', itemNode)?.value || '').trim();
- if (ui.title) ui.title.textContent = label || 'Item sem título';
+ if (ui.title) ui.title.textContent = label || getUntitledItemLabel();
  const content = getChecklistItemContent(itemNode);
  const dueDate = getChecklistItemDueDate(itemNode);
  ui.editor.value = content;
@@ -3219,7 +4522,7 @@ function updateChecklistProgress(cardNode){
  prog.setAttribute('aria-valuenow', String(pct)); 
  prog.setAttribute('aria-valuemin', '0'); 
  prog.setAttribute('aria-valuemax', '100'); 
- prog.title = total > 0 ? `${checked}/${total} itens` : `0/0 itens`; 
+ prog.title = t('progressItemsTitle', { checked: checked, total: total }); 
  } 
 } 
 function getChecklistItemAfterElement(container, y, draggingNode){
@@ -3432,9 +4735,6 @@ function getColAfterElement(container, x){
  if (draggingCol){ draggingCol.classList.remove('dragging-col'); draggingCol.draggable = false; } 
  }); 
  // ===== Configurações / Metadados do board ===== 
- let boardMeta = { 
- ageColorRules: [] // [{ days: number, color: "#rrggbb" }] 
- }; 
  const settingsUI = { 
  overlay: null, 
  tplRow: null, 
@@ -3571,11 +4871,11 @@ function adjustPriorityDays(delta){
  const items = [];
  const cards = [];
  $$('.column').forEach(function(columnNode){
- const columnTitle = (($('.column-title', columnNode)?.value) || '').trim() || 'Sem coluna';
+ const columnTitle = (($('.column-title', columnNode)?.value) || '').trim() || getNoColumnLabel();
  $$('.card', columnNode).forEach(function(cardNode){
  const isCardCompleted = !!($('.card-done', cardNode)?.checked);
  if (isCardCompleted) return;
- const cardTitle = (($('.card-title', cardNode)?.value) || '').trim() || 'Sem título';
+ const cardTitle = (($('.card-title', cardNode)?.value) || '').trim() || getNoTitleLabel();
  const cardDue = ($('.card-due', cardNode)?.value || '').trim();
  const cardDueDate = parseDateOnly(cardDue);
  if (cardDueDate){
@@ -3595,7 +4895,7 @@ function adjustPriorityDays(delta){
  const itemDue = getChecklistItemDueDate(itemNode).trim();
  const itemDueDate = parseDateOnly(itemDue);
  if (!itemDueDate) return;
- const itemLabel = (($('.item-editor', itemNode)?.value) || '').trim() || 'Item sem título';
+ const itemLabel = (($('.item-editor', itemNode)?.value) || '').trim() || getUntitledItemLabel();
  const itemDaysRemaining = diffDays(startOfToday(), itemDueDate);
  items.push({
  itemNode: itemNode,
@@ -3614,11 +4914,11 @@ function adjustPriorityDays(delta){
  if (a.dueTs !== b.dueTs) return a.dueTs - b.dueTs;
  const aCard = String(a.cardTitle || '');
  const bCard = String(b.cardTitle || '');
- const byCard = aCard.localeCompare(bCard, 'pt-BR');
+ const byCard = aCard.localeCompare(bCard, getCurrentLocale());
  if (byCard !== 0) return byCard;
  const aItem = String(a.itemLabel || '');
  const bItem = String(b.itemLabel || '');
- return aItem.localeCompare(bItem, 'pt-BR');
+ return aItem.localeCompare(bItem, getCurrentLocale());
  };
  items.sort(byPriority);
  cards.sort(byPriority);
@@ -3637,8 +4937,8 @@ function renderPriorityReport(){
  const empty = document.createElement('div');
  empty.className = 'priority-report-empty';
  empty.textContent = Number.isFinite(maxDays)
- ? `Nenhum item de checklist com ${maxDays} dia(s) ou menos para vencer.`
- : 'Nenhum item de checklist com data de vencimento.';
+ ? t('priorityEmptyItemsFiltered', { count: maxDays })
+ : t('priorityEmptyItemsNoDue');
  priorityReportUI.itemsList.appendChild(empty);
  } else {
  itemsForReport.forEach(function(entry){
@@ -3667,8 +4967,8 @@ function renderPriorityReport(){
  const empty = document.createElement('div');
  empty.className = 'priority-report-empty';
  empty.textContent = Number.isFinite(maxDays)
- ? `Nenhum card com ${maxDays} dia(s) ou menos para vencer.`
- : 'Nenhum card com data de vencimento.';
+ ? t('priorityEmptyCardsFiltered', { count: maxDays })
+ : t('priorityEmptyCardsNoDue');
  priorityReportUI.cardsList.appendChild(empty);
  } else {
  cardsForReport.forEach(function(entry){
@@ -3751,6 +5051,31 @@ function renderPriorityReport(){
  });
  }
  }
+ function refreshLocalizedDynamicUI(){
+ if (settingsUI.overlay) applyTranslations(settingsUI.overlay);
+ if (priorityReportUI.overlay) applyTranslations(priorityReportUI.overlay);
+ if (languageUI.overlay) applyTranslations(languageUI.overlay);
+ $$('.card').forEach(function(card){
+  renderCardTimestamps(card);
+  renderCollapsedMeta(card);
+  updateChecklistProgress(card);
+ });
+ $$('.checklist-item').forEach(updateChecklistItemNoteButtonState);
+ if (checklistItemModalUI.currentItem && checklistItemModalUI.title){
+  const label = ($('.item-editor', checklistItemModalUI.currentItem)?.value || '').trim();
+  checklistItemModalUI.title.textContent = label || getUntitledItemLabel();
+ }
+ if (window.__cardModal && typeof window.__cardModal._titleHandler === 'function'){
+  try { window.__cardModal._titleHandler(); } catch(_) {}
+ }
+ if (priorityReportUI.overlay && !priorityReportUI.overlay.classList.contains('hidden')){
+  renderPriorityReport();
+ }
+ if (typeof renderHoverMenuItems === 'function'){
+  try { renderHoverMenuItems(); } catch(_) {}
+ }
+ }
+ window.__refreshLocalizedDynamicUI = refreshLocalizedDynamicUI;
  function renderSettingsRows(rules) { 
  ensureSettingsRefs(); 
  settingsUI.rulesList.innerHTML = ''; 
@@ -3854,7 +5179,7 @@ function openCardModal(card, options){
   // --- título dinâmico ---
   const titleInput = card.querySelector('.card-title');
   const titleEl = modal.overlay ? modal.overlay.querySelector('#cardModalTitle') : null;
-  function __syncModalTitle(){ if (titleEl) titleEl.textContent = (titleInput && titleInput.value.trim()) ? titleInput.value.trim() : 'Sem título'; }
+  function __syncModalTitle(){ if (titleEl) titleEl.textContent = (titleInput && titleInput.value.trim()) ? titleInput.value.trim() : getNoTitleLabel(); }
   __syncModalTitle();
   if (titleInput){
     modal._titleInput = titleInput;
@@ -3927,7 +5252,7 @@ document.addEventListener('click', function(e){
 
  // ===== Menu ===== 
  document.getElementById('btnAddColumn').addEventListener('click', function(){
- const col = createColumn(uid('col'), 'Nova coluna', activeBoardName || UNTITLED_BOARD_NAME);
+ const col = createColumn(uid('col'), getDefaultNewColumnName(), activeBoardName || UNTITLED_BOARD_NAME);
  board.appendChild(col);
  applyColumnFilter(col);
  applyActiveBoardVisibility();
@@ -3945,7 +5270,7 @@ document.addEventListener('click', function(e){
  download(file, JSON.stringify(data, null, 2)); 
  }catch(err){ 
  console.error('Erro ao salvar JSON:', err); 
- alert('Falha ao salvar. Veja o console para detalhes.'); 
+ alert(t('saveFailedAlert')); 
  } 
  }); 
  const fileInput = document.getElementById('fileJson'); 
@@ -3959,7 +5284,7 @@ document.addEventListener('click', function(e){
  await loadBoardSequential(data); 
  }catch(err){ 
  console.error('Erro ao ler/carregar JSON:', err); 
- alert('Falha ao carregar JSON. Verifique o arquivo.'); 
+ alert(t('loadFailedAlert')); 
  }finally{ 
  fileInput.value = ''; 
  } 
@@ -4228,7 +5553,7 @@ requestAnimationFrame(syncTopbarSpacer);
   }
 
   function getUniqueBoardName(baseName, excludeName){
-    const base = normalizeBoardName(baseName, DEFAULT_NEW_BOARD_NAME);
+    const base = normalizeBoardName(baseName, getDefaultNewBoardName());
     const existing = getBoardNamesFromDom().filter(function(name){ return name !== excludeName; });
     if (!existing.includes(base)) return base;
     let index = 2;
@@ -4248,14 +5573,14 @@ requestAnimationFrame(syncTopbarSpacer);
       item.classList.add('active');
     }
     textSpan.className = 'hover-menu-item-text';
-    textSpan.textContent = label;
+    textSpan.textContent = getBoardDisplayName(label);
     editBtn.type = 'button';
     editBtn.className = 'hover-menu-item-edit';
-    editBtn.setAttribute('aria-label', 'Editar item');
+    editBtn.setAttribute('aria-label', t('itemEditDetails'));
     editBtn.textContent = '✎';
     removeBtn.type = 'button';
     removeBtn.className = 'hover-menu-item-remove';
-    removeBtn.setAttribute('aria-label', 'Excluir item');
+    removeBtn.setAttribute('aria-label', t('remove'));
     removeBtn.textContent = '-';
     item.appendChild(editBtn);
     item.appendChild(textSpan);
@@ -4337,7 +5662,7 @@ requestAnimationFrame(syncTopbarSpacer);
     const normalized = normalizeBoardName(boardName, UNTITLED_BOARD_NAME);
     const cols = getColumnsForBoardName(normalized);
     if (!cols.length) return;
-    if (!confirm(`Excluir o quadro "${normalized}"?\nTodas as colunas e cards deste quadro serão removidos.`)) return;
+    if (!confirm(t('deleteBoardConfirm', { title: getBoardDisplayName(normalized) }))) return;
     closeAllEditPopovers();
     cols.forEach(function(col){ col.remove(); });
     notifyBoardsChanged();
@@ -4438,8 +5763,8 @@ requestAnimationFrame(syncTopbarSpacer);
     updateHoverMenuAutoScroll(e.clientX, e.clientY);
   });
   hoverMenuAddBtn.addEventListener('click', async function(){
-    const newBoardName = getUniqueBoardName(DEFAULT_NEW_BOARD_NAME);
-    const col = createColumn(uid('col'), 'Nova coluna', newBoardName);
+    const newBoardName = getUniqueBoardName(getDefaultNewBoardName());
+    const col = createColumn(uid('col'), getDefaultNewColumnName(), newBoardName);
     board.appendChild(col);
     applyColumnFilter(col);
     notifyBoardsChanged();
