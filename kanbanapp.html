@@ -2404,6 +2404,9 @@ LANGUAGE_LIBRARY.en = {
  namesNoTitle: 'Untitled',
  namesNoColumn: 'No column',
  namesUntitledItem: 'Untitled item',
+ cardMetaLabelCreatedDate: 'Created date',
+ cardMetaLabelUpdatedDate: 'Last edited',
+ cardMetaLabelDueDate: 'Due date',
  noDueDate: 'No due date',
  dueToday: 'Due today',
  dueInDays: 'Due in {count} day(s)',
@@ -2537,6 +2540,9 @@ LANGUAGE_LIBRARY['pt-BR'] = {
  namesNoTitle: 'Sem título',
  namesNoColumn: 'Sem coluna',
  namesUntitledItem: 'Item sem título',
+ cardMetaLabelCreatedDate: 'Data de criação',
+ cardMetaLabelUpdatedDate: 'Última edição',
+ cardMetaLabelDueDate: 'Data de vencimento',
  noDueDate: 'Sem data de vencimento',
  dueToday: 'Vence hoje',
  dueInDays: 'Vence em {count} dia(s)',
@@ -5785,6 +5791,40 @@ function formatShortDate(iso) {
  return ""; 
  } 
 } 
+function formatShortDateFromDateOnly(value){
+ const dt = parseDateOnly(value);
+ if (!dt) return '';
+ try {
+ return dt.toLocaleDateString(getCurrentLocale(), { day: '2-digit', month: '2-digit', year: '2-digit' });
+ } catch {
+ return '';
+ }
+}
+function areSameTimestamp(a, b){
+ const pa = parseTimestampFlexible(a);
+ const pb = parseTimestampFlexible(b);
+ if (Number.isFinite(pa) && Number.isFinite(pb)) return pa === pb;
+ return String(a || '').trim() === String(b || '').trim();
+}
+function getCardCollapsedMetaDateLabelAndText(card, dueStr){
+ const createdISO = card.dataset.created || nowISO();
+ const updatedISO = card.dataset.updated || createdISO;
+ if (dueStr){
+  const dueText = formatShortDateFromDateOnly(dueStr) || dueStr;
+  return { label: t('cardMetaLabelDueDate'), dateText: dueText };
+ }
+ const sameDate = areSameTimestamp(createdISO, updatedISO);
+ if (sameDate){
+  return {
+   label: t('cardMetaLabelCreatedDate'),
+   dateText: formatShortDate(createdISO) || formatDateForDisplay(createdISO) || createdISO
+  };
+ }
+ return {
+  label: t('cardMetaLabelUpdatedDate'),
+  dateText: formatShortDate(updatedISO) || formatDateForDisplay(updatedISO) || updatedISO
+ };
+}
  function renderCardTimestamps(card){ 
  const c = card.dataset.created || nowISO(); 
  const u = card.dataset.updated || c; 
@@ -6513,10 +6553,10 @@ function makeCardCollapsible(cardNode){
  function renderCollapsedMeta(card) { 
  const box = card.querySelector('.card-collapsed-meta'); 
  if (!box) return; 
- const latestISO = card.dataset.updated || card.dataset.created || nowISO(); 
- const shortDate = formatShortDate(latestISO); 
  const dueEl = card.querySelector('.card-due'); 
  const dueStr = dueEl ? dueEl.value : ''; 
+ const leftData = getCardCollapsedMetaDateLabelAndText(card, dueStr);
+ const left = `${leftData.label}: ${leftData.dateText}`;
  let right = t('noDueDate'); 
  if (dueStr) { 
  const dueDt = parseDateOnly(dueStr); 
@@ -6528,7 +6568,7 @@ function makeCardCollapsible(cardNode){
  right = t('noDueDate'); 
  } 
  } 
- const collapsedText = `${shortDate} — ${right}`;
+ const collapsedText = `${left} — ${right}`;
  const textNode = box.querySelector('.card-collapsed-meta-text');
  if (textNode) textNode.textContent = collapsedText;
  else box.textContent = collapsedText;
