@@ -172,14 +172,14 @@ body {
 .hover-menu-item{
   flex: 0 0 222px;
   width: 222px;
-  height: 44px;
+  height: 50px;
   display: block;
   position: relative;
   padding: 0 40px 0 40px;
   border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 6px;
-  background: var(--bg);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.22);
+  border-radius: 18px;
+  background: linear-gradient(180deg, #3b3b3f 0%, #2a2a2e 100%);
+  box-shadow: 0 14px 26px rgba(0,0,0,0.24);
   color: #f4f1ff;
   font-size: 16.8px;
   font-weight: 600;
@@ -187,24 +187,29 @@ body {
   white-space: nowrap;
   box-sizing: border-box;
   transform: translateY(0) scale(1);
-  transition: transform .34s cubic-bezier(.22, 1, .36, 1), box-shadow .34s cubic-bezier(.22, 1, .36, 1), border-color .24s ease;
+  transition: transform .28s cubic-bezier(.22,1,.36,1), box-shadow .28s cubic-bezier(.22,1,.36,1), border-color .24s ease, background .24s ease;
   overflow: hidden;
   text-align: center;
-  line-height: 42px;
+  line-height: 48px;
   cursor: pointer;
   will-change: transform, box-shadow;
 }
 .hover-menu-item:hover{
-  transform: translateY(-5px) scale(1.015);
-  box-shadow: 0 20px 32px rgba(0,0,0,0.36);
+  transform: translateY(-2px);
+  box-shadow: 0 22px 34px rgba(0,0,0,0.34);
+  border-color: rgba(122,103,240,0.58);
 }
 .hover-menu-item.active{
-  transform: translateY(-5px) scale(1.015);
-  box-shadow: 0 20px 32px rgba(0,0,0,0.36);
+  transform: translateY(-1px);
+  box-shadow: 0 22px 34px rgba(0,0,0,0.34);
+  border-color: rgba(212,168,255,0.55);
+  background: linear-gradient(180deg, rgba(122,103,240,0.34) 0%, rgba(76,60,173,0.56) 100%);
 }
 .hover-menu-item.drag-target{
-  transform: translateY(-5px) scale(1.015);
-  box-shadow: 0 20px 32px rgba(0,0,0,0.36);
+  transform: translateY(-1px);
+  box-shadow: 0 22px 34px rgba(0,0,0,0.34);
+  border-color: rgba(212,168,255,0.55);
+  background: linear-gradient(180deg, rgba(122,103,240,0.34) 0%, rgba(76,60,173,0.56) 100%);
 }
 .hover-menu-item-text{
   display: block;
@@ -225,27 +230,30 @@ body {
   padding: 0;
   border: none;
   border-radius: 0;
-  background: var(--bg);
+  background: transparent;
   color: rgba(244,241,255,0.88);
   font-size: 16px;
   line-height: 1;
   box-shadow: none;
   cursor: pointer;
+  transition: background .2s ease, color .2s ease, border-color .2s ease;
 }
 .hover-menu-item-edit{
   left: 0;
-  border-right: 1px solid rgba(255,255,255,0.12);
+  border-right: 1px solid transparent;
 }
 .hover-menu-item-remove{
   right: 0;
-  border-left: 1px solid rgba(255,255,255,0.12);
+  border-left: 1px solid transparent;
 }
 .hover-menu-item-remove:hover{
-  background: color-mix(in srgb, var(--bg) 82%, #ffffff);
+  background: rgba(255,255,255,0.08);
+  border-left-color: rgba(212,168,255,0.55);
   transform: translateY(-50%);
 }
 .hover-menu-item-edit:hover{
-  background: color-mix(in srgb, var(--bg) 82%, #ffffff);
+  background: rgba(255,255,255,0.08);
+  border-right-color: rgba(212,168,255,0.55);
   transform: translateY(-50%);
 }
 .hover-menu-editor{
@@ -281,14 +289,15 @@ body {
   border-radius: 6px;
 }
 .hover-menu-add{
-  flex: 0 0 44px;
-  width: 44px;
-  height: 44px;
+  flex: 0 0 50px;
+  width: 50px;
+  height: 50px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0;
-  font-size: 19.2px;
+  font-size: 22px;
+  font-weight: 700;
   line-height: 1;
 }
 .hover-menu::after{
