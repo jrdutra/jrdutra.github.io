@@ -1,278 +1,557 @@
-﻿<!doctype html>
-<html lang="pt-BR">
+<!doctype html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>João Dutra | Ferramentas e Redes Sociais</title>
-  <meta name="description" content="Página oficial de João Dutra (João Ricardo Côre Dutra) com atalhos para ferramentas, redes sociais e projetos hospedados no GitHub Pages.">
-  <meta name="keywords" content="João Dutra, João Ricardo Côre Dutra, Joao Dutra, Joao Ricardo Core Dutra, jrdutra, ferramentas, GitHub Pages">
+  <title>ArqRust | A Technology Ecosystem Built from Scratch</title>
+  <meta name="description" content="ArqRust aims to build a complete technology ecosystem entirely in Rust, from scratch, with zero external library dependencies and centralized library repositories. Security starts at the foundation.">
   <meta name="author" content="João Dutra">
-  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="theme-color" content="#faf8ef">
+  <link rel="icon" type="image/x-icon" href="./assets/arqrust-favicon.ico">
   <link rel="canonical" href="https://jrdutra.github.io/">
-  <meta property="og:locale" content="pt_BR">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="João Dutra | Ferramentas e Links Oficiais">
-  <meta property="og:description" content="Acesse as ferramentas e perfis oficiais de João Dutra (João Ricardo Côre Dutra).">
+  <meta property="og:title" content="ArqRust | Built from Scratch. Built in Rust.">
+  <meta property="og:description" content="A vision for a secure technology ecosystem, written entirely in Rust, with zero external library dependencies.">
   <meta property="og:url" content="https://jrdutra.github.io/">
-  <meta property="og:site_name" content="João Dutra">
-  <meta property="og:image" content="https://jrdutra.github.io/avatar.jpg">
+  <meta property="og:image" content="https://jrdutra.github.io/assets/arqrust.png">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="João Dutra | Ferramentas e Links Oficiais">
-  <meta name="twitter:description" content="Página oficial com atalhos para ferramentas e redes sociais de João Dutra.">
-  <meta name="twitter:image" content="https://jrdutra.github.io/avatar.jpg">
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "João Dutra",
-      "alternateName": [
-        "João Ricardo Côre Dutra",
-        "Joao Dutra",
-        "Joao Ricardo Core Dutra"
-      ],
-      "url": "https://jrdutra.github.io/",
-      "image": "https://jrdutra.github.io/avatar.jpg",
-      "sameAs": [
-        "https://www.linkedin.com/in/joao-ricardo-dutra/",
-        "https://www.facebook.com/joaoricardocoredutra",
-        "https://www.youtube.com/@joaodutra",
-        "https://www.instagram.com/jrdutra_/",
-        "https://github.com/jrdutra"
-      ]
-    }
-  </script>
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "João Dutra",
-      "alternateName": "João Ricardo Côre Dutra",
-      "url": "https://jrdutra.github.io/"
-    }
-  </script>
   <style>
     :root {
-      --bg1: #f4f7fb;
-      --bg2: #dbe8ff;
-      --card: #ffffff;
-      --text: #10233f;
-      --muted: #4c607f;
-      --line: #d8e1ee;
-      --accent: #1766d2;
+      color-scheme: light;
+      font-family: Tahoma, Verdana, sans-serif;
+      color: #000;
+      background: #faf8ef;
     }
-
     * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      color: var(--text);
-      background: radial-gradient(circle at 20% 20%, var(--bg2), var(--bg1) 55%);
-      display: grid;
-      place-items: center;
-      padding: 24px;
+    body { margin: 0; min-width: 280px; }
+    .navigation {
+      display: flex;
+      justify-content: flex-end;
+      padding: 24px clamp(20px, 4vw, 64px) 0;
+      position: absolute;
+      inset: 0 0 auto;
+      z-index: 10;
     }
-
-    .frame {
-      width: min(920px, 100%);
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      box-shadow: 0 20px 40px rgba(16, 35, 63, 0.12);
-      padding: 30px;
-    }
-
-    h1 {
-      margin: 0 0 6px;
-      text-align: center;
-      font-size: clamp(1.4rem, 2.4vw, 2rem);
-    }
-
-    p {
-      margin: 0 0 26px;
-      text-align: center;
-      color: var(--muted);
-    }
-
-    .tools {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    .projects-menu { position: relative; --menu-radius: 10px; }
+    .projects-menu summary {
+      display: flex;
+      align-items: center;
       gap: 16px;
+      min-height: 36px;
+      padding: 8px 13px;
+      border: 1px solid #9babc2;
+      border-radius: var(--menu-radius);
+      background: linear-gradient(#fffef9, #f0eddc);
+      box-shadow: inset 1px 1px #fff;
+      color: #244873;
+      font-size: 12px;
+      cursor: pointer;
+      list-style: none;
+      user-select: none;
     }
-
-    .tool {
-      text-decoration: none;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 18px 12px;
+    summary::-webkit-details-marker { display: none; }
+    .projects-menu summary::after { content: '▾'; font-size: 11px; }
+    .projects-menu summary:hover { border-color: #4679b5; background: #fffdf5; }
+    .projects-menu[open] summary { background: #e9edf2; box-shadow: inset 1px 1px 2px #52688726; }
+    a:focus-visible, summary:focus-visible { outline: 2px solid #3569ad; outline-offset: 3px; }
+    .page {
+      width: min(1080px, 100%);
+      min-height: 100vh;
+      min-height: 100svh;
+      margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 10px;
       align-items: center;
-      justify-content: flex-start;
-      color: var(--text);
-      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
-      background: #fff;
+      gap: 40px;
+      padding: 0 clamp(24px, 5vw, 64px) clamp(48px, 8vh, 90px);
     }
-
-    .tool:hover {
-      transform: translateY(-3px);
-      border-color: #bfd2ec;
-      box-shadow: 0 10px 24px rgba(23, 102, 210, 0.15);
-    }
-
-    .icon {
-      width: 58px;
-      height: 58px;
-      border-radius: 12px;
+    .brand { margin: 0; width: min(920px, 100%); background: #faf8ef; isolation: isolate; overflow: hidden; }
+    /* Compensate for the blank bottom edge in the source logo. */
+    .brand img { display: block; width: 100%; height: auto; margin-bottom: -2.8%; mix-blend-mode: multiply; }
+    .introduction { display: flex; flex-direction: column; align-items: center; gap: 24px; width: 100%; }
+    .slogan { max-width: 760px; text-align: center; line-height: 1.5; }
+    .slogan h1 { margin: 0 0 6px; font-size: clamp(24px, 3vw, 30px); }
+    .slogan h2 { margin: 0 0 8px; font-size: clamp(16px, 2vw, 20px); }
+    .slogan p { margin: 0; font-size: 14px; }
+    .slogan .tagline { margin-top: 12px; font-size: 16px; }
+    .motivation { max-width: 760px; text-align: center; }
+    .motivation h2 { margin: 0 0 14px; font-size: 18px; font-weight: normal; }
+    .motivation p { margin: 0; font-size: 14px; line-height: 1.7; text-wrap: pretty; }
+    .motivation p + p { margin-top: 12px; }
+    .ecosystem {
       display: grid;
-      place-items: center;
-      color: #fff;
-      font-size: 1.4rem;
-      font-weight: 700;
-    }
-
-    .icon.converter { background: linear-gradient(135deg, #0ea5a0, #0b7285); }
-    .icon.cws { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
-    .icon.kanban { background: linear-gradient(135deg, #ea580c, #c2410c); }
-    .icon.comparador { background: linear-gradient(135deg, #0f766e, #115e59); }
-    .icon.web { background: linear-gradient(135deg, #7c3aed, #5b21b6); }
-
-    .label {
-      font-weight: 600;
-      text-align: center;
-      word-break: break-word;
-    }
-
-    .author {
-      margin-bottom: 24px;
-      display: grid;
-      gap: 16px;
-      justify-items: center;
-      text-align: center;
-    }
-
-    .avatar {
-      width: 90px;
-      height: 90px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid var(--line);
-      box-shadow: 0 8px 18px rgba(16, 35, 63, 0.16);
-    }
-
-    .author-name {
-      margin: 0;
-      font-size: 1.1rem;
-      font-weight: 700;
-    }
-
-    .socials {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 22px;
       width: 100%;
-      display: grid;
-      grid-template-columns: repeat(5, minmax(90px, 1fr));
-      gap: 10px;
+      margin-top: 0;
     }
-
-    .social {
-      text-decoration: none;
-      border: 1px solid var(--line);
+    .ecosystem-card {
+      position: relative;
+      min-width: 0;
+      border: 2px solid #0754ca;
+      border-radius: 9px;
+      background-color: #f3f0e2;
+      background-image:
+        repeating-linear-gradient(0deg, #ffffff38 0 1px, transparent 1px 4px),
+        repeating-linear-gradient(90deg, #8677480a 0 1px, transparent 1px 4px);
+      box-shadow: 3px 5px 12px #29467220, inset 1px 0 #fff;
+      overflow: hidden;
+    }
+    .ecosystem-card:hover { border-color: #367bed; box-shadow: 3px 6px 16px #29467230, inset 1px 0 #fff; }
+    .ecosystem-card:focus-within { outline: 2px solid #3569ad; outline-offset: 4px; }
+    .ecosystem-card-trigger { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; border-radius: inherit; background: transparent; cursor: pointer; }
+    .ecosystem-card-trigger:focus-visible { outline: none; }
+    .ecosystem-card-body { padding: 24px 22px 28px; }
+    .ecosystem-card-icon { display: block; width: 52px; height: 52px; margin-bottom: 18px; object-fit: contain; }
+    .ecosystem-card h2 { margin: 0 0 8px; font-size: 19px; line-height: 1.4; color: #163e70; }
+    .ecosystem-card h3 { margin: 0 0 12px; font-size: 17px; line-height: 1.4; color: #163e70; }
+    .ecosystem-card p { margin: 0; font-size: 14px; line-height: 1.75; text-wrap: pretty; }
+    html.modal-open { overflow: hidden; }
+    .project-modal {
+      position: fixed;
+      inset: 2.5vh;
+      inset: 2.5dvh;
+      width: calc(100% - 5vh);
+      width: calc(100% - 5dvh);
+      height: 95vh;
+      height: 95dvh;
+      max-width: none;
+      max-height: none;
+      margin: 0;
+      padding: 0;
+      border: 2px solid #0754ca;
       border-radius: 12px;
-      padding: 10px 8px;
-      color: var(--text);
-      display: grid;
-      gap: 8px;
-      place-items: center;
-      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
-      background: #fff;
+      background: #faf8ef;
+      color: #000;
+      box-shadow: 0 18px 70px #13284666, inset 1px 1px #fff;
+      overflow: hidden;
     }
-
-    .social:hover {
-      transform: translateY(-2px);
-      border-color: #bfd2ec;
-      box-shadow: 0 8px 20px rgba(23, 102, 210, 0.14);
+    .project-modal[open] { display: flex; flex-direction: column; }
+    .project-modal::backdrop { background: #172b4b80; }
+    .project-modal-intro { margin-bottom: 32px; padding-right: 36px; }
+    .project-modal-icon { display: block; width: 40px; height: 40px; margin-bottom: 14px; object-fit: contain; }
+    .project-modal-heading { min-width: 0; }
+    .project-modal-heading h2 { margin: 0 0 8px; font-size: clamp(20px, 3vw, 28px); color: #163e70; overflow-wrap: anywhere; }
+    .project-modal-heading p { max-width: 78ch; margin: 0; font-size: 13px; line-height: 1.65; }
+    .project-modal-close-form { position: absolute; top: 16px; right: 16px; z-index: 1; margin: 0; }
+    .project-modal-close { display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 1px solid #9babc2; border-radius: 7px; background: linear-gradient(#fffef9, #e7e2d0); box-shadow: inset 1px 1px #fff; color: #244873; font-size: 24px; line-height: 1; cursor: pointer; }
+    .project-modal-close:hover { background: #fbe3dc; border-color: #b86b50; color: #8b2914; }
+    .project-modal-close:focus-visible, .project-modal-content:focus-visible { outline: 2px solid #3569ad; outline-offset: -4px; }
+    .project-modal-content { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: clamp(20px, 4vw, 48px); text-align: left; }
+    .project-modal-copy { width: 100%; max-width: none; margin: 0; font-size: 15px; line-height: 1.9; }
+    .project-modal-copy p { margin: 0 0 24px; }
+    .project-details-text { max-width: 84ch; }
+    .project-details-text h3 { margin: 28px 0 14px; color: #163e70; font-size: 20px; line-height: 1.4; }
+    .project-details-text h3:first-child { margin-top: 0; }
+    .project-details-text ul { margin: 0 0 24px; padding-left: 22px; }
+    .project-details-text li + li { margin-top: 8px; }
+    .screenshot-gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; max-width: 1300px; margin-top: 24px; }
+    .screenshot-gallery figure { min-width: 0; margin: 0; }
+    .screenshot-gallery figure:last-child:nth-child(odd) { grid-column: 1 / -1; max-width: 1000px; }
+    .screenshot-gallery img, .application-screenshot img { display: block; width: 100%; height: auto; border: 1px solid #b9c3d0; border-radius: 8px; }
+    .screenshot-gallery figcaption, .application-screenshot figcaption { margin-top: 10px; font-size: 13px; line-height: 1.65; color: #354b65; }
+    .screenshot-gallery a, .application-screenshot a { display: block; border-radius: 8px; }
+    .screenshot-gallery a:focus-visible, .application-screenshot a:focus-visible { outline: 2px solid #3569ad; outline-offset: 4px; }
+    .application-screenshot { max-width: 1100px; margin: 28px 0 0; }
+    .projects-panel {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      width: min(450px, calc(100vw - 40px));
+      max-height: calc(100vh - 100px);
+      max-height: calc(100svh - 100px);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      border: 1px solid #a7b5c8;
+      border-radius: var(--menu-radius);
+      background: #fffdf5;
+      box-shadow: 0 8px 24px #2537541c, inset 1px 1px #fff;
+      padding: 0 18px 18px;
+      font-size: 13px;
     }
-
-    .social-icon {
-      width: 42px;
-      height: 42px;
-      display: block;
-      object-fit: contain;
+    .menu-title {
+      margin: 0 -18px 18px;
+      padding: 14px 18px;
+      border-bottom: 1px solid #d2d9e1;
+      border-radius: calc(var(--menu-radius) - 1px) calc(var(--menu-radius) - 1px) 0 0;
+      background: #edf1f5;
+      color: #244873;
+      font-size: 13px;
+      font-weight: bold;
     }
-
-    .social-label {
-      font-size: 0.82rem;
-      font-weight: 600;
+    .author { text-align: center; }
+    .avatar { display: block; margin: 0 auto 8px; width: 60px; height: 60px; border: 2px solid #fff; border-radius: var(--menu-radius); box-shadow: 0 0 0 1px #a7b5c8; object-fit: cover; }
+    .author-name { margin: 0 0 14px; font-weight: bold; }
+    .socials { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; }
+    .social { display: grid; justify-items: center; gap: 7px; padding: 9px 2px; color: #000; text-decoration: none; border: 1px solid transparent; border-radius: var(--menu-radius); }
+    .social-icon { display: block; width: 32px; height: 32px; border-radius: var(--menu-radius); object-fit: contain; }
+    .social-label { font-size: 10px; }
+    .projects-panel h2 { margin: 20px 0 6px; padding-top: 16px; border-top: 1px solid #dedbce; font-size: 15px; color: #244873; }
+    .projects-panel h2 + p { margin: 0 0 10px; font-size: 12px; }
+    .tools { display: grid; gap: 6px; }
+    .tool { display: flex; align-items: center; gap: 12px; padding: 8px; min-height: 49px; border: 1px solid #d1cdbf; border-radius: var(--menu-radius); background: linear-gradient(#fffef9, #f4f1e6); box-shadow: inset 1px 1px #fff; color: #000; text-decoration: none; }
+    .tool:hover, .social:hover { border-color: #7e9fc5; background: #edf3fb; }
+    .icon { display: block; width: 32px; height: 32px; flex: 0 0 32px; object-fit: contain; border-radius: var(--menu-radius); }
+    .label { font-weight: normal; line-height: 1.4; }
+    .xp-tooltip {
+      position: fixed;
+      z-index: 100;
+      width: max-content;
+      max-width: min(280px, calc(100vw - 24px));
+      padding: 9px 13px;
+      border: 1px solid #777465;
+      border-radius: 7px;
+      background: #ffffe1;
+      box-shadow: 3px 4px 7px #0003;
+      color: #000;
+      font: 12px/1.5 Tahoma, Verdana, sans-serif;
+      text-align: left;
+      overflow-wrap: break-word;
     }
-
-    @media (max-width: 720px) {
-      .frame { padding: 22px; }
-      .tools { grid-template-columns: 1fr; }
-      .socials { grid-template-columns: 1fr 1fr; }
+    .xp-tooltip::before {
+      content: '';
+      position: absolute;
+      left: var(--arrow-left, 24px);
+      bottom: -6px;
+      width: 10px;
+      height: 10px;
+      border-right: 1px solid #777465;
+      border-bottom: 1px solid #777465;
+      background: #ffffe1;
+      transform: rotate(45deg);
+    }
+    .xp-tooltip[data-placement="below"]::before {
+      top: -6px;
+      bottom: auto;
+      transform: rotate(225deg);
+    }
+    @media (max-width: 900px) {
+      .page { padding-top: 60px; }
+      .ecosystem { grid-template-columns: 1fr; max-width: 520px; gap: 20px; }
+    }
+    @media (max-width: 760px) {
+      .screenshot-gallery { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .navigation { padding-top: 18px; }
+      .page { gap: 32px; padding-top: 54px; padding-bottom: 48px; }
+      .introduction { gap: 20px; }
+      .motivation p { line-height: 1.7; }
+      .projects-menu summary { font-size: 11px; }
+    }
+    @media (max-width: 350px) {
+      .projects-panel { padding-right: 10px; padding-left: 10px; }
+      .menu-title { margin-right: -10px; margin-left: -10px; }
+      .social-label { font-size: 9px; }
     }
   </style>
 </head>
 <body>
-  <main class="frame">
+  <nav class="navigation" lang="pt-BR" aria-label="Projetos de João Dutra">
+    <details class="projects-menu" id="projects-menu">
+      <summary>Outros Projetos de JrDutra</summary>
+      <section class="projects-panel" aria-label="Outros Projetos de JrDutra">
+        <div class="menu-title">Outros Projetos de JrDutra</div>
+
     <section class="author" aria-label="Informações do autor">
       <img class="avatar" src="./avatar.jpg" alt="Avatar de João Dutra">
       <p class="author-name">Autor: João Dutra</p>
 
       <div class="socials" aria-label="Redes sociais de João Dutra">
-        <a class="social" href="https://www.linkedin.com/in/joao-ricardo-dutra/" target="_blank" rel="noopener noreferrer" title="LinkedIn">
-          <img class="social-icon" alt="Ícone do LinkedIn" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgaGVpZ2h0PSI3MiIgdmlld0JveD0iMCAwIDcyIDcyIiB3aWR0aD0iNzIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNOCw3MiBMNjQsNzIgQzY4LjQxODI3OCw3MiA3Miw2OC40MTgyNzggNzIsNjQgTDcyLDggQzcyLDMuNTgxNzIyIDY4LjQxODI3OCwtOC4xMTYyNDUwMWUtMTYgNjQsMCBMOCwwIEMzLjU4MTcyMiw4LjExNjI0NTAxZS0xNiAtNS40MTA4MzAwMWUtMTYsMy41ODE3MjIgMCw4IEwwLDY0IEM1LjQxMDgzMDAxZS0xNiw2OC40MTgyNzggMy41ODE3MjIsNzIgOCw3MiBaIiBmaWxsPSIjMDA3RUJCIi8+PHBhdGggZD0iTTYyLDYyIEw1MS4zMTU2MjUsNjIgTDUxLjMxNTYyNSw0My44MDIxMTQ5IEM1MS4zMTU2MjUsMzguODEyNzU0MiA0OS40MTk3OTE3LDM2LjAyNDUzMjMgNDUuNDcwNzAzMSwzNi4wMjQ1MzIzIEM0MS4xNzQ2MDk0LDM2LjAyNDUzMjMgMzguOTMwMDc4MSwzOC45MjYxMTAzIDM4LjkzMDA3ODEsNDMuODAyMTE0OSBMMzguOTMwMDc4MSw2MiBMMjguNjMzMzMzMyw2MiBMMjguNjMzMzMzMywyNy4zMzMzMzMzIEwzOC45MzAwNzgxLDI3LjMzMzMzMzMgTDM4LjkzMDA3ODEsMzIuMDAyOTI4MyBDMzguOTMwMDc4MSwzMi4wMDI5MjgzIDQyLjAyNjA0MTcsMjYuMjc0MjE1MSA0OS4zODI1NTIxLDI2LjI3NDIxNTEgQzU2LjczNTY3NzEsMjYuMjc0MjE1MSA2MiwzMC43NjQ0NzA1IDYyLDQwLjA1MTIxMiBMNjIsNjIgWiBNMTYuMzQ5MzQ5LDIyLjc5NDAxMzMgQzEyLjg0MjA1NzMsMjIuNzk0MDEzMyAxMCwxOS45Mjk2NTY3IDEwLDE2LjM5NzAwNjcgQzEwLDEyLjg2NDM1NjYgMTIuODQyMDU3MywxMCAxNi4zNDkzNDksMTAgQzE5Ljg1NjY0MDYsMTAgMjIuNjk3MDA1MiwxMi44NjQzNTY2IDIyLjY5NzAwNTIsMTYuMzk3MDA2NyBDMjIuNjk3MDA1MiwxOS45Mjk2NTY3IDE5Ljg1NjY0MDYsMjIuNzk0MDEzMyAxNi4zNDkzNDksMjIuNzk0MDEzMyBaIE0xMS4wMzI1NTIxLDYyIEwyMS43Njk0MDEsNjIgTDIxLjc2OTQwMSwyNy4zMzMzMzMzIEwxMS4wMzI1NTIxLDI3LjMzMzMzMzMgTDExLjAzMjU1MjEsNjIgWiIgZmlsbD0iI0ZGRiIvPjwvZz48L3N2Zz4=">
+        <a class="social" href="https://www.linkedin.com/in/joao-ricardo-dutra/" target="_blank" rel="noopener noreferrer" data-tooltip="LinkedIn">
+          <img class="social-icon" src="./assets/icons/social-bevel/linkedin.svg" width="32" height="32" alt="" aria-hidden="true" loading="lazy">
           <span class="social-label">LinkedIn</span>
         </a>
-        <a class="social" href="https://www.facebook.com/joaoricardocoredutra" target="_blank" rel="noopener noreferrer" title="Facebook">
-          <img class="social-icon" alt="Ícone do Facebook" src="data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMDg2NkZGIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+RmFjZWJvb2s8L3RpdGxlPjxwYXRoIGQ9Ik05LjEwMSAyMy42OTF2LTcuOThINi42Mjd2LTMuNjY3aDIuNDc0di0xLjU4YzAtNC4wODUgMS44NDgtNS45NzggNS44NTgtNS45NzguNDAxIDAgLjk1NS4wNDIgMS40NjguMTAzYTguNjggOC42OCAwIDAgMSAxLjE0MS4xOTV2My4zMjVhOC42MjMgOC42MjMgMCAwIDAtLjY1My0uMDM2IDI2LjgwNSAyNi44MDUgMCAwIDAtLjczMy0uMDA5Yy0uNzA3IDAtMS4yNTkuMDk2LTEuNjc1LjMwOWExLjY4NiAxLjY4NiAwIDAgMC0uNjc5LjYyMmMtLjI1OC40Mi0uMzc0Ljk5NS0uMzc0IDEuNzUydjEuMjk3aDMuOTE5bC0uMzg2IDIuMTAzLS4yODcgMS41NjRoLTMuMjQ2djguMjQ1QzE5LjM5NiAyMy4yMzggMjQgMTguMTc5IDI0IDEyLjA0NGMwLTYuNjI3LTUuMzczLTEyLTEyLTEycy0xMiA1LjM3My0xMiAxMmMwIDUuNjI4IDMuODc0IDEwLjM1IDkuMTAxIDExLjY0N1oiLz48L3N2Zz4=">
+        <a class="social" href="https://www.facebook.com/joaoricardocoredutra" target="_blank" rel="noopener noreferrer" data-tooltip="Facebook">
+          <img class="social-icon" src="./assets/icons/social-bevel/facebook.svg" width="32" height="32" alt="" aria-hidden="true" loading="lazy">
           <span class="social-label">Facebook</span>
         </a>
-        <a class="social" href="https://www.youtube.com/@joaodutra" target="_blank" rel="noopener noreferrer" title="YouTube">
-          <img class="social-icon" alt="Ícone do YouTube" src="data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjRkYwMDAwIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+WW91VHViZTwvdGl0bGU+PHBhdGggZD0iTTIzLjQ5OCA2LjE4NmEzLjAxNiAzLjAxNiAwIDAgMC0yLjEyMi0yLjEzNkMxOS41MDUgMy41NDUgMTIgMy41NDUgMTIgMy41NDVzLTcuNTA1IDAtOS4zNzcuNTA1QTMuMDE3IDMuMDE3IDAgMCAwIC41MDIgNi4xODZDMCA4LjA3IDAgMTIgMCAxMnMwIDMuOTMuNTAyIDUuODE0YTMuMDE2IDMuMDE2IDAgMCAwIDIuMTIyIDIuMTM2YzEuODcxLjUwNSA5LjM3Ni41MDUgOS4zNzYuNTA1czcuNTA1IDAgOS4zNzctLjUwNWEzLjAxNSAzLjAxNSAwIDAgMCAyLjEyMi0yLjEzNkMyNCAxNS45MyAyNCAxMiAyNCAxMnMwLTMuOTMtLjUwMi01LjgxNHpNOS41NDUgMTUuNTY4VjguNDMyTDE1LjgxOCAxMmwtNi4yNzMgMy41Njh6Ii8+PC9zdmc+">
+        <a class="social" href="https://www.youtube.com/@joaodutra" target="_blank" rel="noopener noreferrer" data-tooltip="YouTube">
+          <img class="social-icon" src="./assets/icons/social-bevel/youtube.svg" width="32" height="32" alt="" aria-hidden="true" loading="lazy">
           <span class="social-label">YouTube</span>
         </a>
-        <a class="social" href="https://www.instagram.com/jrdutra_/" target="_blank" rel="noopener noreferrer" title="Instagram">
-          <img class="social-icon" alt="Ícone do Instagram" src="data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjRkYwMDY5IiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+SW5zdGFncmFtPC90aXRsZT48cGF0aCBkPSJNNy4wMzAxLjA4NGMtMS4yNzY4LjA2MDItMi4xNDg3LjI2NC0yLjkxMS41NjM0LS43ODg4LjMwNzUtMS40NTc1LjcyLTIuMTIyOCAxLjM4NzctLjY2NTIuNjY3Ny0xLjA3NSAxLjMzNjgtMS4zODAyIDIuMTI3LS4yOTU0Ljc2MzgtLjQ5NTYgMS42MzY1LS41NTIgMi45MTQtLjA1NjQgMS4yNzc1LS4wNjg5IDEuNjg4Mi0uMDYyNiA0Ljk0Ny4wMDYyIDMuMjU4Ni4wMjA2IDMuNjY3MS4wODI1IDQuOTQ3My4wNjEgMS4yNzY1LjI2NCAyLjE0ODIuNTYzNSAyLjkxMDcuMzA4Ljc4ODkuNzIgMS40NTczIDEuMzg4IDIuMTIyOC42Njc5LjY2NTUgMS4zMzY1IDEuMDc0MyAyLjEyODUgMS4zOC43NjMyLjI5NSAxLjYzNjEuNDk2MSAyLjkxMzQuNTUyIDEuMjc3My4wNTYgMS42ODg0LjA2OSA0Ljk0NjIuMDYyNyAzLjI1NzgtLjAwNjIgMy42NjgtLjAyMDcgNC45NDc4LS4wODE0IDEuMjgtLjA2MDcgMi4xNDctLjI2NTIgMi45MDk4LS41NjMzLjc4ODktLjMwODYgMS40NTc4LS43MiAyLjEyMjgtMS4zODgxLjY2NS0uNjY4MiAxLjA3NDUtMS4zMzc4IDEuMzc5NS0yLjEyODQuMjk1Ny0uNzYzMi40OTY2LTEuNjM2LjU1Mi0yLjkxMjQuMDU2LTEuMjgwOS4wNjkyLTEuNjg5OC4wNjMtNC45NDgtLjAwNjMtMy4yNTgzLS4wMjEtMy42NjY4LS4wODE3LTQuOTQ2NS0uMDYwNy0xLjI3OTctLjI2NC0yLjE0ODctLjU2MzMtMi45MTE3LS4zMDg0LS43ODg5LS43Mi0xLjQ1NjgtMS4zODc2LTIuMTIyOEMyMS4yOTgyIDEuMzMgMjAuNjI4LjkyMDggMTkuODM3OC42MTY1IDE5LjA3NC4zMjEgMTguMjAxNy4xMTk3IDE2LjkyNDQuMDY0NSAxNS42NDcxLjAwOTMgMTUuMjM2LS4wMDUgMTEuOTc3LjAwMTQgOC43MTguMDA3NiA4LjMxLjAyMTUgNy4wMzAxLjA4MzltLjE0MDIgMjEuNjkzMmMtMS4xNy0uMDUwOS0xLjgwNTMtLjI0NTMtMi4yMjg3LS40MDgtLjU2MDYtLjIxNi0uOTYtLjQ3NzEtMS4zODE5LS44OTUtLjQyMi0uNDE3OC0uNjgxMS0uODE4Ni0uOS0xLjM3OC0uMTY0NC0uNDIzNC0uMzYyNC0xLjA1OC0uNDE3MS0yLjIyOC0uMDU5NS0xLjI2NDUtLjA3Mi0xLjY0NDItLjA3OS00Ljg0OC0uMDA3LTMuMjAzNy4wMDUzLTMuNTgzLjA2MDctNC44NDguMDUtMS4xNjkuMjQ1Ni0xLjgwNS40MDgtMi4yMjgyLjIxNi0uNTYxMy40NzYyLS45Ni44OTUtMS4zODE2LjQxODgtLjQyMTcuODE4NC0uNjgxNCAxLjM3ODMtLjkwMDMuNDIzLS4xNjUxIDEuMDU3NS0uMzYxNCAyLjIyNy0uNDE3MSAxLjI2NTUtLjA2IDEuNjQ0Ny0uMDcyIDQuODQ4LS4wNzkgMy4yMDMzLS4wMDcgMy41ODM1LjAwNSA0Ljg0OTUuMDYwOCAxLjE2OS4wNTA4IDEuODA1My4yNDQ1IDIuMjI4LjQwOC41NjA4LjIxNi45Ni40NzU0IDEuMzgxNi44OTUuNDIxNy40MTk0LjY4MTYuODE3Ni45MDA1IDEuMzc4Ny4xNjUzLjQyMTcuMzYxNyAxLjA1Ni40MTY5IDIuMjI2My4wNjAyIDEuMjY1NS4wNzM5IDEuNjQ1LjA3OTYgNC44NDguMDA1OCAzLjIwMy0uMDA1NSAzLjU4MzQtLjA2MSA0Ljg0OC0uMDUxIDEuMTctLjI0NSAxLjgwNTUtLjQwOCAyLjIyOTQtLjIxNi41NjA0LS40NzYzLjk2LS44OTU0IDEuMzgxNC0uNDE5LjQyMTUtLjgxODEuNjgxMS0xLjM3ODMuOS0uNDIyNC4xNjQ5LTEuMDU3Ny4zNjE3LTIuMjI2Mi40MTc0LTEuMjY1Ni4wNTk1LTEuNjQ0OC4wNzItNC44NDkzLjA3OS0zLjIwNDUuMDA3LTMuNTgyNS0uMDA2LTQuODQ4LS4wNjA4TTE2Ljk1MyA1LjU4NjRBMS40NCAxLjQ0IDAgMSAwIDE4LjM5IDQuMTQ0YTEuNDQgMS40NCAwIDAgMC0xLjQzNyAxLjQ0MjRNNS44Mzg1IDEyLjAxMmMuMDA2NyAzLjQwMzIgMi43NzA2IDYuMTU1NyA2LjE3MyA2LjE0OTMgMy40MDI2LS4wMDY1IDYuMTU3LTIuNzcwMSA2LjE1MDYtNi4xNzMzLS4wMDY1LTMuNDAzMi0yLjc3MS02LjE1NjUtNi4xNzQtNi4xNDk4LTMuNDAzLjAwNjctNi4xNTYgMi43NzEtNi4xNDk2IDYuMTczOE04IDEyLjAwNzdhNCA0IDAgMSAxIDQuMDA4IDMuOTkyMUEzLjk5OTYgMy45OTk2IDAgMCAxIDggMTIuMDA3NyIvPjwvc3ZnPg==">
+        <a class="social" href="https://www.instagram.com/jrdutra_/" target="_blank" rel="noopener noreferrer" data-tooltip="Instagram">
+          <img class="social-icon" src="./assets/icons/social-bevel/instagram.svg" width="32" height="32" alt="" aria-hidden="true" loading="lazy">
           <span class="social-label">Instagram</span>
         </a>
-        <a class="social" href="https://github.com/jrdutra" target="_blank" rel="noopener noreferrer" title="GitHub">
-          <img class="social-icon" alt="Ícone do GitHub" src="data:image/svg+xml;base64,PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+R2l0SHViPC90aXRsZT48cGF0aCBkPSJNMTIgLjI5N2MtNi42MyAwLTEyIDUuMzczLTEyIDEyIDAgNS4zMDMgMy40MzggOS44IDguMjA1IDExLjM4NS42LjExMy44Mi0uMjU4LjgyLS41NzcgMC0uMjg1LS4wMS0xLjA0LS4wMTUtMi4wNC0zLjMzOC43MjQtNC4wNDItMS42MS00LjA0Mi0xLjYxQzQuNDIyIDE4LjA3IDMuNjMzIDE3LjcgMy42MzMgMTcuN2MtMS4wODctLjc0NC4wODQtLjcyOS4wODQtLjcyOSAxLjIwNS4wODQgMS44MzggMS4yMzYgMS44MzggMS4yMzYgMS4wNyAxLjgzNSAyLjgwOSAxLjMwNSAzLjQ5NS45OTguMTA4LS43NzYuNDE3LTEuMzA1Ljc2LTEuNjA1LTIuNjY1LS4zLTUuNDY2LTEuMzMyLTUuNDY2LTUuOTMgMC0xLjMxLjQ2NS0yLjM4IDEuMjM1LTMuMjItLjEzNS0uMzAzLS41NC0xLjUyMy4xMDUtMy4xNzYgMCAwIDEuMDA1LS4zMjIgMy4zIDEuMjMuOTYtLjI2NyAxLjk4LS4zOTkgMy0uNDA1IDEuMDIuMDA2IDIuMDQuMTM4IDMgLjQwNSAyLjI4LTEuNTUyIDMuMjg1LTEuMjMgMy4yODUtMS4yMy42NDUgMS42NTMuMjQgMi44NzMuMTIgMy4xNzYuNzY1Ljg0IDEuMjMgMS45MSAxLjIzIDMuMjIgMCA0LjYxLTIuODA1IDUuNjI1LTUuNDc1IDUuOTIuNDIuMzYuODEgMS4wOTYuODEgMi4yMiAwIDEuNjA2LS4wMTUgMi44OTYtLjAxNSAzLjI4NiAwIC4zMTUuMjEuNjkuODI1LjU3QzIwLjU2NSAyMi4wOTIgMjQgMTcuNTkyIDI0IDEyLjI5N2MwLTYuNjI3LTUuMzczLTEyLTEyLTEyIi8+PC9zdmc+">
+        <a class="social" href="https://github.com/jrdutra" target="_blank" rel="noopener noreferrer" data-tooltip="GitHub">
+          <img class="social-icon" src="./assets/icons/social-bevel/github.svg" width="32" height="32" alt="" aria-hidden="true" loading="lazy">
           <span class="social-label">GitHub</span>
         </a>
       </div>
     </section>
 
-    <h1>Painel de Ferramentas</h1>
-    <p>Selecione uma ferramenta para abrir.</p>
+    <h2>Projetos</h2>
+    <p>Selecione um projeto para abrir.</p>
 
-    <section class="tools" aria-label="Atalhos para ferramentas">
-      <a class="tool" href="./conversortextolatex/" title="Abrir Conversor Texto para LaTeX" target="_blank" rel="noopener noreferrer">
-        <span class="icon converter" aria-hidden="true">Tx</span>
-        <span class="label">Conversor Texto para LaTeX</span>
+    <section class="tools" aria-label="Atalhos para projetos">
+      <a class="tool" href="https://kanbanapp.io/" data-tooltip="Quadro Kanban" target="_blank" rel="noopener noreferrer">
+        <img class="icon" src="./assets/icons/checklist_done.png" width="32" height="32" alt="" aria-hidden="true" loading="lazy">
+        <span class="label">KanbanApp</span>
       </a>
 
-      <a class="tool" href="./cws/" title="Abrir Leitor de Área CWS" target="_blank" rel="noopener noreferrer">
-        <span class="icon cws" aria-hidden="true">CW</span>
-        <span class="label">Leitor de Área CWS</span>
+      <a class="tool" href="https://simplevlogeditor.com/" data-tooltip="Editor de Vídeo" target="_blank" rel="noopener noreferrer">
+        <img class="icon" src="./assets/icons/video_camera.png" width="32" height="32" alt="" aria-hidden="true" loading="lazy">
+        <span class="label">SimpleVlogEditor</span>
       </a>
 
-      <a class="tool" href="./kanbanapp/kanbanapp.html" title="Abrir Kanban App" target="_blank" rel="noopener noreferrer">
-        <span class="icon kanban" aria-hidden="true">KB</span>
-        <span class="label">Kanban App</span>
-      </a>
-
-      <a class="tool" href="./construtor-comparacao/" title="Abrir Construtor de Comparação de Produtos" target="_blank" rel="noopener noreferrer">
-        <span class="icon comparador" aria-hidden="true">CP</span>
-        <span class="label">Construtor de Comparação de Produtos</span>
-      </a>
-
-      <a class="tool" href="https://ferramenta.azurewebsites.net/" title="Abrir Ferramentas DEV" target="_blank" rel="noopener noreferrer">
-        <span class="icon web" aria-hidden="true">WEB</span>
-        <span class="label">Ferramentas DEV</span>
+      <a class="tool" href="https://thebiglearn.org/" data-tooltip="Plataforma de estudo e ferramentas" target="_blank" rel="noopener noreferrer">
+        <img class="icon" src="./assets/icons/edit_note.png" width="32" height="32" alt="" aria-hidden="true" loading="lazy">
+        <span class="label">TheBigLearn</span>
       </a>
     </section>
-  </main>
+
+      </section>
+    </details>
+  </nav>
+  <main class="page">
+        <figure class="brand">
+          <img src="./assets/arqrust.png" width="2172" height="724" alt="ArqRust" fetchpriority="high">
+        </figure>
+        <div class="introduction">
+        <section class="slogan" aria-labelledby="slogan-title">
+          <h1 id="slogan-title">ArqRust</h1>
+          <h2>Advanced Runtime Quickstart</h2>
+          <p>Native Libraries &amp; Development Toolkit</p>
+          <p class="tagline"><em>Build Native. Build Faster.</em></p>
+        </section>
+        <section class="motivation" aria-labelledby="motivation-title">
+          <h2 id="motivation-title">Our motivation</h2>
+          <p>To build a complete technology ecosystem entirely in Rust, from the ground up, with zero dependencies on external libraries and centralized repositories for our own libraries.</p>
+          <p>Security drives this vision. In today’s cybersecurity landscape, even major dependency managers and package repositories can be compromised. ArqRust aims to create a foundation we can understand, control, and trust — by building it ourselves, from scratch.</p>
+        </section>
+        </div>
+        <section class="ecosystem" aria-label="Explore the ArqRust ecosystem">
+          <article class="ecosystem-card" aria-labelledby="arqrustapps-title" data-details="arqrustapps-details">
+            <div class="ecosystem-card-body">
+              <img class="ecosystem-card-icon" src="./assets/icons/pockettools.png" width="52" height="52" alt="" aria-hidden="true" loading="lazy">
+              <h2 id="arqrustapps-title">ArqRustApps</h2>
+              <h3>Applications &amp; utilities</h3>
+              <p>A collection of applications and utilities built with the ArqRust suite, turning its libraries into practical tools for everyday use.</p>
+            </div>
+            <button class="ecosystem-card-trigger" type="button" aria-haspopup="dialog" aria-controls="project-modal" aria-labelledby="arqrustapps-title"></button>
+          </article>
+          <article class="ecosystem-card" aria-labelledby="arqrustui-title" data-details="arqrustui-details">
+            <div class="ecosystem-card-body">
+              <img class="ecosystem-card-icon" src="./assets/icons/program_window.png" width="52" height="52" alt="" aria-hidden="true" loading="lazy">
+              <h2 id="arqrustui-title">ArqRustUI</h2>
+              <h3>Native graphical interfaces</h3>
+              <p>A graphical interface library built around the operating system’s native controls, providing a foundation for desktop applications written in Rust.</p>
+            </div>
+            <button class="ecosystem-card-trigger" type="button" aria-haspopup="dialog" aria-controls="project-modal" aria-labelledby="arqrustui-title"></button>
+          </article>
+          <article class="ecosystem-card" aria-labelledby="arqrustssl-title" data-details="arqrustssl-details">
+            <div class="ecosystem-card-body">
+              <img class="ecosystem-card-icon" src="./assets/icons/shield.png" width="52" height="52" alt="" aria-hidden="true" loading="lazy">
+              <h2 id="arqrustssl-title">ArqRustSSL</h2>
+              <h3>OpenSSL, rewritten in Rust</h3>
+              <p>A project to rewrite OpenSSL in Rust from the ground up, with independent implementations and no dependencies on external libraries.</p>
+            </div>
+            <button class="ecosystem-card-trigger" type="button" aria-haspopup="dialog" aria-controls="project-modal" aria-labelledby="arqrustssl-title"></button>
+          </article>
+        </section>
+      </main>
+  <template id="arqrustapps-details" lang="en">
+    <div class="project-details-text">
+      <h3>Applications built with the ArqRust suite</h3>
+      <p>ArqRustApps brings together applications and utilities implemented with the suite’s own libraries. PocketTools is the first application and the pilot for integrating reusable ArqRust capabilities into practical desktop tools.</p>
+      <h3>PocketTools</h3>
+      <p>PocketTools is a native Rust desktop application with an interface built using ArqRustUI. Its main screen groups tools for text editing, reusable templates, text comparison, Base64 and URL conversion, JSON, XML and YAML editing, IPv4 CIDR calculations and Unix timestamps.</p>
+      <p>The search field helps find a tool by name or description. Each tool opens in its own window, with its own data.</p>
+    </div>
+    <figure class="application-screenshot">
+      <a href="./assets/screenshots/pockettools-main.png" target="_blank" rel="noopener noreferrer" aria-label="View the PocketTools main screen screenshot">
+        <img src="./assets/screenshots/pockettools-main.png" width="1324" height="1007" alt="PocketTools main screen showing a search field and ten utilities grouped into text and development tools." loading="lazy">
+      </a>
+      <figcaption><strong>PocketTools main screen.</strong> An actual capture of the application running on Windows.</figcaption>
+    </figure>
+  </template>
+  <template id="arqrustui-details" lang="en">
+    <div class="project-details-text">
+      <h3>Native desktop interfaces, written in Rust</h3>
+      <p>ArqRustUI aims to make native Windows applications easier to build in Rust. It brings windows, controls, layouts, drawing and event handling together in a reusable library, so applications can focus on their own tools and workflows.</p>
+      <p>The library uses the operating system’s native APIs through its own Rust interfaces. It is built with the Rust standard library and native Windows APIs, without third-party GUI crates, HTML or an embedded browser. Its current target is Windows 10 and Windows 11.</p>
+      <h3>Controls for real applications</h3>
+      <ul>
+        <li>Buttons, text fields, password fields, selection controls, sliders, progress bars and date pickers.</li>
+        <li>Lists, tables, tree views and tabs for organizing information.</li>
+        <li>Menus, toolbars, status bars and reusable layouts for complete desktop interfaces.</li>
+        <li>Modern controls such as switches, numeric fields, ratings, cards and dockable panels.</li>
+      </ul>
+      <p>ArqRustUI is independent of any particular application. PocketTools uses it as a consumer of its public API, while other applications can reuse the same interface building blocks.</p>
+      <h3>Examples running on Windows</h3>
+      <p>These are actual captures of the library’s example programs. Select an image to view the original screenshot.</p>
+    </div>
+    <div class="screenshot-gallery">
+      <figure>
+        <a href="./assets/screenshots/arqrustui-basic.png" target="_blank" rel="noopener noreferrer" aria-label="View the basic controls screenshot">
+          <img src="./assets/screenshots/arqrustui-basic.png" width="1234" height="737" alt="ArqRustUI demo with text and password fields, selection controls, a list, slider, progress bar and date controls." loading="lazy">
+        </a>
+        <figcaption><strong>Basic controls.</strong> Native form fields, selection controls, lists, progress and date controls.</figcaption>
+      </figure>
+      <figure>
+        <a href="./assets/screenshots/arqrustui-charts.png" target="_blank" rel="noopener noreferrer" aria-label="View the charts and animations screenshot">
+          <img src="./assets/screenshots/arqrustui-charts.png" width="1294" height="827" alt="ArqRustUI bar chart comparing quarterly sales for 2025 and 2026." loading="lazy">
+        </a>
+        <figcaption><strong>Charts and animations.</strong> A grouped bar chart with quarterly data and interactive controls.</figcaption>
+      </figure>
+      <figure>
+        <a href="./assets/screenshots/arqrustui-commandbar.png" target="_blank" rel="noopener noreferrer" aria-label="View the command bar screenshot">
+          <img src="./assets/screenshots/arqrustui-commandbar.png" width="1144" height="677" alt="ArqRustUI command bar with navigation buttons, menus and a search field." loading="lazy">
+        </a>
+        <figcaption><strong>Command bar.</strong> Navigation buttons, drop-down menus and search in a command bar.</figcaption>
+      </figure>
+      <figure>
+        <a href="./assets/screenshots/arqrustui-drawing.png" target="_blank" rel="noopener noreferrer" aria-label="View the custom drawing screenshot">
+          <img src="./assets/screenshots/arqrustui-drawing.png" width="1024" height="677" alt="ArqRustUI custom drawing example with GDI and GDI+ shapes, gradients, curves and a drawing area." loading="lazy">
+        </a>
+        <figcaption><strong>Custom drawing.</strong> Shapes, gradients, curves and a freehand drawing area using GDI and GDI+.</figcaption>
+      </figure>
+      <figure>
+        <a href="./assets/screenshots/arqrustui-icon-browser.png" target="_blank" rel="noopener noreferrer" aria-label="View the icon browser screenshot">
+          <img src="./assets/screenshots/arqrustui-icon-browser.png" width="1354" height="947" alt="ArqRustUI icon browser displaying categories, a list of assets and a large preview." loading="lazy">
+        </a>
+        <figcaption><strong>Icon browser.</strong> Categorized assets, format information and previews.</figcaption>
+      </figure>
+    </div>
+  </template>
+  <template id="arqrustssl-details" lang="la">
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vitae sapien nec justo tincidunt ullamcorper. Donec dignissim, augue quis volutpat interdum, tellus arcu feugiat libero, vitae fermentum sem nulla vitae magna. Sed euismod velit vel tellus consectetur, ac consequat neque placerat.</p>
+        <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Nulla vitae elit libero, a pharetra augue. Curabitur blandit tempus porttitor. Maecenas faucibus mollis interdum. Aenean eu leo quam, pellentesque ornare sem lacinia quam venenatis vestibulum.</p>
+        <p>Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae. Aliquam erat volutpat. Fusce vel risus sit amet orci malesuada finibus. Quisque tincidunt, massa sed malesuada pretium, ipsum sapien convallis neque, quis tincidunt justo purus eget erat.</p>
+        <p>Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Etiam porta sem malesuada magna mollis euismod. Donec ullamcorper nulla non metus auctor fringilla. Sed posuere consectetur est at lobortis. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>
+        <p>Nam fermentum, dolor non consequat volutpat, augue urna aliquam arcu, eget ullamcorper justo neque eget orci. Suspendisse potenti. Vivamus euismod lacus id nibh consequat, ut facilisis nisi hendrerit. Duis at sapien vitae neque placerat posuere.</p>
+  </template>
+  <dialog class="project-modal" id="project-modal" aria-labelledby="project-modal-title" aria-describedby="project-modal-description">
+    <form class="project-modal-close-form" method="dialog">
+      <button class="project-modal-close" type="submit" aria-label="Close project details" autofocus>×</button>
+    </form>
+    <div class="project-modal-content" tabindex="0" aria-label="Project details">
+      <div class="project-modal-intro">
+        <img class="project-modal-icon" id="project-modal-icon" width="40" height="40" alt="" aria-hidden="true">
+        <div class="project-modal-heading">
+          <h2 id="project-modal-title"></h2>
+          <p id="project-modal-description"></p>
+        </div>
+      </div>
+      <div class="project-modal-copy" id="project-modal-copy"></div>
+    </div>
+  </dialog>
+  <div class="xp-tooltip" id="menu-tooltip" role="tooltip" lang="pt-BR" hidden></div>
+  <script>
+    const projectsMenu = document.getElementById('projects-menu');
+    document.addEventListener('click', (event) => {
+      if (!projectsMenu.contains(event.target)) projectsMenu.open = false;
+    });
+    const tooltip = document.getElementById('menu-tooltip');
+    let tooltipTarget = null;
+    let showTimer;
+    let hideTimer;
+
+    function hideTooltip() {
+      clearTimeout(showTimer);
+      clearTimeout(hideTimer);
+      if (tooltipTarget) tooltipTarget.removeAttribute('aria-describedby');
+      tooltipTarget = null;
+      tooltip.hidden = true;
+    }
+
+    function showTooltip(target) {
+      hideTooltip();
+      if (!projectsMenu.open) return;
+      tooltipTarget = target;
+      tooltip.textContent = target.dataset.tooltip;
+      target.setAttribute('aria-describedby', tooltip.id);
+      tooltip.hidden = false;
+      const anchor = target.getBoundingClientRect();
+      const balloon = tooltip.getBoundingClientRect();
+      const inset = 12;
+      const viewportWidth = document.documentElement.clientWidth;
+      const viewportHeight = document.documentElement.clientHeight;
+      const pointer = Math.min(anchor.left + 48, anchor.right - 16);
+      const left = Math.max(inset, Math.min(pointer - 24, viewportWidth - balloon.width - inset));
+      const above = anchor.top - balloon.height - inset;
+      const placement = above >= inset ? 'above' : 'below';
+      const top = placement === 'above' ? above : anchor.bottom + inset;
+      tooltip.dataset.placement = placement;
+      tooltip.style.left = left + 'px';
+      tooltip.style.top = Math.max(inset, Math.min(top, viewportHeight - balloon.height - inset)) + 'px';
+      tooltip.style.setProperty('--arrow-left', Math.max(12, Math.min(pointer - left - 5, balloon.width - 22)) + 'px');
+    }
+
+    function scheduleHide() {
+      clearTimeout(showTimer);
+      clearTimeout(hideTimer);
+      if (tooltipTarget === document.activeElement) return;
+      hideTimer = setTimeout(hideTooltip, 150);
+    }
+
+    projectsMenu.querySelectorAll('[data-tooltip]').forEach((target) => {
+      target.addEventListener('pointerenter', (event) => {
+        if (event.pointerType === 'touch') return;
+        clearTimeout(showTimer);
+        clearTimeout(hideTimer);
+        showTimer = setTimeout(() => showTooltip(target), 250);
+      });
+      target.addEventListener('pointerleave', scheduleHide);
+      target.addEventListener('focus', () => showTooltip(target));
+      target.addEventListener('blur', hideTooltip);
+      target.addEventListener('click', hideTooltip);
+    });
+    tooltip.addEventListener('pointerenter', () => clearTimeout(hideTimer));
+    tooltip.addEventListener('pointerleave', scheduleHide);
+    projectsMenu.addEventListener('toggle', () => {
+      if (!projectsMenu.open) hideTooltip();
+    });
+    document.addEventListener('scroll', hideTooltip, true);
+    window.addEventListener('resize', hideTooltip);
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && !tooltip.hidden) {
+        hideTooltip();
+        return;
+      }
+      if (event.key === 'Escape' && projectsMenu.open) {
+        projectsMenu.open = false;
+        projectsMenu.querySelector('summary').focus();
+      }
+    });
+
+    const projectModal = document.getElementById('project-modal');
+    const modalTitle = document.getElementById('project-modal-title');
+    const modalDescription = document.getElementById('project-modal-description');
+    const modalIcon = document.getElementById('project-modal-icon');
+    const modalCopy = document.getElementById('project-modal-copy');
+    let lastCardTrigger = null;
+
+    document.querySelectorAll('.ecosystem-card-trigger').forEach((trigger) => {
+      trigger.addEventListener('click', () => {
+        const card = trigger.closest('.ecosystem-card');
+        lastCardTrigger = trigger;
+        modalTitle.textContent = card.querySelector('h2').textContent;
+        modalDescription.textContent = card.querySelector('p').textContent;
+        modalIcon.src = card.querySelector('.ecosystem-card-icon').getAttribute('src');
+        const detailTemplate = document.getElementById(card.dataset.details);
+        modalCopy.replaceChildren(detailTemplate.content.cloneNode(true));
+        modalCopy.lang = detailTemplate.lang;
+        projectsMenu.open = false;
+        hideTooltip();
+        projectModal.showModal();
+        document.documentElement.classList.add('modal-open');
+        projectModal.querySelector('.project-modal-content').scrollTop = 0;
+      });
+    });
+    projectModal.addEventListener('close', () => {
+      document.documentElement.classList.remove('modal-open');
+      if (lastCardTrigger) lastCardTrigger.focus({ preventScroll: true });
+    });
+    projectModal.addEventListener('click', (event) => {
+      if (event.target !== projectModal) return;
+      const bounds = projectModal.getBoundingClientRect();
+      if (event.clientX < bounds.left || event.clientX > bounds.right ||
+          event.clientY < bounds.top || event.clientY > bounds.bottom) {
+        projectModal.close();
+      }
+    });
+  </script>
 </body>
 </html>
-

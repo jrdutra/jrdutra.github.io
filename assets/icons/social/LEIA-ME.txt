@@ -1,0 +1,6 @@
+PACOTE DE ICONES DE REDES SOCIAIS - ESTILO 3D CLASSICO
+
+40 icones individuais .ico com transparencia.
+Tamanhos inclusos: 16, 24, 32, 48, 64, 128 e 256 pixels.
+Inspiracao visual na era Windows XP, sem reutilizar os icones originais do Windows.
+Os simbolos e nomes das plataformas pertencem a seus respectivos titulares.
