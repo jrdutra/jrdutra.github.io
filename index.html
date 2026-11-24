@@ -106,6 +106,9 @@
     .ecosystem-card h2 { margin: 0 0 8px; font-size: 19px; line-height: 1.4; color: #163e70; }
     .ecosystem-card h3 { margin: 0 0 12px; font-size: 17px; line-height: 1.4; color: #163e70; }
     .ecosystem-card p { margin: 0; font-size: 14px; line-height: 1.75; text-wrap: pretty; }
+    .repository-link { position: relative; z-index: 1; display: block; width: fit-content; margin-bottom: 18px; color: #0754ca; font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; text-decoration: underline; }
+    .repository-link:hover { color: #163e70; }
+    .repository-link:focus-visible { outline: 2px solid #3569ad; outline-offset: 4px; border-radius: 3px; }
     html.modal-open { overflow: hidden; }
     .project-modal {
       position: fixed;
@@ -153,6 +156,25 @@
     .screenshot-gallery a, .application-screenshot a { display: block; border-radius: 8px; }
     .screenshot-gallery a:focus-visible, .application-screenshot a:focus-visible { outline: 2px solid #3569ad; outline-offset: 4px; }
     .application-screenshot { max-width: 1100px; margin: 28px 0 0; }
+    .code-examples { max-width: 1100px; margin-top: 40px; padding-top: 28px; border-top: 1px solid #d6d2bf; }
+    .code-examples h3 { margin: 0 0 16px; font-size: 22px; line-height: 1.4; color: #163e70; }
+    .code-examples h4 { margin: 28px 0 12px; font-size: 17px; line-height: 1.5; color: #163e70; }
+    .code-examples p { max-width: 84ch; }
+    .code-examples :not(pre) > code { padding: 2px 5px; border: 1px solid #ded9c7; border-radius: 4px; background: #f1eddf; font: 0.9em Consolas, "Courier New", monospace; }
+    .code-block { min-width: 0; margin: 16px 0 24px; overflow: hidden; border: 1px solid #a7b5c8; border-radius: 8px; background: #fffef8; box-shadow: inset 1px 1px #fff; }
+    .code-block-label { padding: 8px 16px; border-bottom: 1px solid #d2d9e1; background: #edf1f5; color: #244873; font-size: 12px; }
+    .code-block pre { max-width: 100%; margin: 0; padding: 20px; overflow-x: auto; color: #152d4a; font: 13px/1.7 Consolas, "Courier New", monospace; white-space: pre; tab-size: 4; }
+    .code-block pre:focus-visible { outline: 2px solid #3569ad; outline-offset: -4px; }
+    .language-rust .rust-keyword { color: #7b2e91; font-weight: bold; }
+    .language-rust .rust-type { color: #005c9e; }
+    .language-rust .rust-function { color: #006b62; }
+    .language-rust .rust-macro { color: #9c3d00; }
+    .language-rust .rust-string { color: #9d3b28; }
+    .language-rust .rust-number { color: #875700; }
+    .language-rust .rust-comment { color: #61704d; font-style: italic; }
+    .language-rust .rust-attribute { color: #795d14; }
+    .language-rust .rust-operator { color: #4c586b; }
+    .code-examples-note { font-size: 14px; }
     .projects-panel {
       position: absolute;
       top: calc(100% + 8px);
@@ -333,6 +355,7 @@
           </article>
           <article class="ecosystem-card" aria-labelledby="arqrustui-title" data-details="arqrustui-details">
             <div class="ecosystem-card-body">
+              <a class="repository-link" href="https://github.com/jrdutra/ArqRustUI" target="_blank" rel="noopener noreferrer" aria-label="ArqRustUI GitHub repository">https://github.com/jrdutra/ArqRustUI</a>
               <img class="ecosystem-card-icon" src="./assets/icons/program_window.png" width="52" height="52" alt="" aria-hidden="true" loading="lazy">
               <h2 id="arqrustui-title">ArqRustUI</h2>
               <h3>Native graphical interfaces</h3>
@@ -367,6 +390,7 @@
     </figure>
   </template>
   <template id="arqrustui-details" lang="en">
+    <a class="repository-link" href="https://github.com/jrdutra/ArqRustUI" target="_blank" rel="noopener noreferrer" aria-label="ArqRustUI GitHub repository">https://github.com/jrdutra/ArqRustUI</a>
     <div class="project-details-text">
       <h3>Native desktop interfaces, written in Rust</h3>
       <p>ArqRustUI aims to make native Windows applications easier to build in Rust. It brings windows, controls, layouts, drawing and event handling together in a reusable library, so applications can focus on their own tools and workflows.</p>
@@ -414,6 +438,133 @@
         <figcaption><strong>Icon browser.</strong> Categorized assets, format information and previews.</figcaption>
       </figure>
     </div>
+
+    <section class="code-examples" aria-labelledby="ui-code-examples-title">
+      <h3 id="ui-code-examples-title">Try ArqRustUI in a few lines</h3>
+      <p>These complete examples introduce the basics: a window, a button and a small form. Use Windows 10 or 11 with Rust 1.80 or newer.</p>
+      <h4>Set up your project</h4>
+      <p>Create a Rust binary project next to the <code>ArqRustUI</code> folder. Add this local dependency to <code>Cargo.toml</code>:</p>
+      <div class="code-block">
+        <div class="code-block-label">Cargo.toml · TOML</div>
+        <pre tabindex="0" aria-label="Cargo dependency configuration"><code class="language-toml">[dependencies]
+arqrustui = { path = "../ArqRustUI" }</code></pre>
+      </div>
+      <p>Replace <code>src/main.rs</code> with one of the examples below, then run <code>cargo run</code> from your application’s folder. Each example runs on its own.</p>
+      <article class="code-example">
+        <h4>1. Create a native window</h4>
+        <p>Start the application, create a window, show it and enter the event loop. The event loop keeps the interface responsive until the window closes.</p>
+        <div class="code-block">
+          <div class="code-block-label">src/main.rs · Rust</div>
+          <pre tabindex="0" aria-label="Create a native window Rust example"><code class="language-rust">#![<span class="rust-attribute">windows_subsystem</span> <span class="rust-operator">=</span> <span class="rust-string">"windows"</span>]
+<span class="rust-keyword">use</span> arqrustui<span class="rust-operator">::</span>prelude<span class="rust-operator">::</span><span class="rust-operator">*</span>;
+
+<span class="rust-keyword">fn</span> <span class="rust-function">main</span>() <span class="rust-operator">-&gt;</span> <span class="rust-type">GuiResult</span><span class="rust-operator">&lt;</span>()<span class="rust-operator">&gt;</span> {
+    <span class="rust-keyword">let</span> app <span class="rust-operator">=</span> <span class="rust-type">Application</span><span class="rust-operator">::</span><span class="rust-function">new</span>()<span class="rust-operator">?</span>;
+    <span class="rust-keyword">let</span> window <span class="rust-operator">=</span> <span class="rust-type">Window</span><span class="rust-operator">::</span><span class="rust-function">builder</span>()
+        .<span class="rust-function">title</span>(<span class="rust-string">"My first ArqRustUI window"</span>)
+        .<span class="rust-function">size</span>(<span class="rust-number">420</span>, <span class="rust-number">220</span>)
+        .<span class="rust-function">centered</span>()
+        .<span class="rust-function">build</span>()<span class="rust-operator">?</span>;
+
+    window.<span class="rust-function">show</span>();
+    app.<span class="rust-function">run</span>()
+}</code></pre>
+        </div>
+      </article>
+      <article class="code-example">
+        <h4>2. Respond to a button click</h4>
+        <p>Create a button inside the window and connect its click event to a message box. A vertical layout handles the padding and button size.</p>
+        <div class="code-block">
+          <div class="code-block-label">src/main.rs · Rust</div>
+          <pre tabindex="0" aria-label="Respond to a button click Rust example"><code class="language-rust">#![<span class="rust-attribute">windows_subsystem</span> <span class="rust-operator">=</span> <span class="rust-string">"windows"</span>]
+<span class="rust-keyword">use</span> arqrustui<span class="rust-operator">::</span>prelude<span class="rust-operator">::</span><span class="rust-operator">*</span>;
+
+<span class="rust-keyword">fn</span> <span class="rust-function">main</span>() <span class="rust-operator">-&gt;</span> <span class="rust-type">GuiResult</span><span class="rust-operator">&lt;</span>()<span class="rust-operator">&gt;</span> {
+    <span class="rust-keyword">let</span> app <span class="rust-operator">=</span> <span class="rust-type">Application</span><span class="rust-operator">::</span><span class="rust-function">new</span>()<span class="rust-operator">?</span>;
+    <span class="rust-keyword">let</span> window <span class="rust-operator">=</span> <span class="rust-type">Window</span><span class="rust-operator">::</span><span class="rust-function">builder</span>()
+        .<span class="rust-function">title</span>(<span class="rust-string">"A button with an action"</span>)
+        .<span class="rust-function">size</span>(<span class="rust-number">420</span>, <span class="rust-number">180</span>)
+        .<span class="rust-function">centered</span>()
+        .<span class="rust-function">build</span>()<span class="rust-operator">?</span>;
+
+    <span class="rust-keyword">let</span> button <span class="rust-operator">=</span> <span class="rust-type">Button</span><span class="rust-operator">::</span><span class="rust-function">builder</span>()
+        .<span class="rust-function">text</span>(<span class="rust-string">"Say hello"</span>)
+        .<span class="rust-function">parent</span>(<span class="rust-operator">&amp;</span>window)
+        .<span class="rust-function">build</span>()<span class="rust-operator">?</span>;
+
+    <span class="rust-keyword">let</span> layout <span class="rust-operator">=</span> <span class="rust-type">StackLayout</span><span class="rust-operator">::</span><span class="rust-function">vertical</span>()
+        .<span class="rust-function">padding</span>(<span class="rust-type">Thickness</span><span class="rust-operator">::</span><span class="rust-function">all</span>(<span class="rust-number">20</span>));
+    layout.<span class="rust-function">add_with</span>(<span class="rust-operator">&amp;</span>button, <span class="rust-type">LayoutParams</span><span class="rust-operator">::</span><span class="rust-function">new</span>().<span class="rust-function">height</span>(<span class="rust-number">32</span>));
+    window.<span class="rust-function">set_layout</span>(layout);
+
+    button.<span class="rust-function">on_click</span>(<span class="rust-operator">|</span><span class="rust-operator">|</span> {
+        <span class="rust-type">MessageBox</span><span class="rust-operator">::</span><span class="rust-function">info</span>(<span class="rust-string">"Hello"</span>, <span class="rust-string">"You clicked a native button."</span>);
+    });
+
+    window.<span class="rust-function">show</span>();
+    app.<span class="rust-function">run</span>()
+}</code></pre>
+        </div>
+      </article>
+      <article class="code-example">
+        <h4>3. Read input and update the interface</h4>
+        <p>This small form reads a name and displays a greeting. The callback uses text() to read the field and set_text() to update the label.</p>
+        <div class="code-block">
+          <div class="code-block-label">src/main.rs · Rust</div>
+          <pre tabindex="0" aria-label="Read input and update the interface Rust example"><code class="language-rust">#![<span class="rust-attribute">windows_subsystem</span> <span class="rust-operator">=</span> <span class="rust-string">"windows"</span>]
+<span class="rust-keyword">use</span> arqrustui<span class="rust-operator">::</span>prelude<span class="rust-operator">::</span><span class="rust-operator">*</span>;
+
+<span class="rust-keyword">fn</span> <span class="rust-function">main</span>() <span class="rust-operator">-&gt;</span> <span class="rust-type">GuiResult</span><span class="rust-operator">&lt;</span>()<span class="rust-operator">&gt;</span> {
+    <span class="rust-keyword">let</span> app <span class="rust-operator">=</span> <span class="rust-type">Application</span><span class="rust-operator">::</span><span class="rust-function">new</span>()<span class="rust-operator">?</span>;
+    <span class="rust-keyword">let</span> window <span class="rust-operator">=</span> <span class="rust-type">Window</span><span class="rust-operator">::</span><span class="rust-function">builder</span>()
+        .<span class="rust-function">title</span>(<span class="rust-string">"A simple greeting form"</span>)
+        .<span class="rust-function">size</span>(<span class="rust-number">460</span>, <span class="rust-number">240</span>)
+        .<span class="rust-function">centered</span>()
+        .<span class="rust-function">build</span>()<span class="rust-operator">?</span>;
+
+    <span class="rust-keyword">let</span> caption <span class="rust-operator">=</span> <span class="rust-type">Label</span><span class="rust-operator">::</span><span class="rust-function">builder</span>()
+        .<span class="rust-function">text</span>(<span class="rust-string">"Your name:"</span>)
+        .<span class="rust-function">parent</span>(<span class="rust-operator">&amp;</span>window)
+        .<span class="rust-function">build</span>()<span class="rust-operator">?</span>;
+    <span class="rust-keyword">let</span> name <span class="rust-operator">=</span> <span class="rust-type">TextBox</span><span class="rust-operator">::</span><span class="rust-function">builder</span>()
+        .<span class="rust-function">placeholder</span>(<span class="rust-string">"Type your name"</span>)
+        .<span class="rust-function">parent</span>(<span class="rust-operator">&amp;</span>window)
+        .<span class="rust-function">build</span>()<span class="rust-operator">?</span>;
+    <span class="rust-keyword">let</span> greet <span class="rust-operator">=</span> <span class="rust-type">Button</span><span class="rust-operator">::</span><span class="rust-function">builder</span>()
+        .<span class="rust-function">text</span>(<span class="rust-string">"Greet me"</span>)
+        .<span class="rust-function">parent</span>(<span class="rust-operator">&amp;</span>window)
+        .<span class="rust-function">build</span>()<span class="rust-operator">?</span>;
+    <span class="rust-keyword">let</span> result <span class="rust-operator">=</span> <span class="rust-type">Label</span><span class="rust-operator">::</span><span class="rust-function">builder</span>()
+        .<span class="rust-function">text</span>(<span class="rust-string">"Your greeting appears here."</span>)
+        .<span class="rust-function">parent</span>(<span class="rust-operator">&amp;</span>window)
+        .<span class="rust-function">build</span>()<span class="rust-operator">?</span>;
+
+    <span class="rust-keyword">let</span> layout <span class="rust-operator">=</span> <span class="rust-type">StackLayout</span><span class="rust-operator">::</span><span class="rust-function">vertical</span>()
+        .<span class="rust-function">spacing</span>(<span class="rust-number">10</span>)
+        .<span class="rust-function">padding</span>(<span class="rust-type">Thickness</span><span class="rust-operator">::</span><span class="rust-function">all</span>(<span class="rust-number">20</span>));
+    layout.<span class="rust-function">add_with</span>(<span class="rust-operator">&amp;</span>caption, <span class="rust-type">LayoutParams</span><span class="rust-operator">::</span><span class="rust-function">new</span>().<span class="rust-function">height</span>(<span class="rust-number">22</span>));
+    layout.<span class="rust-function">add_with</span>(<span class="rust-operator">&amp;</span>name, <span class="rust-type">LayoutParams</span><span class="rust-operator">::</span><span class="rust-function">new</span>().<span class="rust-function">height</span>(<span class="rust-number">28</span>));
+    layout.<span class="rust-function">add_with</span>(<span class="rust-operator">&amp;</span>greet, <span class="rust-type">LayoutParams</span><span class="rust-operator">::</span><span class="rust-function">new</span>().<span class="rust-function">height</span>(<span class="rust-number">32</span>));
+    layout.<span class="rust-function">add_with</span>(<span class="rust-operator">&amp;</span>result, <span class="rust-type">LayoutParams</span><span class="rust-operator">::</span><span class="rust-function">new</span>().<span class="rust-function">height</span>(<span class="rust-number">28</span>));
+    window.<span class="rust-function">set_layout</span>(layout);
+
+    greet.<span class="rust-function">on_click</span>(<span class="rust-keyword">move</span> <span class="rust-operator">|</span><span class="rust-operator">|</span> {
+        <span class="rust-keyword">let</span> value <span class="rust-operator">=</span> name.<span class="rust-function">text</span>();
+        <span class="rust-keyword">let</span> person <span class="rust-operator">=</span> <span class="rust-keyword">if</span> value.<span class="rust-function">trim</span>().<span class="rust-function">is_empty</span>() {
+            <span class="rust-string">"Rust developer"</span>
+        } <span class="rust-keyword">else</span> {
+            value.<span class="rust-function">trim</span>()
+        };
+        result.<span class="rust-function">set_text</span>(<span class="rust-operator">&amp;</span><span class="rust-macro">format!</span>(<span class="rust-string">"Hello, {person}!"</span>));
+    });
+
+    window.<span class="rust-function">show</span>();
+    app.<span class="rust-function">run</span>()
+}</code></pre>
+        </div>
+      </article>
+      <p class="code-examples-note">The shared pattern is simple: initialize <code>Application</code>, create controls with a <code>parent</code>, connect events, show the window and call <code>app.run()</code>. Layouts organize the controls when the window changes size.</p>
+    </section>
   </template>
   <template id="arqrustssl-details" lang="la">
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vitae sapien nec justo tincidunt ullamcorper. Donec dignissim, augue quis volutpat interdum, tellus arcu feugiat libero, vitae fermentum sem nulla vitae magna. Sed euismod velit vel tellus consectetur, ac consequat neque placerat.</p>
